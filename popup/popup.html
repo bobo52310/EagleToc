@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart TOC</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="popup-container">
+    <header class="popup-header">
+      <h1 class="popup-title">Smart TOC</h1>
+      <div class="popup-subtitle">Table of Contents Generator</div>
+    </header>
+    
+    <main class="popup-main">
+      <button id="toggle-toc" class="primary-button">
+        <span class="button-icon">📋</span>
+        <span class="button-text">Toggle TOC</span>
+      </button>
+      
+      <div class="popup-info">
+        <p class="info-text">Click to show/hide the table of contents for this page.</p>
+      </div>
+      
+      <div class="popup-actions">
+        <button id="settings-btn" class="secondary-button">
+          <span class="button-icon">⚙️</span>
+          Settings
+        </button>
+        
+        <button id="help-btn" class="secondary-button">
+          <span class="button-icon">❓</span>
+          Help
+        </button>
+      </div>
+    </main>
+    
+    <footer class="popup-footer">
+      <div class="version">v1.0.0</div>
+    </footer>
+  </div>
+  
+  <script src="popup.js"></script>
+</body>
+</html>

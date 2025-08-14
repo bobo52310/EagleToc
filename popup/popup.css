@@ -1,0 +1,140 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  width: 320px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  font-size: 14px;
+  line-height: 1.4;
+  background: #ffffff;
+  color: #24292f;
+}
+
+.popup-container {
+  padding: 0;
+}
+
+.popup-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 20px;
+  text-align: center;
+}
+
+.popup-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.popup-subtitle {
+  font-size: 12px;
+  opacity: 0.9;
+}
+
+.popup-main {
+  padding: 20px;
+}
+
+.primary-button {
+  width: 100%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 14px 20px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+  margin-bottom: 16px;
+}
+
+.primary-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.primary-button:active {
+  transform: translateY(0);
+}
+
+.button-icon {
+  font-size: 18px;
+}
+
+.button-text {
+  font-size: 14px;
+}
+
+.popup-info {
+  background: #f6f8fa;
+  border-radius: 6px;
+  padding: 12px;
+  margin-bottom: 16px;
+}
+
+.info-text {
+  font-size: 12px;
+  color: #656d76;
+  text-align: center;
+}
+
+.popup-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.secondary-button {
+  flex: 1;
+  background: white;
+  color: #24292f;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  transition: all 0.2s ease;
+}
+
+.secondary-button:hover {
+  background: #f6f8fa;
+  border-color: #8c959f;
+}
+
+.secondary-button:active {
+  background: #ebedef;
+}
+
+.secondary-button .button-icon {
+  font-size: 14px;
+}
+
+.popup-footer {
+  padding: 12px 20px;
+  text-align: center;
+  border-top: 1px solid #e1e5e9;
+  background: #f6f8fa;
+}
+
+.version {
+  font-size: 11px;
+  color: #8c959f;
+}
+
+.popup-container {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}

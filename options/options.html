@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart TOC - Settings</title>
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <h1>Smart TOC Settings</h1>
+      <p>Configure your table of contents preferences</p>
+    </header>
+
+    <main class="main">
+      <section class="settings-section">
+        <h2>General Settings</h2>
+        
+        <div class="setting-item">
+          <label class="setting-label">
+            <input type="checkbox" id="enableLocalFiles" class="setting-checkbox">
+            <span class="checkmark"></span>
+            Enable for local HTML files
+          </label>
+          <p class="setting-description">Allow Smart TOC to work on file:// URLs</p>
+        </div>
+
+        <div class="setting-item">
+          <label class="setting-label">
+            <input type="checkbox" id="autoShow" class="setting-checkbox">
+            <span class="checkmark"></span>
+            Auto-show TOC on compatible pages
+          </label>
+          <p class="setting-description">Automatically display TOC when headings are detected</p>
+        </div>
+
+        <div class="setting-item">
+          <label class="setting-label">Maximum heading levels:</label>
+          <select id="maxHeadingLevels" class="setting-select">
+            <option value="3">3 levels (h1-h3)</option>
+            <option value="4">4 levels (h1-h4)</option>
+            <option value="5">5 levels (h1-h5)</option>
+            <option value="6">6 levels (h1-h6)</option>
+          </select>
+          <p class="setting-description">How many heading levels to include in the TOC</p>
+        </div>
+      </section>
+
+      <section class="settings-section">
+        <h2>Appearance</h2>
+        
+        <div class="setting-item">
+          <label class="setting-label">TOC Position:</label>
+          <select id="tocPosition" class="setting-select">
+            <option value="right">Right side</option>
+            <option value="left">Left side</option>
+            <option value="floating">Floating</option>
+          </select>
+        </div>
+
+        <div class="setting-item">
+          <label class="setting-label">TOC Width:</label>
+          <input type="range" id="tocWidth" min="250" max="500" value="300" class="setting-range">
+          <span id="tocWidthValue" class="range-value">300px</span>
+        </div>
+      </section>
+
+      <section class="settings-section">
+        <h2>Keyboard Shortcuts</h2>
+        <div class="setting-item">
+          <p class="shortcut-info">
+            <strong>Toggle TOC:</strong> Click extension icon or Alt+T<br>
+            <strong>Close TOC:</strong> Escape key
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="button-group">
+        <button id="saveSettings" class="btn btn-primary">Save Settings</button>
+        <button id="resetSettings" class="btn btn-secondary">Reset to Defaults</button>
+      </div>
+      <div class="status-message" id="statusMessage"></div>
+    </footer>
+  </div>
+
+  <script src="options.js"></script>
+</body>
+</html>
