@@ -260,3 +260,22 @@ body.smart-toc-glance-mode strong:hover {
   border-radius: 4px;
   padding: 2px 4px;
 }
+
+/* Collapsed panel state */
+.smart-toc-panel.smart-toc-collapsed .smart-toc-content {
+  display: none;
+}
+
+.smart-toc-panel.smart-toc-collapsed .smart-toc-resize-handle {
+  display: none;
+}
+
+.smart-toc-panel.smart-toc-collapsed {
+  height: auto;
+  min-height: auto;
+  max-height: none;
+}
+
+.smart-toc-expand {
+  display: none;
+}

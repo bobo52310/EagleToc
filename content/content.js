@@ -3,6 +3,7 @@ class SmartTOC {
     this.tocPanel = null;
     this.headings = [];
     this.isVisible = false;
+    this.isCollapsed = false;
     this.currentHeading = null;
     this.intersectionObserver = null;
     this.isDragging = false;
@@ -59,8 +60,8 @@ class SmartTOC {
       <div class="smart-toc-header">
         <span class="smart-toc-title">Table of Contents</span>
         <div class="smart-toc-controls">
-          <button class="smart-toc-collapse-all" title="Collapse all">📁</button>
-          <button class="smart-toc-expand-all" title="Expand all">📂</button>
+          <button class="smart-toc-collapse" title="Collapse panel">📁</button>
+          <button class="smart-toc-expand" title="Expand panel">📂</button>
           <button class="smart-toc-copy" title="Copy to clipboard">📋</button>
           <button class="smart-toc-close" title="Close">×</button>
         </div>
@@ -77,6 +78,9 @@ class SmartTOC {
     
     document.body.appendChild(this.tocPanel);
     this.tocPanel.style.display = 'none';
+    
+    // Initialize button visibility
+    setTimeout(() => this.updateCollapseExpandButtons(), 0);
   }
 
   extractHeadings() {
@@ -329,21 +333,25 @@ class SmartTOC {
 
   setupEventListeners() {
     chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+      console.log('Content script received message:', request);
       if (request.action === 'toggle-toc') {
+        console.log('Toggling TOC, current visible state:', this.isVisible);
         this.toggle();
+        sendResponse({ success: true, isVisible: this.isVisible });
       } else if (request.action === 'get-status') {
         sendResponse({ isVisible: this.isVisible });
       }
+      return true; // Important for async response
     });
 
     const closeBtn = this.tocPanel.querySelector('.smart-toc-close');
     closeBtn.addEventListener('click', () => this.hide());
 
-    const collapseAllBtn = this.tocPanel.querySelector('.smart-toc-collapse-all');
-    collapseAllBtn.addEventListener('click', () => this.collapseAll());
+    const collapseBtn = this.tocPanel.querySelector('.smart-toc-collapse');
+    collapseBtn.addEventListener('click', () => this.collapsePanel());
 
-    const expandAllBtn = this.tocPanel.querySelector('.smart-toc-expand-all');
-    expandAllBtn.addEventListener('click', () => this.expandAll());
+    const expandBtn = this.tocPanel.querySelector('.smart-toc-expand');
+    expandBtn.addEventListener('click', () => this.expandPanel());
 
     const copyBtn = this.tocPanel.querySelector('.smart-toc-copy');
     copyBtn.addEventListener('click', () => this.copyToClipboard());
@@ -359,20 +367,29 @@ class SmartTOC {
     });
   }
 
-  collapseAll() {
-    this.headings.forEach(heading => {
-      if (heading.level > 2) {
-        heading.visible = false;
-      }
-    });
-    this.renderTOC();
+  collapsePanel() {
+    this.isCollapsed = true;
+    this.tocPanel.classList.add('smart-toc-collapsed');
+    this.updateCollapseExpandButtons();
   }
 
-  expandAll() {
-    this.headings.forEach(heading => {
-      heading.visible = heading.level <= this.settings.maxHeadingLevels;
-    });
-    this.renderTOC();
+  expandPanel() {
+    this.isCollapsed = false;
+    this.tocPanel.classList.remove('smart-toc-collapsed');
+    this.updateCollapseExpandButtons();
+  }
+
+  updateCollapseExpandButtons() {
+    const collapseBtn = this.tocPanel.querySelector('.smart-toc-collapse');
+    const expandBtn = this.tocPanel.querySelector('.smart-toc-expand');
+    
+    if (this.isCollapsed) {
+      collapseBtn.style.display = 'none';
+      expandBtn.style.display = 'flex';
+    } else {
+      collapseBtn.style.display = 'flex';
+      expandBtn.style.display = 'none';
+    }
   }
 
   async copyToClipboard() {
@@ -658,5 +675,15 @@ class SmartTOC {
 }
 
 if (typeof window !== 'undefined') {
+  console.log('Smart TOC content script loaded');
+  
+  // Prevent multiple initialization
+  if (window.smartTOC) {
+    console.log('Smart TOC already exists, cleaning up...');
+    window.smartTOC.destroy();
+  }
+  
+  console.log('Initializing Smart TOC...');
   window.smartTOC = new SmartTOC();
+  console.log('Smart TOC initialized:', window.smartTOC);
 }
