@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>拖曳性能測試 - Smart TOC</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      margin: 40px;
+      background: #f5f5f5;
+    }
+    
+    h1, h2, h3 {
+      margin-top: 2rem;
+      color: #333;
+    }
+    
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    .test-instructions {
+      background: #e8f4fd;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 30px;
+      border-left: 4px solid #0066cc;
+    }
+    
+    .performance-note {
+      background: #f0f8ff;
+      padding: 15px;
+      border-radius: 5px;
+      margin: 20px 0;
+      font-size: 14px;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Smart TOC 拖曳性能測試</h1>
+    
+    <div class="test-instructions">
+      <h3>測試說明</h3>
+      <ol>
+        <li>點擊瀏覽器工具列的 Smart TOC 圖標來開啟目錄面板</li>
+        <li>嘗試拖曳目錄面板的標題欄到不同位置</li>
+        <li>觀察拖曳過程是否流暢，無延遲或卡頓現象</li>
+        <li>測試調整面板大小的流暢度</li>
+        <li>檢查拖曳時的視覺反饋是否正確</li>
+      </ol>
+    </div>
+    
+    <div class="performance-note">
+      <strong>性能優化重點：</strong>
+      <ul>
+        <li>使用預綁定的事件處理器，避免重複創建函數</li>
+        <li>使用 requestAnimationFrame 確保流暢動畫</li>
+        <li>添加 will-change CSS 屬性優化渲染</li>
+        <li>拖曳時禁用過渡動畫避免衝突</li>
+        <li>更低調的工具列設計，減少視覺干擾</li>
+      </ul>
+    </div>
+    
+    <h2>第一章：基本拖曳測試</h2>
+    <p>這一章主要測試基本的拖曳功能。拖曳目錄面板應該能夠即時跟隨滑鼠移動，沒有任何延遲或跳躍現象。</p>
+    
+    <h3>1.1 水平拖曳</h3>
+    <p>測試從左到右和從右到左的水平拖曳，確保邊界限制正常工作。</p>
+    
+    <h3>1.2 垂直拖曳</h3>
+    <p>測試從上到下和從下到上的垂直拖曳，檢查是否會超出視窗範圍。</p>
+    
+    <h3>1.3 對角線拖曳</h3>
+    <p>測試對角線方向的拖曳，這是最考驗性能的拖曳方式。</p>
+    
+    <h2>第二章：高頻拖曳測試</h2>
+    <p>這一章測試快速、頻繁的拖曳操作，模擬使用者可能的極端使用情況。</p>
+    
+    <h3>2.1 快速拖曳</h3>
+    <p>快速移動滑鼠進行拖曳，測試是否能夠跟上。</p>
+    
+    <h3>2.2 抖動拖曳</h3>
+    <p>在小範圍內快速來回拖曳，測試性能穩定性。</p>
+    
+    <h2>第三章：調整大小測試</h2>
+    <p>測試面板大小調整功能的流暢度。</p>
+    
+    <h3>3.1 右下角調整</h3>
+    <p>使用右下角控制點調整面板大小。</p>
+    
+    <h3>3.2 邊緣調整</h3>
+    <p>使用四個邊緣的控制點分別調整寬度和高度。</p>
+    
+    <h3>3.3 角落調整</h3>
+    <p>使用四個角落的控制點同時調整寬度和高度。</p>
+    
+    <h2>第四章：複合操作測試</h2>
+    <p>測試拖曳與其他功能的配合。</p>
+    
+    <h3>4.1 拖曳後點擊</h3>
+    <p>拖曳面板後立即點擊目錄項目，測試事件處理是否正確。</p>
+    
+    <h3>4.2 拖曳與摺疊</h3>
+    <p>在拖曳過程中嘗試摺疊/展開面板。</p>
+    
+    <h2>第五章：瀏覽器兼容性測試</h2>
+    <p>在不同瀏覽器中測試拖曳性能。</p>
+    
+    <h3>5.1 Chrome 測試</h3>
+    <p>在 Chrome 瀏覽器中的表現。</p>
+    
+    <h3>5.2 Firefox 測試</h3>
+    <p>在 Firefox 瀏覽器中的表現。</p>
+    
+    <h3>5.3 Safari 測試</h3>
+    <p>在 Safari 瀏覽器中的表現。</p>
+    
+    <h2>結論</h2>
+    <p>通過以上測試，我們可以評估 Smart TOC 拖曳功能的性能改善效果。主要改進包括：</p>
+    <ul>
+      <li><strong>消除延遲：</strong>使用預綁定事件處理器避免重複創建函數</li>
+      <li><strong>流暢動畫：</strong>使用 requestAnimationFrame 確保 60fps 流暢度</li>
+      <li><strong>視覺優化：</strong>添加拖曳狀態樣式和 will-change 屬性</li>
+      <li><strong>減少干擾：</strong>更低調的工具列設計，降低視覺負擔</li>
+    </ul>
+  </div>
+</body>
+</html>

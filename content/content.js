@@ -675,18 +675,23 @@ class SmartTOC {
   makeDraggable() {
     const header = this.tocPanel.querySelector('.smart-toc-header');
     
+    // Bind methods once
+    this.boundHandleDrag = this.handleDrag.bind(this);
+    this.boundStopDragging = this.stopDragging.bind(this);
+    
     header.addEventListener('mousedown', (e) => {
       if (e.target.tagName === 'BUTTON') return;
       
       this.isDragging = true;
+      this.tocPanel.classList.add('smart-toc-dragging');
       const rect = this.tocPanel.getBoundingClientRect();
       this.dragOffset = {
         x: e.clientX - rect.left,
         y: e.clientY - rect.top
       };
       
-      document.addEventListener('mousemove', this.handleDrag.bind(this));
-      document.addEventListener('mouseup', this.stopDragging.bind(this));
+      document.addEventListener('mousemove', this.boundHandleDrag);
+      document.addEventListener('mouseup', this.boundStopDragging);
       
       e.preventDefault();
     });
@@ -695,28 +700,47 @@ class SmartTOC {
   handleDrag(e) {
     if (!this.isDragging) return;
     
-    const x = e.clientX - this.dragOffset.x;
-    const y = e.clientY - this.dragOffset.y;
+    // Store the position for requestAnimationFrame
+    this.pendingDragX = e.clientX - this.dragOffset.x;
+    this.pendingDragY = e.clientY - this.dragOffset.y;
     
-    const maxX = window.innerWidth - this.tocPanel.offsetWidth;
-    const maxY = window.innerHeight - this.tocPanel.offsetHeight;
-    
-    const clampedX = Math.max(0, Math.min(x, maxX));
-    const clampedY = Math.max(0, Math.min(y, maxY));
-    
-    this.tocPanel.style.left = clampedX + 'px';
-    this.tocPanel.style.top = clampedY + 'px';
-    this.tocPanel.style.right = 'auto';
+    // Use requestAnimationFrame for smooth dragging
+    if (!this.dragFrameRequest) {
+      this.dragFrameRequest = requestAnimationFrame(() => {
+        const maxX = window.innerWidth - this.tocPanel.offsetWidth;
+        const maxY = window.innerHeight - this.tocPanel.offsetHeight;
+        
+        const clampedX = Math.max(0, Math.min(this.pendingDragX, maxX));
+        const clampedY = Math.max(0, Math.min(this.pendingDragY, maxY));
+        
+        this.tocPanel.style.left = clampedX + 'px';
+        this.tocPanel.style.top = clampedY + 'px';
+        this.tocPanel.style.right = 'auto';
+        
+        this.dragFrameRequest = null;
+      });
+    }
   }
 
   stopDragging() {
     this.isDragging = false;
-    document.removeEventListener('mousemove', this.handleDrag.bind(this));
-    document.removeEventListener('mouseup', this.stopDragging.bind(this));
+    this.tocPanel.classList.remove('smart-toc-dragging');
+    document.removeEventListener('mousemove', this.boundHandleDrag);
+    document.removeEventListener('mouseup', this.boundStopDragging);
+    
+    // Cancel any pending frame request
+    if (this.dragFrameRequest) {
+      cancelAnimationFrame(this.dragFrameRequest);
+      this.dragFrameRequest = null;
+    }
   }
 
   makeResizable() {
     const resizeHandles = this.tocPanel.querySelectorAll('.smart-toc-resize-handle');
+    
+    // Bind methods once
+    this.boundHandleResize = this.handleResize.bind(this);
+    this.boundStopResizing = this.stopResizing.bind(this);
     
     resizeHandles.forEach(handle => {
       handle.addEventListener('mousedown', (e) => {
@@ -730,8 +754,8 @@ class SmartTOC {
         this.resizeStartTop = this.tocPanel.offsetTop;
         
         this.tocPanel.classList.add('smart-toc-resizing');
-        document.addEventListener('mousemove', this.handleResize.bind(this));
-        document.addEventListener('mouseup', this.stopResizing.bind(this));
+        document.addEventListener('mousemove', this.boundHandleResize);
+        document.addEventListener('mouseup', this.boundStopResizing);
         e.preventDefault();
         e.stopPropagation();
       });
@@ -741,77 +765,94 @@ class SmartTOC {
   handleResize(e) {
     if (!this.isResizing) return;
     
-    const deltaX = e.clientX - this.resizeStartX;
-    const deltaY = e.clientY - this.resizeStartY;
+    // Store the delta values for requestAnimationFrame
+    this.pendingDeltaX = e.clientX - this.resizeStartX;
+    this.pendingDeltaY = e.clientY - this.resizeStartY;
     
-    const minWidth = 250;
-    const minHeight = 200;
-    const maxWidth = window.innerWidth * 0.8;
-    const maxHeight = window.innerHeight * 0.8;
-    
-    let newWidth = this.resizeStartWidth;
-    let newHeight = this.resizeStartHeight;
-    let newLeft = this.resizeStartLeft;
-    let newTop = this.resizeStartTop;
-    
-    switch (this.resizeDirection) {
-      case 'right':
-        newWidth = Math.max(minWidth, Math.min(maxWidth, this.resizeStartWidth + deltaX));
-        break;
+    // Use requestAnimationFrame for smooth resizing
+    if (!this.resizeFrameRequest) {
+      this.resizeFrameRequest = requestAnimationFrame(() => {
+        const deltaX = this.pendingDeltaX;
+        const deltaY = this.pendingDeltaY;
         
-      case 'left':
-        newWidth = Math.max(minWidth, Math.min(maxWidth, this.resizeStartWidth - deltaX));
-        newLeft = this.resizeStartLeft + (this.resizeStartWidth - newWidth);
-        break;
+        const minWidth = 250;
+        const minHeight = 200;
+        const maxWidth = window.innerWidth * 0.8;
+        const maxHeight = window.innerHeight * 0.8;
         
-      case 'bottom':
-        newHeight = Math.max(minHeight, Math.min(maxHeight, this.resizeStartHeight + deltaY));
-        break;
+        let newWidth = this.resizeStartWidth;
+        let newHeight = this.resizeStartHeight;
+        let newLeft = this.resizeStartLeft;
+        let newTop = this.resizeStartTop;
         
-      case 'top':
-        newHeight = Math.max(minHeight, Math.min(maxHeight, this.resizeStartHeight - deltaY));
-        newTop = this.resizeStartTop + (this.resizeStartHeight - newHeight);
-        break;
+        switch (this.resizeDirection) {
+          case 'right':
+            newWidth = Math.max(minWidth, Math.min(maxWidth, this.resizeStartWidth + deltaX));
+            break;
+            
+          case 'left':
+            newWidth = Math.max(minWidth, Math.min(maxWidth, this.resizeStartWidth - deltaX));
+            newLeft = this.resizeStartLeft + (this.resizeStartWidth - newWidth);
+            break;
+            
+          case 'bottom':
+            newHeight = Math.max(minHeight, Math.min(maxHeight, this.resizeStartHeight + deltaY));
+            break;
+            
+          case 'top':
+            newHeight = Math.max(minHeight, Math.min(maxHeight, this.resizeStartHeight - deltaY));
+            newTop = this.resizeStartTop + (this.resizeStartHeight - newHeight);
+            break;
+            
+          case 'bottom-right':
+            newWidth = Math.max(minWidth, Math.min(maxWidth, this.resizeStartWidth + deltaX));
+            newHeight = Math.max(minHeight, Math.min(maxHeight, this.resizeStartHeight + deltaY));
+            break;
+            
+          case 'bottom-left':
+            newWidth = Math.max(minWidth, Math.min(maxWidth, this.resizeStartWidth - deltaX));
+            newHeight = Math.max(minHeight, Math.min(maxHeight, this.resizeStartHeight + deltaY));
+            newLeft = this.resizeStartLeft + (this.resizeStartWidth - newWidth);
+            break;
+            
+          case 'top-right':
+            newWidth = Math.max(minWidth, Math.min(maxWidth, this.resizeStartWidth + deltaX));
+            newHeight = Math.max(minHeight, Math.min(maxHeight, this.resizeStartHeight - deltaY));
+            newTop = this.resizeStartTop + (this.resizeStartHeight - newHeight);
+            break;
+            
+          case 'top-left':
+            newWidth = Math.max(minWidth, Math.min(maxWidth, this.resizeStartWidth - deltaX));
+            newHeight = Math.max(minHeight, Math.min(maxHeight, this.resizeStartHeight - deltaY));
+            newLeft = this.resizeStartLeft + (this.resizeStartWidth - newWidth);
+            newTop = this.resizeStartTop + (this.resizeStartHeight - newHeight);
+            break;
+        }
         
-      case 'bottom-right':
-        newWidth = Math.max(minWidth, Math.min(maxWidth, this.resizeStartWidth + deltaX));
-        newHeight = Math.max(minHeight, Math.min(maxHeight, this.resizeStartHeight + deltaY));
-        break;
+        this.tocPanel.style.width = newWidth + 'px';
+        this.tocPanel.style.height = newHeight + 'px';
+        this.tocPanel.style.left = newLeft + 'px';
+        this.tocPanel.style.top = newTop + 'px';
+        this.tocPanel.style.right = 'auto';
+        this.tocPanel.style.bottom = 'auto';
         
-      case 'bottom-left':
-        newWidth = Math.max(minWidth, Math.min(maxWidth, this.resizeStartWidth - deltaX));
-        newHeight = Math.max(minHeight, Math.min(maxHeight, this.resizeStartHeight + deltaY));
-        newLeft = this.resizeStartLeft + (this.resizeStartWidth - newWidth);
-        break;
-        
-      case 'top-right':
-        newWidth = Math.max(minWidth, Math.min(maxWidth, this.resizeStartWidth + deltaX));
-        newHeight = Math.max(minHeight, Math.min(maxHeight, this.resizeStartHeight - deltaY));
-        newTop = this.resizeStartTop + (this.resizeStartHeight - newHeight);
-        break;
-        
-      case 'top-left':
-        newWidth = Math.max(minWidth, Math.min(maxWidth, this.resizeStartWidth - deltaX));
-        newHeight = Math.max(minHeight, Math.min(maxHeight, this.resizeStartHeight - deltaY));
-        newLeft = this.resizeStartLeft + (this.resizeStartWidth - newWidth);
-        newTop = this.resizeStartTop + (this.resizeStartHeight - newHeight);
-        break;
+        this.resizeFrameRequest = null;
+      });
     }
-    
-    this.tocPanel.style.width = newWidth + 'px';
-    this.tocPanel.style.height = newHeight + 'px';
-    this.tocPanel.style.left = newLeft + 'px';
-    this.tocPanel.style.top = newTop + 'px';
-    this.tocPanel.style.right = 'auto';
-    this.tocPanel.style.bottom = 'auto';
   }
 
   stopResizing() {
     this.isResizing = false;
     this.resizeDirection = null;
     this.tocPanel.classList.remove('smart-toc-resizing');
-    document.removeEventListener('mousemove', this.handleResize.bind(this));
-    document.removeEventListener('mouseup', this.stopResizing.bind(this));
+    document.removeEventListener('mousemove', this.boundHandleResize);
+    document.removeEventListener('mouseup', this.boundStopResizing);
+    
+    // Cancel any pending frame request
+    if (this.resizeFrameRequest) {
+      cancelAnimationFrame(this.resizeFrameRequest);
+      this.resizeFrameRequest = null;
+    }
   }
 
   setupGlanceMode() {
