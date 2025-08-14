@@ -35,6 +35,38 @@
           <p class="setting-description">Automatically display TOC when headings are detected</p>
         </div>
 
+        <div class="setting-item auto-show-options">
+          <label class="setting-label">Minimum headings for auto-show:</label>
+          <div class="number-input-group">
+            <input type="number" id="autoShowMinHeadings" min="1" max="10" value="2" class="number-input">
+            <span class="input-suffix">headings</span>
+          </div>
+          <p class="setting-description">Only auto-show when page has at least this many headings</p>
+        </div>
+
+        <div class="setting-item auto-show-options">
+          <label class="setting-label">Auto-show delay:</label>
+          <div class="select-group">
+            <select id="autoShowDelay" class="select-input">
+              <option value="0">Immediately</option>
+              <option value="300">0.3 seconds</option>
+              <option value="500" selected>0.5 seconds</option>
+              <option value="1000">1 second</option>
+              <option value="2000">2 seconds</option>
+            </select>
+          </div>
+          <p class="setting-description">Delay before showing TOC after page loads</p>
+        </div>
+
+        <div class="setting-item auto-show-options">
+          <label class="setting-label">Disabled domains management:</label>
+          <div class="domain-management">
+            <div id="disabledDomainsList" class="disabled-domains-list"></div>
+            <button type="button" id="clearDisabledDomains" class="clear-button">Clear all disabled domains</button>
+          </div>
+          <p class="setting-description">Domains where you manually closed auto-shown TOC</p>
+        </div>
+
         <div class="setting-item">
           <label class="setting-label">Maximum heading levels:</label>
           <select id="maxHeadingLevels" class="setting-select">

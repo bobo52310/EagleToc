@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>重複標題測試頁面</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .test-info {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        
+        /* 模擬維基百科的結構 */
+        .main-content {
+            border: 2px dashed #e74c3c;
+            padding: 20px;
+            margin: 10px 0;
+        }
+        
+        #content {
+            border: 2px dashed #3498db;
+            padding: 20px;
+            margin: 10px 0;
+        }
+        
+        article {
+            border: 2px dashed #2ecc71;
+            padding: 20px;
+            margin: 10px 0;
+        }
+        
+        .nested-container {
+            background: rgba(52, 152, 219, 0.1);
+            padding: 15px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-info">
+        <h2>重複標題測試頁面</h2>
+        <p>此頁面用於測試 Smart TOC 的去重功能。頁面結構模擬了可能產生重複標題的情況：</p>
+        <ul>
+            <li>紅框：.main-content 容器</li>
+            <li>藍框：#content 容器</li>
+            <li>綠框：article 容器</li>
+        </ul>
+        <p><strong>期望結果：</strong>每個標題在 TOC 中只出現一次</p>
+    </div>
+
+    <!-- 多個嵌套容器，模擬維基百科的結構 -->
+    <div class="main-content">
+        <h1>主要標題 (在 main-content 中)</h1>
+        
+        <div id="content">
+            <h1>主要標題 (在 content 中，重複)</h1>
+            
+            <article>
+                <h1>主要標題 (在 article 中，重複)</h1>
+                
+                <div class="nested-container">
+                    <h2>第一章：概述</h2>
+                    <p>這裡是第一章的內容...</p>
+                    
+                    <h3>1.1 背景介紹</h3>
+                    <p>背景介紹的內容...</p>
+                    
+                    <h3>1.2 目標與範圍</h3>
+                    <p>目標與範圍的說明...</p>
+                </div>
+                
+                <h2>第二章：詳細說明</h2>
+                <p>第二章的詳細內容...</p>
+                
+                <h3>2.1 技術規格</h3>
+                <p>技術規格的說明...</p>
+                
+                <h3>2.2 實施方法</h3>
+                <p>實施方法的描述...</p>
+                
+                <h2>第三章：結論</h2>
+                <p>結論部分的內容...</p>
+            </article>
+        </div>
+    </div>
+    
+    <!-- 額外的獨立標題 -->
+    <h1>獨立標題 (不在任何特定容器中)</h1>
+    <p>這個標題應該也會被正確識別</p>
+    
+    <h2>附錄：額外資訊</h2>
+    <p>附錄的內容...</p>
+    
+    <!-- 測試腳本 -->
+    <script>
+        console.log('重複標題測試頁面已載入');
+        console.log('等待 Smart TOC 載入...');
+        
+        setTimeout(() => {
+            // 檢查所有 H1 標題
+            const h1Elements = document.querySelectorAll('h1');
+            console.log('頁面中的 H1 標題數量:', h1Elements.length);
+            h1Elements.forEach((h1, index) => {
+                console.log(`H1 ${index + 1}: "${h1.textContent.trim()}"`);
+            });
+            
+            // 檢查 Smart TOC 的標題列表
+            if (window.smartTOC && window.smartTOC.headings) {
+                const tocH1s = window.smartTOC.headings.filter(h => h.level === 1);
+                console.log('TOC 中的 H1 標題數量:', tocH1s.length);
+                tocH1s.forEach((h1, index) => {
+                    console.log(`TOC H1 ${index + 1}: "${h1.text}"`);
+                });
+                
+                if (tocH1s.length < h1Elements.length) {
+                    console.log('✅ 去重功能正常運作 - TOC 中的 H1 數量少於頁面中的實際數量');
+                } else {
+                    console.log('❌ 可能存在重複 - TOC 中的 H1 數量與頁面相同或更多');
+                }
+            }
+        }, 2000);
+    </script>
+</body>
+</html>

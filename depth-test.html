@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>階層深度切換測試 - Smart TOC</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      margin: 40px;
+      background: #f8f9fa;
+    }
+    
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: white;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+    }
+    
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 2rem;
+      color: #333;
+    }
+    
+    h1 { color: #d73027; border-bottom: 3px solid #d73027; padding-bottom: 10px; }
+    h2 { color: #f46d43; border-left: 4px solid #f46d43; padding-left: 15px; }
+    h3 { color: #fdae61; }
+    h4 { color: #fee08b; }
+    h5 { color: #e6f598; }
+    h6 { color: #abd9e9; }
+    
+    .test-instructions {
+      background: #e3f2fd;
+      padding: 25px;
+      border-radius: 10px;
+      margin-bottom: 30px;
+      border-left: 5px solid #1976d2;
+    }
+    
+    .depth-info {
+      background: #f3e5f5;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 25px 0;
+      font-size: 14px;
+      color: #4a148c;
+    }
+    
+    .level-indicator {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: bold;
+      margin-left: 10px;
+    }
+    
+    .level-1 { background: #ffebee; color: #c62828; }
+    .level-2 { background: #fff3e0; color: #ef6c00; }
+    .level-3 { background: #fffde7; color: #f57f17; }
+    .level-4 { background: #f9fbe7; color: #689f38; }
+    .level-5 { background: #e8f5e8; color: #388e3c; }
+    .level-6 { background: #e1f5fe; color: #0277bd; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>階層深度切換功能測試 <span class="level-indicator level-1">H1</span></h1>
+    
+    <div class="test-instructions">
+      <h3>測試說明</h3>
+      <ol>
+        <li>點擊瀏覽器工具列的 Smart TOC 圖標開啟目錄面板</li>
+        <li>觀察面板左上方的深度控制器：<strong>[-] H3 [+]</strong>（預設顯示到 H3 層級）</li>
+        <li>點擊 <strong>[+]</strong> 按鈕增加深度：H3 → H4 → H5 → H6（到達 H6 後按鈕變灰禁用）</li>
+        <li>點擊 <strong>[-]</strong> 按鈕減少深度：H6 → H5 → H4 → H3 → H2 → H1（到達 H1 後按鈕變灰禁用）</li>
+        <li>每次點擊後，目錄應即時更新顯示對應深度的標題</li>
+        <li>測試邊界情況：H1 時減少按鈕禁用，H6 時增加按鈕禁用</li>
+      </ol>
+    </div>
+    
+    <div class="depth-info">
+      <strong>深度等級說明：</strong>
+      <ul>
+        <li><strong>H1：</strong>只顯示最頂層標題（章節）</li>
+        <li><strong>H2：</strong>顯示到第二層標題（章節 + 主要段落）</li>
+        <li><strong>H3：</strong>顯示到第三層標題（預設設定，適合大多數文章）</li>
+        <li><strong>H4-H6：</strong>顯示更深層次的標題（適合詳細文檔）</li>
+      </ul>
+    </div>
+    
+    <h1>第一章：Web 開發基礎 <span class="level-indicator level-1">H1</span></h1>
+    
+    <h2>1.1 HTML 結構 <span class="level-indicator level-2">H2</span></h2>
+    <p>HTML 是網頁的骨架，定義了內容的結構和意義。</p>
+    
+    <h3>1.1.1 語意化標籤 <span class="level-indicator level-3">H3</span></h3>
+    <p>使用正確的 HTML 標籤來表示內容的含義。</p>
+    
+    <h4>1.1.1.1 標題標籤 <span class="level-indicator level-4">H4</span></h4>
+    <p>從 h1 到 h6 的標題標籤應該按層次使用。</p>
+    
+    <h5>1.1.1.1.1 主標題 <span class="level-indicator level-5">H5</span></h5>
+    <p>每個頁面只應該有一個 h1 標籤。</p>
+    
+    <h6>1.1.1.1.1.1 標題最佳實踐 <span class="level-indicator level-6">H6</span></h6>
+    <p>標題應該簡潔明了，避免過長。</p>
+    
+    <h4>1.1.1.2 段落標籤 <span class="level-indicator level-4">H4</span></h4>
+    <p>使用 p 標籤來包裝文本段落。</p>
+    
+    <h3>1.1.2 表單元素 <span class="level-indicator level-3">H3</span></h3>
+    <p>表單是用戶與網站互動的重要方式。</p>
+    
+    <h4>1.1.2.1 輸入控件 <span class="level-indicator level-4">H4</span></h4>
+    <p>包括文本輸入、選擇框、按鈕等。</p>
+    
+    <h5>1.1.2.1.1 文本輸入 <span class="level-indicator level-5">H5</span></h5>
+    <p>text, email, password 等輸入類型。</p>
+    
+    <h2>1.2 CSS 樣式 <span class="level-indicator level-2">H2</span></h2>
+    <p>CSS 控制網頁的視覺呈現和佈局。</p>
+    
+    <h3>1.2.1 選擇器 <span class="level-indicator level-3">H3</span></h3>
+    <p>CSS 選擇器用來指定要應用樣式的元素。</p>
+    
+    <h4>1.2.1.1 基本選擇器 <span class="level-indicator level-4">H4</span></h4>
+    <p>包括類型選擇器、類選擇器、ID選擇器。</p>
+    
+    <h5>1.2.1.1.1 類型選擇器 <span class="level-indicator level-5">H5</span></h5>
+    <p>直接使用 HTML 標籤名作為選擇器。</p>
+    
+    <h6>1.2.1.1.1.1 通用選擇器 <span class="level-indicator level-6">H6</span></h6>
+    <p>使用 * 號來選擇所有元素。</p>
+    
+    <h1>第二章：JavaScript 程式設計 <span class="level-indicator level-1">H1</span></h1>
+    
+    <h2>2.1 基礎語法 <span class="level-indicator level-2">H2</span></h2>
+    <p>JavaScript 是為網頁添加互動功能的程式語言。</p>
+    
+    <h3>2.1.1 變數聲明 <span class="level-indicator level-3">H3</span></h3>
+    <p>使用 var, let, const 來聲明變數。</p>
+    
+    <h4>2.1.1.1 let 關鍵字 <span class="level-indicator level-4">H4</span></h4>
+    <p>let 提供塊級作用域，是現代 JavaScript 的推薦用法。</p>
+    
+    <h5>2.1.1.1.1 作用域規則 <span class="level-indicator level-5">H5</span></h5>
+    <p>let 變數只在聲明的塊內有效。</p>
+    
+    <h6>2.1.1.1.1.1 暫時性死區 <span class="level-indicator level-6">H6</span></h6>
+    <p>在聲明前無法訪問 let 變數。</p>
+    
+    <h3>2.1.2 函數定義 <span class="level-indicator level-3">H3</span></h3>
+    <p>JavaScript 中有多種定義函數的方式。</p>
+    
+    <h4>2.1.2.1 函數聲明 <span class="level-indicator level-4">H4</span></h4>
+    <p>使用 function 關鍵字聲明函數。</p>
+    
+    <h2>2.2 DOM 操作 <span class="level-indicator level-2">H2</span></h2>
+    <p>DOM 是文檔對象模型，用於操作 HTML 元素。</p>
+    
+    <h3>2.2.1 元素選取 <span class="level-indicator level-3">H3</span></h3>
+    <p>使用各種方法來選取 DOM 元素。</p>
+    
+    <h4>2.2.1.1 querySelector <span class="level-indicator level-4">H4</span></h4>
+    <p>使用 CSS 選擇器語法來選取元素。</p>
+    
+    <h5>2.2.1.1.1 選擇器語法 <span class="level-indicator level-5">H5</span></h5>
+    <p>支援所有標準的 CSS 選擇器。</p>
+    
+    <h1>第三章：響應式設計 <span class="level-indicator level-1">H1</span></h1>
+    
+    <h2>3.1 媒體查詢 <span class="level-indicator level-2">H2</span></h2>
+    <p>媒體查詢允許根據設備特性應用不同的樣式。</p>
+    
+    <h3>3.1.1 斷點設計 <span class="level-indicator level-3">H3</span></h3>
+    <p>設計合理的斷點來適應不同螢幕尺寸。</p>
+    
+    <h4>3.1.1.1 行動優先 <span class="level-indicator level-4">H4</span></h4>
+    <p>從最小螢幕開始設計，然後向上擴展。</p>
+    
+    <h5>3.1.1.1.1 漸進增強 <span class="level-indicator level-5">H5</span></h5>
+    <p>先確保基本功能可用，再添加增強功能。</p>
+    
+    <h6>3.1.1.1.1.1 回退方案 <span class="level-indicator level-6">H6</span></h6>
+    <p>為不支援新特性的瀏覽器提供替代方案。</p>
+    
+    <h2>結論</h2>
+    <p>透過這個測試頁面，您可以完整測試 Smart TOC 的階層深度切換功能。使用遞增/遞減按鈕時應該能看到：</p>
+    <ul>
+      <li><strong>即時更新：</strong>目錄內容立即反映新的深度設定</li>
+      <li><strong>精確控制：</strong>使用 [+] 和 [-] 按鈕精確控制深度層級</li>
+      <li><strong>邊界保護：</strong>到達 H1 或 H6 時對應按鈕自動禁用</li>
+      <li><strong>視覺回饋：</strong>中央顯示當前深度等級，按鈕狀態即時更新</li>
+      <li><strong>設定保存：</strong>重新開啟面板時記住上次的深度設定</li>
+      <li><strong>操作直觀：</strong>不再需要記住循環順序，想要什麼深度直接點擊對應方向</li>
+    </ul>
+  </div>
+</body>
+</html>

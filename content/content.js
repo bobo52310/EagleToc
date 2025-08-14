@@ -3,6 +3,7 @@ class SmartTOC {
     this.tocPanel = null;
     this.headings = [];
     this.isVisible = false;
+    this.wasAutoShown = false; // 標記是否為自動顯示
     this.isCollapsed = false;
     this.currentHeading = null;
     this.intersectionObserver = null;
@@ -12,14 +13,34 @@ class SmartTOC {
     this.altPressed = false;
     this.glanceMode = false;
     this.glanceTimeout = null;
+    this.searchQuery = '';
+    this.searchActive = false;
+    this.filteredHeadings = [];
+    this.searchModal = null;
+    this.selectedResultIndex = -1;
     this.settings = {
       maxHeadingLevels: 3,
       tocPosition: 'right',
       tocWidth: 300,
       enableLocalFiles: false,
       autoShow: false,
+      autoShowMinHeadings: 2,
+      autoShowDelay: 500,
       fontSize: 16,
-      highlightDuration: 5
+      highlightDuration: 5,
+      whitelistEnabled: true,
+      autoShowWhitelist: [
+        'wikipedia.org',
+        '*.wikipedia.org',
+        'github.com',
+        '*.github.com',
+        'developer.mozilla.org',
+        'docs.microsoft.com',
+        'developer.apple.com',
+        'nodejs.org',
+        'reactjs.org',
+        'vuejs.org'
+      ]
     };
     this.init();
   }
@@ -33,10 +54,8 @@ class SmartTOC {
     this.makeDraggable();
     this.makeResizable();
     this.setupGlanceMode();
-    
-    if (this.settings.autoShow && this.headings.length > 2) {
-      setTimeout(() => this.show(), 1000);
-    }
+    this.createSearchModal();
+    this.setupSearch();
   }
 
   async loadSettings() {
@@ -60,13 +79,20 @@ class SmartTOC {
     this.tocPanel.className = 'smart-toc-panel';
     this.tocPanel.innerHTML = `
       <div class="smart-toc-header">
-        <span class="smart-toc-title">Table of Contents</span>
         <div class="smart-toc-controls">
-          <button class="smart-toc-settings" title="Settings">⚙️</button>
-          <button class="smart-toc-collapse" title="Collapse panel">📁</button>
-          <button class="smart-toc-expand" title="Expand panel">📂</button>
-          <button class="smart-toc-copy" title="Copy to clipboard">📋</button>
-          <button class="smart-toc-close" title="Close">×</button>
+          <div class="smart-toc-depth-controls">
+            <button class="smart-toc-depth-decrease" title="減少顯示深度">−</button>
+            <span class="smart-toc-depth-display">H${this.settings.maxHeadingLevels}</span>
+            <button class="smart-toc-depth-increase" title="增加顯示深度">+</button>
+          </div>
+          <div class="smart-toc-action-buttons">
+            <button class="smart-toc-search-toggle" title="Toggle search">🔍</button>
+            <button class="smart-toc-settings" title="Settings">⚙️</button>
+            <button class="smart-toc-collapse" title="Collapse panel">📁</button>
+            <button class="smart-toc-expand" title="Expand panel">📂</button>
+            <button class="smart-toc-copy" title="Copy to clipboard">📋</button>
+            <button class="smart-toc-close" title="Close">×</button>
+          </div>
         </div>
         <div class="smart-toc-settings-panel">
           <div class="smart-toc-settings-item">
@@ -83,6 +109,28 @@ class SmartTOC {
               <button class="smart-toc-font-btn smart-toc-highlight-decrease" title="減少時間">-</button>
               <span class="smart-toc-highlight-duration-display">5s</span>
               <button class="smart-toc-font-btn smart-toc-highlight-increase" title="增加時間">+</button>
+            </div>
+          </div>
+          <div class="smart-toc-settings-item smart-toc-whitelist-section">
+            <div class="smart-toc-whitelist-header">
+              <span class="smart-toc-settings-label">自動顯示白名單</span>
+              <label class="smart-toc-whitelist-toggle">
+                <input type="checkbox" class="smart-toc-whitelist-enabled" checked />
+                <span class="smart-toc-toggle-slider"></span>
+              </label>
+            </div>
+            <div class="smart-toc-whitelist-controls">
+              <div class="smart-toc-whitelist-input-row">
+                <input type="text" class="smart-toc-whitelist-input" placeholder="新增網域 (例: example.com)" />
+                <button class="smart-toc-whitelist-add" title="新增網域">+</button>
+              </div>
+              <div class="smart-toc-whitelist-actions">
+                <button class="smart-toc-whitelist-add-current" title="新增當前網域">新增當前網域</button>
+                <button class="smart-toc-whitelist-reset" title="重置為預設值">重置</button>
+              </div>
+            </div>
+            <div class="smart-toc-whitelist-list">
+              <!-- 白名單項目會動態生成 -->
             </div>
           </div>
         </div>
@@ -114,6 +162,9 @@ class SmartTOC {
     // Update settings display with actual values
     this.updateSettingsDisplay();
     
+    // Update depth button display
+    this.updateDepthButtonDisplay();
+    
     // Initialize button visibility
     setTimeout(() => this.updateCollapseExpandButtons(), 0);
   }
@@ -136,6 +187,8 @@ class SmartTOC {
       headings = Array.from(document.querySelectorAll('h1, h2, h3, h4, h5, h6, strong'));
     }
 
+    // 去除重複的標題元素
+    headings = this.deduplicateHeadings(headings);
     headings = this.filterHeadings(headings);
     
     if (headings.length === 0) {
@@ -174,6 +227,16 @@ class SmartTOC {
 
     this.renderTOC();
     this.watchForDynamicContent();
+    
+    // 檢查是否需要自動顯示 TOC
+    this.checkAutoShow();
+  }
+
+  checkAutoShow() {
+    if (this.settings.autoShow && 
+        this.headings.length >= this.settings.autoShowMinHeadings) {
+      setTimeout(() => this.autoShowTOC(), this.settings.autoShowDelay);
+    }
   }
 
   findMainContent() {
@@ -202,6 +265,53 @@ class SmartTOC {
       const headings = container.querySelectorAll('h1, h2, h3, h4, h5, h6');
       return headings.length >= 2;
     });
+  }
+
+  deduplicateHeadings(headings) {
+    const seen = new Set();
+    const uniqueElements = [];
+    
+    for (const heading of headings) {
+      // 首先檢查是否是同一個 DOM 元素
+      if (uniqueElements.includes(heading)) {
+        continue;
+      }
+      
+      // 使用文本內容和標籤名創建唯一標識
+      const text = heading.textContent.trim();
+      const tagName = heading.tagName.toLowerCase();
+      
+      // 如果文本內容和標籤完全相同，檢查是否為嵌套關係
+      const duplicateKey = `${tagName}:${text}`;
+      
+      if (seen.has(duplicateKey)) {
+        // 如果已存在相同的標題，比較 DOM 層級，保留較外層的元素
+        const existingHeading = uniqueElements.find(h => 
+          h.tagName.toLowerCase() === tagName && h.textContent.trim() === text
+        );
+        
+        if (existingHeading && this.isChildOf(heading, existingHeading)) {
+          // 當前標題是已存在標題的子元素，跳過
+          continue;
+        } else if (existingHeading && this.isChildOf(existingHeading, heading)) {
+          // 已存在的標題是當前標題的子元素，替換為當前標題
+          const index = uniqueElements.indexOf(existingHeading);
+          uniqueElements[index] = heading;
+          continue;
+        }
+        // 如果不是嵌套關係，可能是真正的重複內容，保留第一個
+        continue;
+      }
+      
+      seen.add(duplicateKey);
+      uniqueElements.push(heading);
+    }
+    
+    return uniqueElements;
+  }
+  
+  isChildOf(child, parent) {
+    return parent.contains(child) && parent !== child;
   }
 
   filterHeadings(headings) {
@@ -397,6 +507,14 @@ class SmartTOC {
         sendResponse({ success: true, isVisible: this.isVisible });
       } else if (request.action === 'get-status') {
         sendResponse({ isVisible: this.isVisible });
+      } else if (request.action === 'get-disabled-domains') {
+        sendResponse({ disabledDomains: this.getAutoShowDisabledDomains() });
+      } else if (request.action === 'remove-disabled-domain') {
+        this.removeDomainFromDisabledList(request.domain);
+        sendResponse({ success: true });
+      } else if (request.action === 'clear-disabled-domains') {
+        this.clearAllDisabledDomains();
+        sendResponse({ success: true });
       }
       return true; // Important for async response
     });
@@ -412,6 +530,12 @@ class SmartTOC {
 
     const copyBtn = this.tocPanel.querySelector('.smart-toc-copy');
     copyBtn.addEventListener('click', () => this.copyToClipboard());
+
+    const depthIncreaseBtn = this.tocPanel.querySelector('.smart-toc-depth-increase');
+    const depthDecreaseBtn = this.tocPanel.querySelector('.smart-toc-depth-decrease');
+    
+    depthIncreaseBtn.addEventListener('click', () => this.increaseHeadingDepth());
+    depthDecreaseBtn.addEventListener('click', () => this.decreaseHeadingDepth());
 
     const settingsBtn = this.tocPanel.querySelector('.smart-toc-settings');
     if (settingsBtn) {
@@ -444,6 +568,9 @@ class SmartTOC {
       highlightDecreaseBtn.addEventListener('click', () => this.changeHighlightDuration(-1));
     }
 
+    // 白名單相關事件監聽器
+    this.setupWhitelistEventListeners();
+
     document.addEventListener('click', (e) => {
       if (!this.tocPanel.contains(e.target)) {
         this.hideSettingsPanel();
@@ -451,12 +578,32 @@ class SmartTOC {
     });
 
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && this.isVisible) {
-        this.hide();
+      if (e.key === 'Escape') {
+        // If search modal is open, close it first, otherwise hide TOC
+        if (this.searchModal && this.searchModal.classList.contains('show')) {
+          this.hideSearchModal();
+        } else if (this.isVisible) {
+          this.hide();
+        }
       }
       if (e.altKey && e.key.toLowerCase() === 't') {
         e.preventDefault();
         this.toggle();
+      }
+      // Ctrl/Cmd + K to open search modal (global shortcut)
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        // 如果 TOC 沒有開啟，先開啟它
+        if (!this.isVisible) {
+          this.show();
+        }
+        // 然後開啟搜尋模態框
+        this.showSearchModal();
+      }
+      // Alt + S to open search modal (only when TOC is visible)
+      if (this.isVisible && e.altKey && e.key.toLowerCase() === 's') {
+        e.preventDefault();
+        this.showSearchModal();
       }
     });
   }
@@ -528,16 +675,17 @@ class SmartTOC {
     this.showNotification('已複製到剪貼簿');
   }
 
-  showNotification(message) {
-    // Remove any existing notification
-    const existingNotification = document.querySelector('.smart-toc-notification');
+  showNotification(message, duration = 2000, type = 'default') {
+    // Remove any existing notification of the same type
+    const selector = type === 'auto-show' ? '.smart-toc-auto-notification' : '.smart-toc-notification';
+    const existingNotification = document.querySelector(selector);
     if (existingNotification) {
       existingNotification.remove();
     }
 
     // Create new notification
     const notification = document.createElement('div');
-    notification.className = 'smart-toc-notification';
+    notification.className = type === 'auto-show' ? 'smart-toc-auto-notification' : 'smart-toc-notification';
     notification.textContent = message;
     document.body.appendChild(notification);
 
@@ -548,13 +696,17 @@ class SmartTOC {
 
     // Hide and remove notification
     setTimeout(() => {
-      notification.classList.remove('show');
+      if (type === 'auto-show') {
+        notification.classList.add('fade-out');
+      } else {
+        notification.classList.remove('show');
+      }
       setTimeout(() => {
         if (notification.parentNode) {
           notification.parentNode.removeChild(notification);
         }
-      }, 300);
-    }, 2000);
+      }, 400);
+    }, duration);
   }
 
   fallbackCopyToClipboard(text) {
@@ -639,6 +791,58 @@ class SmartTOC {
     this.applyContentFontSize();
   }
 
+  increaseHeadingDepth() {
+    if (this.settings.maxHeadingLevels < 6) {
+      this.settings.maxHeadingLevels++;
+      this.updateDepthControls();
+      this.updateHeadingVisibility();
+      this.renderTOC();
+      this.saveSettings();
+    }
+  }
+
+  decreaseHeadingDepth() {
+    if (this.settings.maxHeadingLevels > 1) {
+      this.settings.maxHeadingLevels--;
+      this.updateDepthControls();
+      this.updateHeadingVisibility();
+      this.renderTOC();
+      this.saveSettings();
+    }
+  }
+
+  updateDepthControls() {
+    const depthDisplay = this.tocPanel.querySelector('.smart-toc-depth-display');
+    const increaseBtn = this.tocPanel.querySelector('.smart-toc-depth-increase');
+    const decreaseBtn = this.tocPanel.querySelector('.smart-toc-depth-decrease');
+    
+    if (depthDisplay) {
+      depthDisplay.textContent = `H${this.settings.maxHeadingLevels}`;
+    }
+    
+    // 更新按鈕狀態
+    if (increaseBtn) {
+      increaseBtn.disabled = this.settings.maxHeadingLevels >= 6;
+      increaseBtn.style.opacity = this.settings.maxHeadingLevels >= 6 ? '0.3' : '0.7';
+    }
+    
+    if (decreaseBtn) {
+      decreaseBtn.disabled = this.settings.maxHeadingLevels <= 1;
+      decreaseBtn.style.opacity = this.settings.maxHeadingLevels <= 1 ? '0.3' : '0.7';
+    }
+  }
+
+  updateHeadingVisibility() {
+    this.headings.forEach(heading => {
+      heading.visible = heading.level <= this.settings.maxHeadingLevels || heading.element.tagName.toLowerCase() === 'strong';
+    });
+  }
+
+  updateDepthButtonDisplay() {
+    // 使用新的 updateDepthControls 方法
+    this.updateDepthControls();
+  }
+
   async saveSettings() {
     if (typeof chrome !== 'undefined' && chrome.runtime) {
       chrome.runtime.sendMessage({ 
@@ -646,6 +850,279 @@ class SmartTOC {
         settings: this.settings 
       });
     }
+  }
+
+  autoShowTOC() {
+    // 檢查是否應該自動顯示（考慮域名記憶等）
+    if (this.shouldAutoShow()) {
+      this.wasAutoShown = true; // 標記為自動顯示
+      this.show();
+      this.showAutoDisplayNotification();
+    }
+  }
+
+  shouldAutoShow() {
+    const currentDomain = window.location.hostname;
+    
+    // 如果啟用白名單，先檢查是否在白名單中
+    if (this.settings.whitelistEnabled) {
+      if (!this.isInWhitelist(currentDomain)) {
+        return false;
+      }
+    }
+    
+    // 檢查當前域名是否在黑名單中
+    const autoShowDisabledDomains = this.getAutoShowDisabledDomains();
+    if (autoShowDisabledDomains.includes(currentDomain)) {
+      return false;
+    }
+    
+    return true;
+  }
+
+  getAutoShowDisabledDomains() {
+    // 從 localStorage 獲取被用戶手動關閉過的域名
+    try {
+      const stored = localStorage.getItem('smart-toc-disabled-domains');
+      return stored ? JSON.parse(stored) : [];
+    } catch {
+      return [];
+    }
+  }
+
+  disableAutoShowForCurrentDomain() {
+    const currentDomain = window.location.hostname;
+    const disabledDomains = this.getAutoShowDisabledDomains();
+    
+    if (!disabledDomains.includes(currentDomain)) {
+      disabledDomains.push(currentDomain);
+      localStorage.setItem('smart-toc-disabled-domains', JSON.stringify(disabledDomains));
+    }
+  }
+
+  showAutoDisplayNotification() {
+    // 只有在用戶首次在此域名看到自動顯示時才顯示通知
+    const currentDomain = window.location.hostname;
+    const notifiedDomains = this.getNotifiedDomains();
+    
+    if (!notifiedDomains.includes(currentDomain)) {
+      this.showNotification('TOC 已自動顯示。如不需要，可點擊 × 關閉', 4000, 'auto-show');
+      notifiedDomains.push(currentDomain);
+      localStorage.setItem('smart-toc-notified-domains', JSON.stringify(notifiedDomains));
+    }
+  }
+
+  getNotifiedDomains() {
+    try {
+      const stored = localStorage.getItem('smart-toc-notified-domains');
+      return stored ? JSON.parse(stored) : [];
+    } catch {
+      return [];
+    }
+  }
+
+  removeDomainFromDisabledList(domain) {
+    const disabledDomains = this.getAutoShowDisabledDomains();
+    const filteredDomains = disabledDomains.filter(d => d !== domain);
+    localStorage.setItem('smart-toc-disabled-domains', JSON.stringify(filteredDomains));
+  }
+
+  clearAllDisabledDomains() {
+    localStorage.removeItem('smart-toc-disabled-domains');
+    localStorage.removeItem('smart-toc-notified-domains');
+  }
+
+  isInWhitelist(domain) {
+    const whitelist = this.settings.autoShowWhitelist || [];
+    
+    return whitelist.some(pattern => {
+      // 移除協議前綴 (如果有)
+      pattern = pattern.replace(/^https?:\/\//, '');
+      domain = domain.replace(/^https?:\/\//, '');
+      
+      // 完全匹配
+      if (pattern === domain) {
+        return true;
+      }
+      
+      // 萬用字元匹配 (*.example.com)
+      if (pattern.startsWith('*.')) {
+        const baseDomain = pattern.slice(2); // 移除 "*."
+        return domain === baseDomain || domain.endsWith('.' + baseDomain);
+      }
+      
+      // 子域名匹配 (example.com 也匹配 www.example.com)
+      if (domain.endsWith('.' + pattern)) {
+        return true;
+      }
+      
+      return false;
+    });
+  }
+
+  addToWhitelist(domain) {
+    if (!domain) return false;
+    
+    // 清理域名
+    domain = domain.replace(/^https?:\/\//, '').replace(/\/.*$/, '').toLowerCase();
+    
+    if (!this.isInWhitelist(domain)) {
+      this.settings.autoShowWhitelist.push(domain);
+      this.saveSettings();
+      return true;
+    }
+    return false;
+  }
+
+  removeFromWhitelist(domain) {
+    const index = this.settings.autoShowWhitelist.indexOf(domain);
+    if (index > -1) {
+      this.settings.autoShowWhitelist.splice(index, 1);
+      this.saveSettings();
+      return true;
+    }
+    return false;
+  }
+
+  addCurrentDomainToWhitelist() {
+    const currentDomain = window.location.hostname;
+    return this.addToWhitelist(currentDomain);
+  }
+
+  resetWhitelistToDefault() {
+    this.settings.autoShowWhitelist = [
+      'wikipedia.org',
+      '*.wikipedia.org',
+      'github.com',
+      '*.github.com',
+      'developer.mozilla.org',
+      'docs.microsoft.com',
+      'developer.apple.com',
+      'nodejs.org',
+      'reactjs.org',
+      'vuejs.org'
+    ];
+    this.saveSettings();
+  }
+
+  toggleWhitelistEnabled() {
+    this.settings.whitelistEnabled = !this.settings.whitelistEnabled;
+    this.saveSettings();
+    this.updateWhitelistUI();
+  }
+
+  setupWhitelistEventListeners() {
+    const whitelistToggle = this.tocPanel.querySelector('.smart-toc-whitelist-enabled');
+    const whitelistInput = this.tocPanel.querySelector('.smart-toc-whitelist-input');
+    const whitelistAddBtn = this.tocPanel.querySelector('.smart-toc-whitelist-add');
+    const addCurrentBtn = this.tocPanel.querySelector('.smart-toc-whitelist-add-current');
+    const resetBtn = this.tocPanel.querySelector('.smart-toc-whitelist-reset');
+
+    if (whitelistToggle) {
+      whitelistToggle.addEventListener('change', () => {
+        this.toggleWhitelistEnabled();
+      });
+    }
+
+    if (whitelistInput) {
+      whitelistInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          this.addDomainFromInput();
+        }
+      });
+    }
+
+    if (whitelistAddBtn) {
+      whitelistAddBtn.addEventListener('click', () => {
+        this.addDomainFromInput();
+      });
+    }
+
+    if (addCurrentBtn) {
+      addCurrentBtn.addEventListener('click', () => {
+        if (this.addCurrentDomainToWhitelist()) {
+          this.showNotification(`已新增 ${window.location.hostname} 到白名單`);
+          this.renderWhitelistItems();
+        } else {
+          this.showNotification(`${window.location.hostname} 已在白名單中`);
+        }
+      });
+    }
+
+    if (resetBtn) {
+      resetBtn.addEventListener('click', () => {
+        this.resetWhitelistToDefault();
+        this.showNotification('白名單已重置為預設值');
+        this.renderWhitelistItems();
+      });
+    }
+
+    // 初始化白名單顯示
+    this.updateWhitelistUI();
+    this.renderWhitelistItems();
+  }
+
+  addDomainFromInput() {
+    const input = this.tocPanel.querySelector('.smart-toc-whitelist-input');
+    const domain = input.value.trim();
+    
+    if (!domain) {
+      this.showNotification('請輸入網域名稱');
+      return;
+    }
+
+    if (this.addToWhitelist(domain)) {
+      input.value = '';
+      this.showNotification(`已新增 ${domain} 到白名單`);
+      this.renderWhitelistItems();
+    } else {
+      this.showNotification(`${domain} 已在白名單中`);
+    }
+  }
+
+  updateWhitelistUI() {
+    const toggle = this.tocPanel.querySelector('.smart-toc-whitelist-enabled');
+    const controls = this.tocPanel.querySelector('.smart-toc-whitelist-controls');
+    const list = this.tocPanel.querySelector('.smart-toc-whitelist-list');
+
+    if (toggle) {
+      toggle.checked = this.settings.whitelistEnabled;
+    }
+
+    if (controls && list) {
+      const opacity = this.settings.whitelistEnabled ? '1' : '0.5';
+      const pointerEvents = this.settings.whitelistEnabled ? 'auto' : 'none';
+      
+      controls.style.opacity = opacity;
+      controls.style.pointerEvents = pointerEvents;
+      list.style.opacity = opacity;
+      list.style.pointerEvents = pointerEvents;
+    }
+  }
+
+  renderWhitelistItems() {
+    const listContainer = this.tocPanel.querySelector('.smart-toc-whitelist-list');
+    if (!listContainer) return;
+
+    const whitelist = this.settings.autoShowWhitelist || [];
+    
+    listContainer.innerHTML = whitelist.map(domain => `
+      <div class="smart-toc-whitelist-item">
+        <span class="smart-toc-whitelist-domain">${domain}</span>
+        <button class="smart-toc-whitelist-remove" data-domain="${domain}" title="移除">×</button>
+      </div>
+    `).join('');
+
+    // 綁定移除按鈕事件
+    listContainer.querySelectorAll('.smart-toc-whitelist-remove').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const domain = e.target.dataset.domain;
+        if (this.removeFromWhitelist(domain)) {
+          this.showNotification(`已從白名單移除 ${domain}`);
+          this.renderWhitelistItems();
+        }
+      });
+    });
   }
 
   show() {
@@ -662,6 +1139,12 @@ class SmartTOC {
     setTimeout(() => {
       this.tocPanel.style.display = 'none';
     }, 300);
+    
+    // 只有當 TOC 是自動顯示的情況下，用戶手動關閉才記錄域名偏好
+    if (this.settings.autoShow && this.wasAutoShown) {
+      this.disableAutoShowForCurrentDomain();
+      this.wasAutoShown = false; // 重置標記
+    }
   }
 
   toggle() {
@@ -966,6 +1449,249 @@ class SmartTOC {
     };
   }
 
+  createSearchModal() {
+    // 創建搜尋模態框
+    this.searchModal = document.createElement('div');
+    this.searchModal.className = 'smart-toc-search-modal';
+    this.searchModal.innerHTML = `
+      <div class="smart-toc-search-overlay"></div>
+      <div class="smart-toc-search-dialog">
+        <div class="smart-toc-search-input-container">
+          <input type="text" class="smart-toc-search-input" placeholder="搜尋標題..." />
+          <div class="smart-toc-search-icon">🔍</div>
+        </div>
+        <div class="smart-toc-search-results"></div>
+        <div class="smart-toc-search-footer">
+          <div class="smart-toc-search-tips">
+            <span>↑↓ 導航</span>
+            <span>Enter 選擇</span>
+            <span>ESC 關閉</span>
+          </div>
+        </div>
+      </div>
+    `;
+
+    // 添加到 body
+    document.body.appendChild(this.searchModal);
+    this.searchModal.style.display = 'none';
+  }
+
+  setupSearch() {
+    const searchToggle = this.tocPanel.querySelector('.smart-toc-search-toggle');
+    const modalSearchInput = this.searchModal.querySelector('.smart-toc-search-input');
+    const overlay = this.searchModal.querySelector('.smart-toc-search-overlay');
+
+    if (searchToggle) {
+      searchToggle.addEventListener('click', () => this.showSearchModal());
+    }
+
+    if (modalSearchInput) {
+      modalSearchInput.addEventListener('input', (e) => {
+        this.performModalSearch(e.target.value);
+      });
+      
+      modalSearchInput.addEventListener('keydown', (e) => {
+        this.handleSearchKeydown(e);
+      });
+    }
+
+    if (overlay) {
+      overlay.addEventListener('click', () => this.hideSearchModal());
+    }
+  }
+
+  showSearchModal() {
+    this.searchModal.style.display = 'block';
+    // 強制瀏覽器重繪，然後添加 show class
+    requestAnimationFrame(() => {
+      this.searchModal.classList.add('show');
+      const searchInput = this.searchModal.querySelector('.smart-toc-search-input');
+      if (searchInput) {
+        setTimeout(() => {
+          searchInput.focus();
+          searchInput.select();
+        }, 100);
+      }
+    });
+  }
+
+  hideSearchModal() {
+    this.searchModal.classList.remove('show');
+    setTimeout(() => {
+      this.searchModal.style.display = 'none';
+      this.clearModalSearch();
+    }, 200);
+  }
+
+  performModalSearch(query) {
+    this.searchQuery = query.trim().toLowerCase();
+    this.selectedResultIndex = -1;
+    
+    if (!this.searchQuery) {
+      this.clearModalSearchResults();
+      return;
+    }
+
+    this.searchActive = true;
+    
+    // 過濾符合搜尋的標題
+    this.filteredHeadings = this.headings.filter(heading => {
+      if (!heading.visible) return false;
+      const headingText = heading.text.toLowerCase();
+      return this.fuzzyMatch(headingText, this.searchQuery);
+    });
+
+    this.renderSearchResults();
+  }
+
+  fuzzyMatch(text, query) {
+    // Simple fuzzy matching algorithm
+    if (!query) return true;
+    
+    // Direct substring match (case insensitive)
+    if (text.includes(query)) return true;
+    
+    // Character sequence match (allows gaps between characters)
+    let queryIndex = 0;
+    for (let i = 0; i < text.length && queryIndex < query.length; i++) {
+      if (text[i] === query[queryIndex]) {
+        queryIndex++;
+      }
+    }
+    
+    return queryIndex === query.length;
+  }
+
+  renderSearchResults() {
+    const resultsContainer = this.searchModal.querySelector('.smart-toc-search-results');
+    
+    if (this.filteredHeadings.length === 0) {
+      resultsContainer.innerHTML = `
+        <div class="smart-toc-search-no-results">
+          找不到匹配的標題
+        </div>
+      `;
+      return;
+    }
+
+    const resultsHTML = this.filteredHeadings.map((heading, index) => {
+      const levelText = `H${heading.level}`;
+      const highlightedTitle = this.highlightMatchingText(heading.text, this.searchQuery);
+      
+      return `
+        <div class="smart-toc-search-result-item" data-index="${index}">
+          <div class="smart-toc-search-result-content">
+            <div class="smart-toc-search-result-title">${highlightedTitle}</div>
+            <div class="smart-toc-search-result-level">${levelText}</div>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    resultsContainer.innerHTML = resultsHTML;
+
+    // 綁定點擊事件
+    resultsContainer.querySelectorAll('.smart-toc-search-result-item').forEach((item, index) => {
+      item.addEventListener('click', () => {
+        this.selectSearchResult(index);
+      });
+    });
+  }
+
+  highlightMatchingText(originalText, query) {
+    if (!query) {
+      return originalText;
+    }
+    
+    const lowerText = originalText.toLowerCase();
+    const lowerQuery = query.toLowerCase();
+    
+    // Find direct matches to highlight
+    const startIndex = lowerText.indexOf(lowerQuery);
+    
+    if (startIndex !== -1) {
+      const beforeMatch = originalText.substring(0, startIndex);
+      const match = originalText.substring(startIndex, startIndex + query.length);
+      const afterMatch = originalText.substring(startIndex + query.length);
+      
+      return beforeMatch + 
+             '<span class="smart-toc-search-match">' + match + '</span>' + 
+             afterMatch;
+    }
+    
+    return originalText;
+  }
+
+  handleSearchKeydown(e) {
+    if (e.key === 'Escape') {
+      this.hideSearchModal();
+    } else if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      this.navigateResults(1);
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      this.navigateResults(-1);
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      this.selectCurrentResult();
+    }
+  }
+
+  navigateResults(direction) {
+    const maxIndex = this.filteredHeadings.length - 1;
+    
+    if (maxIndex < 0) return;
+    
+    this.selectedResultIndex = Math.max(0, Math.min(maxIndex, this.selectedResultIndex + direction));
+    
+    // 更新視覺選中狀態
+    const resultItems = this.searchModal.querySelectorAll('.smart-toc-search-result-item');
+    resultItems.forEach((item, index) => {
+      if (index === this.selectedResultIndex) {
+        item.classList.add('selected');
+        item.scrollIntoView({ block: 'nearest' });
+      } else {
+        item.classList.remove('selected');
+      }
+    });
+  }
+
+  selectCurrentResult() {
+    if (this.selectedResultIndex >= 0 && this.selectedResultIndex < this.filteredHeadings.length) {
+      this.selectSearchResult(this.selectedResultIndex);
+    } else if (this.filteredHeadings.length > 0) {
+      this.selectSearchResult(0);
+    }
+  }
+
+  selectSearchResult(index) {
+    if (index < 0 || index >= this.filteredHeadings.length) return;
+    
+    const heading = this.filteredHeadings[index];
+    this.hideSearchModal();
+    this.scrollToHeading(heading);
+  }
+
+  clearModalSearch() {
+    const searchInput = this.searchModal.querySelector('.smart-toc-search-input');
+    if (searchInput) {
+      searchInput.value = '';
+    }
+    this.clearModalSearchResults();
+  }
+
+  clearModalSearchResults() {
+    this.searchQuery = '';
+    this.searchActive = false;
+    this.filteredHeadings = [];
+    this.selectedResultIndex = -1;
+    
+    const resultsContainer = this.searchModal.querySelector('.smart-toc-search-results');
+    if (resultsContainer) {
+      resultsContainer.innerHTML = '';
+    }
+  }
+
   destroy() {
     if (this.intersectionObserver) {
       this.intersectionObserver.disconnect();
@@ -975,6 +1701,9 @@ class SmartTOC {
     }
     if (this.tocPanel && this.tocPanel.parentNode) {
       this.tocPanel.parentNode.removeChild(this.tocPanel);
+    }
+    if (this.searchModal && this.searchModal.parentNode) {
+      this.searchModal.parentNode.removeChild(this.searchModal);
     }
     document.body.classList.remove('smart-toc-glance-mode');
   }
