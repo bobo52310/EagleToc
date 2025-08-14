@@ -76,6 +76,52 @@
   font-size: 16px;
 }
 
+/* Custom Instant Tooltip */
+.smart-toc-tooltip {
+  position: absolute;
+  background: rgba(0, 0, 0, 0.9);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  white-space: nowrap;
+  z-index: 2147483648;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(-2px);
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  line-height: 1.2;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.smart-toc-tooltip.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.smart-toc-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 4px solid transparent;
+  border-top-color: rgba(0, 0, 0, 0.9);
+}
+
+/* Dark theme tooltip */
+@media (prefers-color-scheme: dark) {
+  .smart-toc-tooltip {
+    background: rgba(255, 255, 255, 0.9);
+    color: #000;
+  }
+  
+  .smart-toc-tooltip::after {
+    border-top-color: rgba(255, 255, 255, 0.9);
+  }
+}
+
 .smart-toc-depth-controls {
   display: flex;
   align-items: center;
@@ -100,7 +146,7 @@
   min-width: 24px;
 }
 
-/* Alfred-style Search Modal */
+/* Search Panel next to TOC */
 .smart-toc-search-modal {
   position: fixed;
   top: 0;
@@ -112,44 +158,38 @@
   visibility: hidden;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  pointer-events: none; /* Allow clicking through when not focused */
 }
 
 .smart-toc-search-modal.show {
   opacity: 1;
   visibility: visible;
+  pointer-events: auto;
 }
 
 .smart-toc-search-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  /* Remove background overlay for cleaner look */
+  display: none;
 }
 
 .smart-toc-search-dialog {
   position: absolute;
-  top: 20%;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 90%;
-  max-width: 600px;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.1);
+  /* Position relative to TOC panel - will be set dynamically by JS */
+  top: 50px;
+  right: 350px; /* Default position, adjusted by JS based on TOC position */
+  width: 380px;
+  max-width: 400px;
+  background: #ffffff;
+  border: 1px solid #e1e5e9;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   overflow: hidden;
-  transform: translateX(-50%) translateY(-10px) scale(0.95);
+  transform: translateX(20px) scale(0.95);
   transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .smart-toc-search-modal.show .smart-toc-search-dialog {
-  transform: translateX(-50%) translateY(0) scale(1);
+  transform: translateX(0) scale(1);
 }
 
 .smart-toc-search-input-container {
@@ -927,4 +967,275 @@ body.smart-toc-glance-mode strong:hover {
 .smart-toc-auto-notification.fade-out {
   opacity: 0;
   transform: translateX(20px);
+}
+
+/* ==================== DARK THEME ==================== */
+@media (prefers-color-scheme: dark) {
+  /* Main TOC Panel */
+  .smart-toc-panel {
+    background: #1c1c1e;
+    border: 1px solid #38383a;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    color: #ffffff;
+  }
+
+  /* Header */
+  .smart-toc-header {
+    background: #2c2c2e;
+    border-bottom: 1px solid #38383a;
+    color: #ffffff;
+  }
+
+  /* Buttons */
+  .smart-toc-controls button {
+    color: #98989a;
+  }
+
+  .smart-toc-controls button:hover {
+    background: #38383a;
+    color: #ffffff;
+  }
+
+  /* Depth controls */
+  .smart-toc-depth-controls {
+    background: rgba(0, 122, 255, 0.15);
+    border: 1px solid rgba(0, 122, 255, 0.3);
+  }
+
+  .smart-toc-depth-display {
+    color: #007aff;
+    background: rgba(0, 122, 255, 0.2);
+  }
+
+  /* Settings Panel */
+  .smart-toc-settings-panel {
+    background: #1c1c1e;
+    border-top: 1px solid #38383a;
+  }
+
+  .smart-toc-settings-label {
+    color: #ffffff;
+  }
+
+  .smart-toc-font-btn {
+    background: #2c2c2e;
+    border: 1px solid #48484a;
+    color: #ffffff;
+  }
+
+  .smart-toc-font-btn:hover {
+    background: #38383a;
+  }
+
+  .smart-toc-font-size-display,
+  .smart-toc-highlight-duration-display {
+    color: #ffffff;
+  }
+
+  /* Whitelist Section */
+  .smart-toc-whitelist-input {
+    background: #2c2c2e;
+    border: 1px solid #48484a;
+    color: #ffffff;
+  }
+
+  .smart-toc-whitelist-input::placeholder {
+    color: #98989a;
+  }
+
+  .smart-toc-whitelist-input:focus {
+    border-color: #007aff;
+  }
+
+  .smart-toc-whitelist-add {
+    background: #2c2c2e;
+    border: 1px solid #48484a;
+    color: #007aff;
+  }
+
+  .smart-toc-whitelist-add:hover {
+    background: #38383a;
+    border-color: #007aff;
+  }
+
+  .smart-toc-whitelist-add-current,
+  .smart-toc-whitelist-reset {
+    background: #2c2c2e;
+    border: 1px solid #48484a;
+    color: #98989a;
+  }
+
+  .smart-toc-whitelist-add-current:hover,
+  .smart-toc-whitelist-reset:hover {
+    background: #38383a;
+    color: #ffffff;
+  }
+
+  .smart-toc-whitelist-item {
+    background: #2c2c2e;
+    border: 1px solid #48484a;
+  }
+
+  .smart-toc-whitelist-domain {
+    color: #ffffff;
+  }
+
+  .smart-toc-whitelist-remove {
+    color: #ff453a;
+  }
+
+  .smart-toc-whitelist-remove:hover {
+    background: rgba(255, 69, 58, 0.1);
+    color: #ff453a;
+  }
+
+  /* Toggle Switch */
+  .smart-toc-toggle-slider {
+    background-color: #48484a;
+  }
+
+  .smart-toc-whitelist-enabled:checked + .smart-toc-toggle-slider {
+    background-color: #007aff;
+  }
+
+  .smart-toc-toggle-slider:before {
+    background-color: #ffffff;
+  }
+
+  /* TOC Content */
+  .smart-toc-content {
+    background: #1c1c1e;
+    color: #ffffff;
+  }
+
+  .smart-toc-loading {
+    color: #98989a;
+  }
+
+  .smart-toc-item {
+    color: #ffffff;
+  }
+
+  .smart-toc-item:hover {
+    background: #2c2c2e;
+  }
+
+  .smart-toc-item.smart-toc-active {
+    background: rgba(0, 122, 255, 0.2);
+    color: #007aff;
+  }
+
+  .smart-toc-item.smart-toc-filtered {
+    opacity: 0.5;
+  }
+
+  /* Search Modal */
+  .smart-toc-search-dialog {
+    background: #1c1c1e;
+    border: 1px solid #38383a;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+  }
+
+  .smart-toc-search-input-container {
+    border-bottom: 1px solid #38383a;
+  }
+
+  .smart-toc-search-input {
+    background: transparent;
+    color: #ffffff;
+  }
+
+  .smart-toc-search-input::placeholder {
+    color: #98989a;
+  }
+
+  .smart-toc-search-icon {
+    color: #98989a;
+  }
+
+  .smart-toc-search-results {
+    background: #1c1c1e;
+  }
+
+  .smart-toc-search-result {
+    color: #ffffff;
+  }
+
+  .smart-toc-search-result:hover {
+    background: #2c2c2e;
+  }
+
+  .smart-toc-search-result.selected {
+    background: rgba(0, 122, 255, 0.2);
+    color: #007aff;
+  }
+
+  .smart-toc-search-result-text {
+    color: #ffffff;
+  }
+
+  .smart-toc-search-result-level {
+    color: #98989a;
+  }
+
+  .smart-toc-search-footer {
+    background: #2c2c2e;
+    border-top: 1px solid #38383a;
+  }
+
+  .smart-toc-search-tips span {
+    color: #98989a;
+  }
+
+  /* Highlight Animation for Dark Theme */
+  @keyframes smart-toc-highlight-dark {
+    0% {
+      background-color: rgba(255, 214, 10, 0.4);
+      box-shadow: 0 0 0 4px rgba(255, 214, 10, 0.2);
+    }
+    100% {
+      background-color: transparent;
+      box-shadow: 0 0 0 0px rgba(255, 214, 10, 0);
+    }
+  }
+
+  .smart-toc-highlighted {
+    animation: smart-toc-highlight-dark var(--smart-toc-highlight-duration, 5s) ease-out forwards;
+  }
+
+  /* Notifications */
+  .smart-toc-notification {
+    background: rgba(28, 28, 30, 0.9);
+    color: #ffffff;
+  }
+
+  .smart-toc-auto-notification {
+    background: linear-gradient(135deg, #5a67d8 0%, #667eea 100%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 16px rgba(90, 103, 216, 0.4);
+  }
+
+  /* Resize Handles */
+  .smart-toc-resize-handle:hover {
+    background-color: rgba(0, 122, 255, 0.3);
+  }
+
+  /* Collapsed state */
+  .smart-toc-panel.smart-toc-collapsed {
+    background: #1c1c1e;
+    border: 1px solid #38383a;
+  }
+
+  /* Scrollbar for dark theme */
+  .smart-toc-content::-webkit-scrollbar-track {
+    background: #2c2c2e;
+  }
+
+  .smart-toc-content::-webkit-scrollbar-thumb {
+    background: #48484a;
+  }
+
+  .smart-toc-content::-webkit-scrollbar-thumb:hover {
+    background: #58585a;
+  }
 }

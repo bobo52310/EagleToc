@@ -56,6 +56,7 @@ class SmartTOC {
     this.setupGlanceMode();
     this.createSearchModal();
     this.setupSearch();
+    this.setupTooltips();
   }
 
   async loadSettings() {
@@ -520,22 +521,40 @@ class SmartTOC {
     });
 
     const closeBtn = this.tocPanel.querySelector('.smart-toc-close');
-    closeBtn.addEventListener('click', () => this.hide());
+    closeBtn.addEventListener('click', () => {
+      this.hideSettingsPanel();
+      this.hide();
+    });
 
     const collapseBtn = this.tocPanel.querySelector('.smart-toc-collapse');
-    collapseBtn.addEventListener('click', () => this.collapsePanel());
+    collapseBtn.addEventListener('click', () => {
+      this.hideSettingsPanel();
+      this.collapsePanel();
+    });
 
     const expandBtn = this.tocPanel.querySelector('.smart-toc-expand');
-    expandBtn.addEventListener('click', () => this.expandPanel());
+    expandBtn.addEventListener('click', () => {
+      this.hideSettingsPanel();
+      this.expandPanel();
+    });
 
     const copyBtn = this.tocPanel.querySelector('.smart-toc-copy');
-    copyBtn.addEventListener('click', () => this.copyToClipboard());
+    copyBtn.addEventListener('click', () => {
+      this.hideSettingsPanel();
+      this.copyToClipboard();
+    });
 
     const depthIncreaseBtn = this.tocPanel.querySelector('.smart-toc-depth-increase');
     const depthDecreaseBtn = this.tocPanel.querySelector('.smart-toc-depth-decrease');
     
-    depthIncreaseBtn.addEventListener('click', () => this.increaseHeadingDepth());
-    depthDecreaseBtn.addEventListener('click', () => this.decreaseHeadingDepth());
+    depthIncreaseBtn.addEventListener('click', () => {
+      this.hideSettingsPanel();
+      this.increaseHeadingDepth();
+    });
+    depthDecreaseBtn.addEventListener('click', () => {
+      this.hideSettingsPanel();
+      this.decreaseHeadingDepth();
+    });
 
     const settingsBtn = this.tocPanel.querySelector('.smart-toc-settings');
     if (settingsBtn) {
@@ -945,10 +964,21 @@ class SmartTOC {
         return true;
       }
       
-      // 萬用字元匹配 (*.example.com)
-      if (pattern.startsWith('*.')) {
-        const baseDomain = pattern.slice(2); // 移除 "*."
-        return domain === baseDomain || domain.endsWith('.' + baseDomain);
+      // 檢查是否包含萬用字元
+      if (pattern.includes('*')) {
+        // 將萬用字元模式轉換為正則表達式
+        const regexPattern = pattern
+          .replace(/[.+?^${}()|[\]\\]/g, '\\$&') // 轉義正則特殊字符
+          .replace(/\*/g, '.*'); // 將 * 轉換為 .*
+        
+        try {
+          const regex = new RegExp(`^${regexPattern}$`, 'i');
+          return regex.test(domain);
+        } catch (e) {
+          // 如果正則表達式無效，回退到原始匹配
+          console.warn('Invalid wildcard pattern:', pattern, e);
+          return false;
+        }
       }
       
       // 子域名匹配 (example.com 也匹配 www.example.com)
@@ -1482,7 +1512,10 @@ class SmartTOC {
     const overlay = this.searchModal.querySelector('.smart-toc-search-overlay');
 
     if (searchToggle) {
-      searchToggle.addEventListener('click', () => this.showSearchModal());
+      searchToggle.addEventListener('click', () => {
+        this.hideSettingsPanel();
+        this.showSearchModal();
+      });
     }
 
     if (modalSearchInput) {
@@ -1502,6 +1535,30 @@ class SmartTOC {
 
   showSearchModal() {
     this.searchModal.style.display = 'block';
+    
+    // 動態計算搜尋對話框的位置（相對於TOC面板）
+    const tocRect = this.tocPanel.getBoundingClientRect();
+    const searchDialog = this.searchModal.querySelector('.smart-toc-search-dialog');
+    
+    if (searchDialog) {
+      // 判斷TOC面板是在左側還是右側
+      const tocPosition = this.settings.tocPosition || 'right';
+      const viewportWidth = window.innerWidth;
+      
+      if (tocPosition === 'right' || tocRect.right > viewportWidth / 2) {
+        // TOC在右側，搜尋框放在左側
+        searchDialog.style.right = 'auto';
+        searchDialog.style.left = Math.max(20, tocRect.left - 400) + 'px';
+      } else {
+        // TOC在左側，搜尋框放在右側
+        searchDialog.style.left = 'auto';
+        searchDialog.style.right = Math.max(20, viewportWidth - tocRect.right - 400) + 'px';
+      }
+      
+      // 設定垂直位置
+      searchDialog.style.top = tocRect.top + 'px';
+    }
+    
     // 強制瀏覽器重繪，然後添加 show class
     requestAnimationFrame(() => {
       this.searchModal.classList.add('show');
@@ -1692,6 +1749,70 @@ class SmartTOC {
     }
   }
 
+  setupTooltips() {
+    // 創建 tooltip 元素
+    this.tooltip = document.createElement('div');
+    this.tooltip.className = 'smart-toc-tooltip';
+    document.body.appendChild(this.tooltip);
+    
+    // 為所有帶有 title 屬性的按鈕設置 tooltip
+    const buttonsWithTitle = this.tocPanel.querySelectorAll('[title]');
+    
+    buttonsWithTitle.forEach(button => {
+      const originalTitle = button.getAttribute('title');
+      
+      // 移除原生 title 屬性以避免原生 tooltip 顯示
+      button.removeAttribute('title');
+      
+      // 存儲 tooltip 文本
+      button.dataset.tooltip = originalTitle;
+      
+      // 添加事件監聽器
+      button.addEventListener('mouseenter', (e) => {
+        this.showTooltip(e.target, originalTitle);
+      });
+      
+      button.addEventListener('mouseleave', () => {
+        this.hideTooltip();
+      });
+      
+      // 處理按鈕被點擊或失焦的情況
+      button.addEventListener('mousedown', () => {
+        this.hideTooltip();
+      });
+    });
+  }
+  
+  showTooltip(element, text) {
+    if (!text || !this.tooltip) return;
+    
+    this.tooltip.textContent = text;
+    this.tooltip.classList.add('show');
+    
+    // 計算位置
+    const rect = element.getBoundingClientRect();
+    const tooltipRect = this.tooltip.getBoundingClientRect();
+    
+    // 水平居中對齊到按鈕
+    let left = rect.left + (rect.width / 2) - (tooltipRect.width / 2);
+    
+    // 確保不超出視窗邊界
+    const padding = 10;
+    left = Math.max(padding, Math.min(left, window.innerWidth - tooltipRect.width - padding));
+    
+    // 垂直位置在按鈕上方
+    const top = rect.top - tooltipRect.height - 8;
+    
+    this.tooltip.style.left = left + 'px';
+    this.tooltip.style.top = top + 'px';
+  }
+  
+  hideTooltip() {
+    if (this.tooltip) {
+      this.tooltip.classList.remove('show');
+    }
+  }
+
   destroy() {
     if (this.intersectionObserver) {
       this.intersectionObserver.disconnect();
@@ -1704,6 +1825,9 @@ class SmartTOC {
     }
     if (this.searchModal && this.searchModal.parentNode) {
       this.searchModal.parentNode.removeChild(this.searchModal);
+    }
+    if (this.tooltip && this.tooltip.parentNode) {
+      this.tooltip.parentNode.removeChild(this.tooltip);
     }
     document.body.classList.remove('smart-toc-glance-mode');
   }
