@@ -8,10 +8,15 @@ class SmartTOC {
     this.isDragging = false;
     this.isResizing = false;
     this.dragOffset = { x: 0, y: 0 };
+    this.altPressed = false;
+    this.glanceMode = false;
+    this.glanceTimeout = null;
     this.settings = {
       maxHeadingLevels: 3,
       tocPosition: 'right',
-      tocWidth: 300
+      tocWidth: 300,
+      enableLocalFiles: false,
+      autoShow: false
     };
     this.init();
   }
@@ -24,6 +29,11 @@ class SmartTOC {
     this.setupScrollTracking();
     this.makeDraggable();
     this.makeResizable();
+    this.setupGlanceMode();
+    
+    if (this.settings.autoShow && this.headings.length > 2) {
+      setTimeout(() => this.show(), 1000);
+    }
   }
 
   async loadSettings() {
@@ -70,6 +80,11 @@ class SmartTOC {
   }
 
   extractHeadings() {
+    if (document.readyState !== 'complete') {
+      setTimeout(() => this.extractHeadings(), 500);
+      return;
+    }
+
     const potentialContainers = this.findMainContent();
     let headings = [];
     
@@ -83,6 +98,11 @@ class SmartTOC {
     }
 
     headings = this.filterHeadings(headings);
+    
+    if (headings.length === 0) {
+      setTimeout(() => this.extractHeadings(), 2000);
+      return;
+    }
     
     this.headings = headings.map((heading, index) => ({
       element: heading,
@@ -105,6 +125,7 @@ class SmartTOC {
     });
 
     this.renderTOC();
+    this.watchForDynamicContent();
   }
 
   findMainContent() {
@@ -472,6 +493,130 @@ class SmartTOC {
     this.isResizing = false;
     document.removeEventListener('mousemove', this.handleResize.bind(this));
     document.removeEventListener('mouseup', this.stopResizing.bind(this));
+  }
+
+  setupGlanceMode() {
+    document.addEventListener('keydown', (e) => {
+      if (e.altKey && !this.altPressed) {
+        this.altPressed = true;
+        document.body.classList.add('smart-toc-glance-mode');
+      }
+    });
+
+    document.addEventListener('keyup', (e) => {
+      if (!e.altKey && this.altPressed) {
+        this.altPressed = false;
+        this.glanceMode = false;
+        document.body.classList.remove('smart-toc-glance-mode');
+        if (this.glanceTimeout) {
+          clearTimeout(this.glanceTimeout);
+        }
+        if (this.isVisible && this.glanceMode) {
+          this.hide();
+        }
+      }
+    });
+
+    document.addEventListener('mouseover', (e) => {
+      if (this.altPressed && !this.isDragging && !this.isResizing) {
+        const heading = e.target.closest('h1, h2, h3, h4, h5, h6');
+        if (heading && this.headings.find(h => h.element === heading)) {
+          this.showGlance();
+        }
+      }
+    });
+
+    document.addEventListener('mouseout', (e) => {
+      if (this.altPressed && this.glanceMode) {
+        this.glanceTimeout = setTimeout(() => {
+          if (this.glanceMode && !this.tocPanel.matches(':hover')) {
+            this.hideGlance();
+          }
+        }, 300);
+      }
+    });
+  }
+
+  showGlance() {
+    if (!this.glanceMode && !this.isVisible) {
+      this.glanceMode = true;
+      this.show();
+      this.tocPanel.classList.add('smart-toc-glance');
+    }
+  }
+
+  hideGlance() {
+    if (this.glanceMode) {
+      this.glanceMode = false;
+      this.tocPanel.classList.remove('smart-toc-glance');
+      this.hide();
+    }
+  }
+
+  watchForDynamicContent() {
+    if (this.mutationObserver) {
+      this.mutationObserver.disconnect();
+    }
+
+    this.mutationObserver = new MutationObserver(
+      this.debounce((mutations) => {
+        let shouldReextract = false;
+        
+        mutations.forEach((mutation) => {
+          if (mutation.type === 'childList') {
+            const addedNodes = Array.from(mutation.addedNodes);
+            const removedNodes = Array.from(mutation.removedNodes);
+            
+            const hasHeadings = [...addedNodes, ...removedNodes].some(node => 
+              node.nodeType === Node.ELEMENT_NODE && 
+              (node.matches('h1, h2, h3, h4, h5, h6') || 
+               node.querySelector('h1, h2, h3, h4, h5, h6'))
+            );
+            
+            if (hasHeadings) {
+              shouldReextract = true;
+            }
+          }
+        });
+
+        if (shouldReextract) {
+          this.extractHeadings();
+          if (this.intersectionObserver) {
+            this.setupScrollTracking();
+          }
+        }
+      }, 1000)
+    );
+
+    this.mutationObserver.observe(document.body, {
+      childList: true,
+      subtree: true
+    });
+  }
+
+  debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+      const later = () => {
+        clearTimeout(timeout);
+        func(...args);
+      };
+      clearTimeout(timeout);
+      timeout = setTimeout(later, wait);
+    };
+  }
+
+  destroy() {
+    if (this.intersectionObserver) {
+      this.intersectionObserver.disconnect();
+    }
+    if (this.mutationObserver) {
+      this.mutationObserver.disconnect();
+    }
+    if (this.tocPanel && this.tocPanel.parentNode) {
+      this.tocPanel.parentNode.removeChild(this.tocPanel);
+    }
+    document.body.classList.remove('smart-toc-glance-mode');
   }
 }
 

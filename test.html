@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart TOC Test Page</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+        
+        .article-content {
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        h1 { color: #2c3e50; margin-top: 0; }
+        h2 { color: #34495e; margin-top: 40px; }
+        h3 { color: #7f8c8d; margin-top: 30px; }
+        h4 { color: #95a5a6; margin-top: 25px; }
+        
+        p { margin-bottom: 20px; }
+        
+        .content-block {
+            margin-bottom: 40px;
+        }
+    </style>
+</head>
+<body>
+    <main class="article-content">
+        <h1>Smart TOC Extension Test Document</h1>
+        <p>This is a test document to demonstrate the Smart TOC Chrome extension functionality. The extension should automatically detect all the headings below and create a navigable table of contents.</p>
+
+        <div class="content-block">
+            <h2>Getting Started</h2>
+            <p>To use the Smart TOC extension, simply click the extension icon in your browser toolbar. The table of contents will appear as a floating panel on the right side of the page.</p>
+
+            <h3>Installation</h3>
+            <p>You can install the Smart TOC extension from the Chrome Web Store or load it manually in developer mode.</p>
+
+            <h4>Manual Installation</h4>
+            <p>For manual installation, enable developer mode in Chrome extensions and load the unpacked extension folder.</p>
+
+            <h4>Chrome Web Store</h4>
+            <p>The extension will be available on the Chrome Web Store for easy installation.</p>
+
+            <h3>First Use</h3>
+            <p>After installation, navigate to any webpage with headings and click the Smart TOC icon to see the table of contents.</p>
+        </div>
+
+        <div class="content-block">
+            <h2>Features Overview</h2>
+            <p>Smart TOC offers numerous features to enhance your reading experience on the web.</p>
+
+            <h3>Automatic Detection</h3>
+            <p>The extension uses a smart algorithm to detect the main content area and extract headings from h1 through h6 tags.</p>
+
+            <h4>Content Area Detection</h4>
+            <p>Smart TOC looks for common content containers like main, article, and various content wrapper classes.</p>
+
+            <h4>Heading Filtering</h4>
+            <p>Only visible headings with actual text content are included in the table of contents.</p>
+
+            <h3>Interactive Navigation</h3>
+            <p>Click any heading in the TOC to smoothly scroll to that section of the page.</p>
+
+            <h4>Current Section Highlighting</h4>
+            <p>As you scroll through the page, the current section is automatically highlighted in the TOC.</p>
+
+            <h4>Smart Scrolling</h4>
+            <p>The TOC automatically scrolls to keep the active heading visible within the panel.</p>
+
+            <h3>Customization Options</h3>
+            <p>The extension provides various customization options through the settings panel.</p>
+
+            <h4>Heading Levels</h4>
+            <p>Choose how many heading levels to include in the TOC (from 3 to 6 levels).</p>
+
+            <h4>Position and Size</h4>
+            <p>Drag the TOC panel to reposition it, or resize it using the drag handle in the bottom-right corner.</p>
+
+            <h4>Auto-show</h4>
+            <p>Enable auto-show to automatically display the TOC when compatible pages are loaded.</p>
+        </div>
+
+        <div class="content-block">
+            <h2>Advanced Features</h2>
+            <p>Smart TOC includes several advanced features for power users.</p>
+
+            <h3>Glance Mode</h3>
+            <p>Hold the Alt/Option key and hover over any heading to quickly glance at the table of contents without permanently showing it.</p>
+
+            <h3>Keyboard Shortcuts</h3>
+            <p>Use Alt+T to toggle the TOC, or press Escape to close it when visible.</p>
+
+            <h4>Copy Functionality</h4>
+            <p>Click the copy button to copy the table of contents to your clipboard in markdown format.</p>
+
+            <h4>Expand and Collapse</h4>
+            <p>Use the expand/collapse buttons to show or hide deeper heading levels.</p>
+
+            <h3>Dynamic Content Support</h3>
+            <p>The extension automatically detects when new headings are added to the page and updates the TOC accordingly.</p>
+
+            <h4>Single Page Applications</h4>
+            <p>Works with modern SPAs that dynamically load content without page refreshes.</p>
+
+            <h4>Progressive Web Apps</h4>
+            <p>Compatible with PWAs and other dynamic web applications.</p>
+        </div>
+
+        <div class="content-block">
+            <h2>Troubleshooting</h2>
+            <p>Common issues and their solutions when using Smart TOC.</p>
+
+            <h3>No Headings Detected</h3>
+            <p>If no headings are detected, ensure the page uses proper HTML heading tags (h1-h6).</p>
+
+            <h3>Performance Issues</h3>
+            <p>The extension is optimized for performance and should not impact page loading or scrolling.</p>
+
+            <h4>Memory Usage</h4>
+            <p>Smart TOC uses minimal memory and automatically cleans up when pages are closed.</p>
+
+            <h4>CPU Usage</h4>
+            <p>All operations are debounced and optimized to minimize CPU usage.</p>
+        </div>
+
+        <div class="content-block">
+            <h2>Contributing</h2>
+            <p>Smart TOC is open source and welcomes contributions from the community.</p>
+
+            <h3>Bug Reports</h3>
+            <p>Please report any bugs or issues on the GitHub repository.</p>
+
+            <h3>Feature Requests</h3>
+            <p>We welcome suggestions for new features and improvements.</p>
+
+            <h4>Development Setup</h4>
+            <p>Instructions for setting up the development environment are available in the README.</p>
+
+            <h4>Testing</h4>
+            <p>Please test your changes on various websites before submitting pull requests.</p>
+        </div>
+
+        <div class="content-block">
+            <h2>Conclusion</h2>
+            <p>Smart TOC makes reading long documents on the web much easier and more efficient. Try all the features mentioned above!</p>
+
+            <h3>Feedback</h3>
+            <p>We appreciate your feedback and suggestions for improving the extension.</p>
+
+            <h3>Future Development</h3>
+            <p>We're continuously working on new features and improvements based on user feedback.</p>
+        </div>
+    </main>
+
+    <script>
+        // Add some dynamic content after page load to test dynamic detection
+        setTimeout(() => {
+            const newSection = document.createElement('div');
+            newSection.className = 'content-block';
+            newSection.innerHTML = `
+                <h2>Dynamic Content</h2>
+                <p>This section was added dynamically after page load to test the extension's ability to detect new headings.</p>
+                
+                <h3>Dynamic Detection</h3>
+                <p>The Smart TOC extension should automatically detect this new heading and add it to the table of contents.</p>
+                
+                <h4>Real-time Updates</h4>
+                <p>Changes to the page structure are monitored and the TOC is updated accordingly.</p>
+            `;
+            document.querySelector('main').appendChild(newSection);
+        }, 3000);
+    </script>
+</body>
+</html>

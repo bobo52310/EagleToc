@@ -206,3 +206,29 @@
 .smart-toc-panel.smart-toc-resizing {
   transition: none;
 }
+
+.smart-toc-panel.smart-toc-glance {
+  opacity: 0.9;
+  backdrop-filter: blur(2px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+}
+
+body.smart-toc-glance-mode h1,
+body.smart-toc-glance-mode h2,
+body.smart-toc-glance-mode h3,
+body.smart-toc-glance-mode h4,
+body.smart-toc-glance-mode h5,
+body.smart-toc-glance-mode h6 {
+  cursor: help;
+  transition: background-color 0.2s ease;
+}
+
+body.smart-toc-glance-mode h1:hover,
+body.smart-toc-glance-mode h2:hover,
+body.smart-toc-glance-mode h3:hover,
+body.smart-toc-glance-mode h4:hover,
+body.smart-toc-glance-mode h5:hover,
+body.smart-toc-glance-mode h6:hover {
+  background-color: rgba(102, 126, 234, 0.1);
+  border-radius: 4px;
+}
