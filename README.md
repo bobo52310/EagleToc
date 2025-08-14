@@ -106,9 +106,21 @@ MIT License - see LICENSE file for details
 
 ## Changelog
 
+### v1.1.0 (Latest)
+- 🌟 **Wildcard whitelist support**: Use `*` patterns like `*.github.*` for flexible domain matching
+- 🔍 **Redesigned search UI**: Search panel appears next to TOC instead of center-screen
+- ⚡ **Instant tooltips**: Custom tooltips with immediate response and dark theme support
+- 🎛️ **Smart settings panel**: Auto-closes when using other features for better workflow
+- 🌙 **Dark theme support**: Full dark mode with automatic system preference detection
+- 📄 **Enhanced documentation**: Comprehensive feature guide and testing framework
+
 ### v1.0.0
 - Initial release
 - Basic TOC generation and navigation
 - Floating panel with drag/resize
 - Settings page
 - Support for h1-h6 headings
+
+## 📖 Enhanced Features Documentation
+
+For detailed information about the new features, see [FEATURE_DOCUMENTATION.md](./FEATURE_DOCUMENTATION.md)
