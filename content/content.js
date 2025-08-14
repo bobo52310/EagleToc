@@ -90,11 +90,11 @@ class SmartTOC {
     
     if (potentialContainers.length > 0) {
       potentialContainers.forEach(container => {
-        const containerHeadings = container.querySelectorAll('h1, h2, h3, h4, h5, h6');
+        const containerHeadings = container.querySelectorAll('h1, h2, h3, h4, h5, h6, strong');
         headings = headings.concat(Array.from(containerHeadings));
       });
     } else {
-      headings = Array.from(document.querySelectorAll('h1, h2, h3, h4, h5, h6'));
+      headings = Array.from(document.querySelectorAll('h1, h2, h3, h4, h5, h6, strong'));
     }
 
     headings = this.filterHeadings(headings);
@@ -104,14 +104,23 @@ class SmartTOC {
       return;
     }
     
-    this.headings = headings.map((heading, index) => ({
-      element: heading,
-      text: this.cleanHeadingText(heading.textContent.trim()),
-      level: parseInt(heading.tagName.charAt(1)),
-      id: heading.id || `smart-toc-heading-${index}`,
-      index,
-      visible: parseInt(heading.tagName.charAt(1)) <= this.settings.maxHeadingLevels
-    }));
+    this.headings = headings.map((heading, index) => {
+      let level;
+      if (heading.tagName.toLowerCase() === 'strong') {
+        level = 7; // Assign level 7 to strong tags
+      } else {
+        level = parseInt(heading.tagName.charAt(1));
+      }
+      
+      return {
+        element: heading,
+        text: this.cleanHeadingText(heading.textContent.trim()),
+        level: level,
+        id: heading.id || `smart-toc-heading-${index}`,
+        index,
+        visible: level <= this.settings.maxHeadingLevels || heading.tagName.toLowerCase() === 'strong'
+      };
+    });
 
     if (!this.headings.length) {
       this.showNoHeadingsMessage();
@@ -161,12 +170,40 @@ class SmartTOC {
       const rect = heading.getBoundingClientRect();
       const style = window.getComputedStyle(heading);
       
-      return rect.width > 0 && 
-             rect.height > 0 && 
-             style.visibility !== 'hidden' && 
-             style.display !== 'none' &&
-             heading.textContent.trim().length > 0 &&
-             !heading.closest('.smart-toc-panel');
+      // Basic visibility checks
+      const isVisible = rect.width > 0 && 
+                       rect.height > 0 && 
+                       style.visibility !== 'hidden' && 
+                       style.display !== 'none' &&
+                       heading.textContent.trim().length > 0 &&
+                       !heading.closest('.smart-toc-panel');
+      
+      if (!isVisible) return false;
+      
+      // Additional filtering for strong tags
+      if (heading.tagName.toLowerCase() === 'strong') {
+        const text = heading.textContent.trim();
+        // Filter out very short strong tags (likely just formatting, not headings)
+        if (text.length < 3) return false;
+        
+        // Check if the strong tag appears to be a heading based on context
+        const parent = heading.parentElement;
+        const parentTag = parent?.tagName.toLowerCase();
+        
+        // Skip strong tags that are clearly inline formatting
+        if (parentTag === 'span' || parentTag === 'em' || parentTag === 'i' || parentTag === 'b') {
+          return false;
+        }
+        
+        // Check if it's the only or main content in its parent
+        const parentText = parent?.textContent.trim() || '';
+        const strongText = text;
+        const isMainContent = parentText === strongText || parentText.startsWith(strongText);
+        
+        return isMainContent && text.length >= 3;
+      }
+      
+      return true;
     });
   }
 
@@ -519,7 +556,7 @@ class SmartTOC {
 
     document.addEventListener('mouseover', (e) => {
       if (this.altPressed && !this.isDragging && !this.isResizing) {
-        const heading = e.target.closest('h1, h2, h3, h4, h5, h6');
+        const heading = e.target.closest('h1, h2, h3, h4, h5, h6, strong');
         if (heading && this.headings.find(h => h.element === heading)) {
           this.showGlance();
         }
@@ -569,8 +606,8 @@ class SmartTOC {
             
             const hasHeadings = [...addedNodes, ...removedNodes].some(node => 
               node.nodeType === Node.ELEMENT_NODE && 
-              (node.matches('h1, h2, h3, h4, h5, h6') || 
-               node.querySelector('h1, h2, h3, h4, h5, h6'))
+              (node.matches('h1, h2, h3, h4, h5, h6, strong') || 
+               node.querySelector('h1, h2, h3, h4, h5, h6, strong'))
             );
             
             if (hasHeadings) {
