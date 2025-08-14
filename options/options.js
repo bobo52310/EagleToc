@@ -5,7 +5,9 @@ const defaultSettings = {
   autoShow: false,
   maxHeadingLevels: 3,
   tocPosition: 'right',
-  tocWidth: 300
+  tocWidth: 300,
+  fontSize: 16,
+  highlightDuration: 5
 };
 
 function loadSettings() {
@@ -16,6 +18,10 @@ function loadSettings() {
     document.getElementById('tocPosition').value = settings.tocPosition;
     document.getElementById('tocWidth').value = settings.tocWidth;
     document.getElementById('tocWidthValue').textContent = settings.tocWidth + 'px';
+    document.getElementById('fontSize').value = settings.fontSize;
+    document.getElementById('fontSizeValue').textContent = settings.fontSize + 'px';
+    document.getElementById('highlightDuration').value = settings.highlightDuration;
+    document.getElementById('highlightDurationValue').textContent = settings.highlightDuration + 's';
   });
 
   setupEventListeners();
@@ -24,6 +30,14 @@ function loadSettings() {
 function setupEventListeners() {
   document.getElementById('tocWidth').addEventListener('input', (e) => {
     document.getElementById('tocWidthValue').textContent = e.target.value + 'px';
+  });
+
+  document.getElementById('fontSize').addEventListener('input', (e) => {
+    document.getElementById('fontSizeValue').textContent = e.target.value + 'px';
+  });
+
+  document.getElementById('highlightDuration').addEventListener('input', (e) => {
+    document.getElementById('highlightDurationValue').textContent = e.target.value + 's';
   });
 
   document.getElementById('saveSettings').addEventListener('click', saveSettings);
@@ -36,7 +50,9 @@ function saveSettings() {
     autoShow: document.getElementById('autoShow').checked,
     maxHeadingLevels: parseInt(document.getElementById('maxHeadingLevels').value),
     tocPosition: document.getElementById('tocPosition').value,
-    tocWidth: parseInt(document.getElementById('tocWidth').value)
+    tocWidth: parseInt(document.getElementById('tocWidth').value),
+    fontSize: parseInt(document.getElementById('fontSize').value),
+    highlightDuration: parseInt(document.getElementById('highlightDuration').value)
   };
 
   chrome.storage.sync.set(settings, () => {

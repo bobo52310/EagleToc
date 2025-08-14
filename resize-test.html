@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>多方向調整大小測試</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .test-instruction {
+            background: #e3f2fd;
+            border: 1px solid #2196f3;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+        .resize-guide {
+            background: #f3e5f5;
+            border: 1px solid #9c27b0;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .direction-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .direction-item {
+            background: #fff;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .direction-item.corner {
+            background: #ffebee;
+            border-color: #f44336;
+        }
+        .direction-item.edge {
+            background: #e8f5e8;
+            border-color: #4caf50;
+        }
+        h1, h2, h3 {
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-instruction">
+        <h2>🔄 多方向調整大小測試</h2>
+        <p><strong>功能說明：</strong>Smart TOC 浮動視窗現在支援從上下左右所有方向調整大小</p>
+        
+        <h3>測試步驟：</h3>
+        <ol>
+            <li>點擊瀏覽器工具列的 Smart TOC 圖示開啟目錄面板</li>
+            <li>將滑鼠移動到面板的<strong>邊緣和角落</strong>，觀察游標變化</li>
+            <li>嘗試從每個方向拖曳調整大小</li>
+            <li>測試所有8個調整點（4個角落 + 4個邊緣）</li>
+            <li>確認調整大小時面板位置和尺寸都正確</li>
+        </ol>
+    </div>
+
+    <div class="resize-guide">
+        <h3>📍 調整大小手柄位置指南</h3>
+        <div class="direction-list">
+            <div class="direction-item corner">
+                <strong>↖️ 左上角</strong><br>
+                cursor: nw-resize
+            </div>
+            <div class="direction-item edge">
+                <strong>⬆️ 上邊緣</strong><br>
+                cursor: n-resize
+            </div>
+            <div class="direction-item corner">
+                <strong>↗️ 右上角</strong><br>
+                cursor: ne-resize
+            </div>
+            <div class="direction-item edge">
+                <strong>➡️ 右邊緣</strong><br>
+                cursor: e-resize
+            </div>
+            <div class="direction-item corner">
+                <strong>↘️ 右下角</strong><br>
+                cursor: nw-resize
+            </div>
+            <div class="direction-item edge">
+                <strong>⬇️ 下邊緣</strong><br>
+                cursor: n-resize
+            </div>
+            <div class="direction-item corner">
+                <strong>↙️ 左下角</strong><br>
+                cursor: ne-resize
+            </div>
+            <div class="direction-item edge">
+                <strong>⬅️ 左邊緣</strong><br>
+                cursor: e-resize
+            </div>
+        </div>
+    </div>
+
+    <h1>測試內容區域</h1>
+    <p>以下內容用於生成足夠的目錄項目進行測試。</p>
+
+    <h2>1. 基本調整大小測試</h2>
+    <p>測試從右下角調整大小（原有功能）。</p>
+
+    <h3>1.1 寬度調整</h3>
+    <p>向右拖曳應該增加寬度。</p>
+
+    <h3>1.2 高度調整</h3>
+    <p>向下拖曳應該增加高度。</p>
+
+    <h2>2. 邊緣調整測試</h2>
+    <p>測試從四個邊緣調整大小。</p>
+
+    <h3>2.1 右邊緣調整</h3>
+    <p>只改變寬度，不影響高度和位置。</p>
+
+    <h3>2.2 左邊緣調整</h3>
+    <p>改變寬度和水平位置，不影響高度。</p>
+
+    <h3>2.3 上邊緣調整</h3>
+    <p>改變高度和垂直位置，不影響寬度。</p>
+
+    <h3>2.4 下邊緣調整</h3>
+    <p>只改變高度，不影響寬度和位置。</p>
+
+    <h2>3. 角落調整測試</h2>
+    <p>測試從四個角落調整大小。</p>
+
+    <h3>3.1 右下角（原功能）</h3>
+    <p>同時改變寬度和高度，位置不變。</p>
+
+    <h3>3.2 右上角</h3>
+    <p>改變寬度、高度和垂直位置。</p>
+
+    <h3>3.3 左下角</h3>
+    <p>改變寬度、高度和水平位置。</p>
+
+    <h3>3.4 左上角</h3>
+    <p>改變寬度、高度、水平位置和垂直位置。</p>
+
+    <h2>4. 限制測試</h2>
+    <p>測試調整大小的限制。</p>
+
+    <h3>4.1 最小尺寸</h3>
+    <p>最小寬度：250px，最小高度：200px。</p>
+
+    <h3>4.2 最大尺寸</h3>
+    <p>最大寬度：80% 螢幕寬度，最大高度：80% 螢幕高度。</p>
+
+    <h3>4.3 邊界限制</h3>
+    <p>調整大小時不應超出螢幕範圍。</p>
+
+    <h2>5. 互動測試</h2>
+    <p>測試調整大小與其他功能的互動。</p>
+
+    <h3>5.1 拖曳與調整大小</h3>
+    <p>確認拖曳標題列不會觸發調整大小。</p>
+
+    <h3>5.2 摺疊狀態</h3>
+    <p>摺疊時調整大小手柄應該隱藏。</p>
+
+    <h3>5.3 設定面板</h3>
+    <p>調整大小時設定面板應該正常運作。</p>
+
+    <h2>6. 視覺回饋測試</h2>
+
+    <h3>6.1 游標變化</h3>
+    <p>滑鼠移到不同調整手柄時游標應該正確變化。</p>
+
+    <h3>6.2 手柄可見性</h3>
+    <p>調整手柄在 hover 時應該更明顯。</p>
+
+    <h3>6.3 調整中狀態</h3>
+    <p>調整大小時面板應該有適當的視覺回饋。</p>
+
+    <h1>測試完成清單</h1>
+    <p>請確認以下所有項目都正常工作：</p>
+    
+    <ul>
+        <li>✅ 8個調整手柄都可見且可用</li>
+        <li>✅ 游標在不同手柄上正確變化</li>
+        <li>✅ 邊緣調整只影響對應方向</li>
+        <li>✅ 角落調整影響兩個方向</li>
+        <li>✅ 左側/上方調整會移動面板位置</li>
+        <li>✅ 最小/最大尺寸限制生效</li>
+        <li>✅ 摺疊時手柄隱藏</li>
+        <li>✅ 不影響其他功能運作</li>
+    </ul>
+
+    <script>
+        console.log('Multi-directional resize test page loaded');
+        
+        // 監控 Smart TOC 初始化
+        setTimeout(() => {
+            if (window.smartTOC) {
+                console.log('Smart TOC detected');
+                
+                // 檢查調整手柄數量
+                setTimeout(() => {
+                    const handles = document.querySelectorAll('.smart-toc-resize-handle');
+                    console.log(`Found ${handles.length} resize handles`);
+                    
+                    if (handles.length === 8) {
+                        console.log('✅ All 8 resize handles found');
+                    } else {
+                        console.error(`❌ Expected 8 handles, found ${handles.length}`);
+                    }
+                }, 1000);
+            }
+        }, 1000);
+    </script>
+</body>
+</html>

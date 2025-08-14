@@ -17,7 +17,9 @@ class SmartTOC {
       tocPosition: 'right',
       tocWidth: 300,
       enableLocalFiles: false,
-      autoShow: false
+      autoShow: false,
+      fontSize: 16,
+      highlightDuration: 5
     };
     this.init();
   }
@@ -60,24 +62,57 @@ class SmartTOC {
       <div class="smart-toc-header">
         <span class="smart-toc-title">Table of Contents</span>
         <div class="smart-toc-controls">
+          <button class="smart-toc-settings" title="Settings">⚙️</button>
           <button class="smart-toc-collapse" title="Collapse panel">📁</button>
           <button class="smart-toc-expand" title="Expand panel">📂</button>
           <button class="smart-toc-copy" title="Copy to clipboard">📋</button>
           <button class="smart-toc-close" title="Close">×</button>
         </div>
+        <div class="smart-toc-settings-panel">
+          <div class="smart-toc-settings-item">
+            <span class="smart-toc-settings-label">字體大小</span>
+            <div class="smart-toc-font-controls">
+              <button class="smart-toc-font-btn smart-toc-font-decrease" title="減小字體">-</button>
+              <span class="smart-toc-font-size-display">16px</span>
+              <button class="smart-toc-font-btn smart-toc-font-increase" title="增大字體">+</button>
+            </div>
+          </div>
+          <div class="smart-toc-settings-item">
+            <span class="smart-toc-settings-label">高亮時間</span>
+            <div class="smart-toc-font-controls">
+              <button class="smart-toc-font-btn smart-toc-highlight-decrease" title="減少時間">-</button>
+              <span class="smart-toc-highlight-duration-display">5s</span>
+              <button class="smart-toc-font-btn smart-toc-highlight-increase" title="增加時間">+</button>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="smart-toc-content">
         <div class="smart-toc-loading">Analyzing page structure...</div>
       </div>
-      <div class="smart-toc-resize-handle"></div>
+      <!-- Resize handles -->
+      <div class="smart-toc-resize-handle corner top-left" data-direction="top-left"></div>
+      <div class="smart-toc-resize-handle edge top" data-direction="top"></div>
+      <div class="smart-toc-resize-handle corner top-right" data-direction="top-right"></div>
+      <div class="smart-toc-resize-handle edge right" data-direction="right"></div>
+      <div class="smart-toc-resize-handle corner bottom-right" data-direction="bottom-right"></div>
+      <div class="smart-toc-resize-handle edge bottom" data-direction="bottom"></div>
+      <div class="smart-toc-resize-handle corner bottom-left" data-direction="bottom-left"></div>
+      <div class="smart-toc-resize-handle edge left" data-direction="left"></div>
     `;
     
     this.tocPanel.style.width = this.settings.tocWidth + 'px';
     this.tocPanel.style.right = this.settings.tocPosition === 'right' ? '20px' : 'auto';
     this.tocPanel.style.left = this.settings.tocPosition === 'left' ? '20px' : 'auto';
     
+    // Apply font size to content area only
+    this.applyContentFontSize();
+    
     document.body.appendChild(this.tocPanel);
     this.tocPanel.style.display = 'none';
+    
+    // Update settings display with actual values
+    this.updateSettingsDisplay();
     
     // Initialize button visibility
     setTimeout(() => this.updateCollapseExpandButtons(), 0);
@@ -225,6 +260,9 @@ class SmartTOC {
     content.innerHTML = '';
     content.appendChild(tocList);
     this.updateCurrentHeading();
+    
+    // Apply font size after rendering TOC
+    this.applyContentFontSize();
   }
 
   createTOCList(headings) {
@@ -266,6 +304,25 @@ class SmartTOC {
     });
 
     this.setActiveHeading(heading.id);
+    this.highlightElement(element);
+  }
+
+  highlightElement(element) {
+    // Remove any existing highlights
+    document.querySelectorAll('.smart-toc-highlighted').forEach(el => {
+      el.classList.remove('smart-toc-highlighted');
+      el.style.removeProperty('--smart-toc-highlight-duration');
+    });
+
+    // Apply highlight with custom duration
+    element.style.setProperty('--smart-toc-highlight-duration', `${this.settings.highlightDuration}s`);
+    element.classList.add('smart-toc-highlighted');
+
+    // Remove highlight after animation completes
+    setTimeout(() => {
+      element.classList.remove('smart-toc-highlighted');
+      element.style.removeProperty('--smart-toc-highlight-duration');
+    }, this.settings.highlightDuration * 1000);
   }
 
   setupScrollTracking() {
@@ -356,6 +413,43 @@ class SmartTOC {
     const copyBtn = this.tocPanel.querySelector('.smart-toc-copy');
     copyBtn.addEventListener('click', () => this.copyToClipboard());
 
+    const settingsBtn = this.tocPanel.querySelector('.smart-toc-settings');
+    if (settingsBtn) {
+      settingsBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        console.log('Settings button clicked');
+        this.toggleSettingsPanel();
+      });
+    } else {
+      console.error('Settings button not found');
+    }
+
+    const fontIncreaseBtn = this.tocPanel.querySelector('.smart-toc-font-increase');
+    if (fontIncreaseBtn) {
+      fontIncreaseBtn.addEventListener('click', () => this.changeFontSize(1));
+    }
+
+    const fontDecreaseBtn = this.tocPanel.querySelector('.smart-toc-font-decrease');
+    if (fontDecreaseBtn) {
+      fontDecreaseBtn.addEventListener('click', () => this.changeFontSize(-1));
+    }
+
+    const highlightIncreaseBtn = this.tocPanel.querySelector('.smart-toc-highlight-increase');
+    if (highlightIncreaseBtn) {
+      highlightIncreaseBtn.addEventListener('click', () => this.changeHighlightDuration(1));
+    }
+
+    const highlightDecreaseBtn = this.tocPanel.querySelector('.smart-toc-highlight-decrease');
+    if (highlightDecreaseBtn) {
+      highlightDecreaseBtn.addEventListener('click', () => this.changeHighlightDuration(-1));
+    }
+
+    document.addEventListener('click', (e) => {
+      if (!this.tocPanel.contains(e.target)) {
+        this.hideSettingsPanel();
+      }
+    });
+
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && this.isVisible) {
         this.hide();
@@ -370,12 +464,18 @@ class SmartTOC {
   collapsePanel() {
     this.isCollapsed = true;
     this.tocPanel.classList.add('smart-toc-collapsed');
+    // Clear any dynamic height that might interfere with collapse
+    this.tocPanel.style.removeProperty('height');
     this.updateCollapseExpandButtons();
   }
 
   expandPanel() {
     this.isCollapsed = false;
     this.tocPanel.classList.remove('smart-toc-collapsed');
+    // Restore default height behavior when expanded
+    if (!this.tocPanel.style.height) {
+      this.tocPanel.style.removeProperty('height');
+    }
     this.updateCollapseExpandButtons();
   }
 
@@ -425,12 +525,36 @@ class SmartTOC {
   }
 
   showCopySuccess() {
-    const copyBtn = this.tocPanel.querySelector('.smart-toc-copy');
-    const originalText = copyBtn.innerHTML;
-    copyBtn.innerHTML = '✅';
+    this.showNotification('已複製到剪貼簿');
+  }
+
+  showNotification(message) {
+    // Remove any existing notification
+    const existingNotification = document.querySelector('.smart-toc-notification');
+    if (existingNotification) {
+      existingNotification.remove();
+    }
+
+    // Create new notification
+    const notification = document.createElement('div');
+    notification.className = 'smart-toc-notification';
+    notification.textContent = message;
+    document.body.appendChild(notification);
+
+    // Show notification
+    requestAnimationFrame(() => {
+      notification.classList.add('show');
+    });
+
+    // Hide and remove notification
     setTimeout(() => {
-      copyBtn.innerHTML = originalText;
-    }, 1500);
+      notification.classList.remove('show');
+      setTimeout(() => {
+        if (notification.parentNode) {
+          notification.parentNode.removeChild(notification);
+        }
+      }, 300);
+    }, 2000);
   }
 
   fallbackCopyToClipboard(text) {
@@ -441,6 +565,87 @@ class SmartTOC {
     document.execCommand('copy');
     document.body.removeChild(textArea);
     this.showCopySuccess();
+  }
+
+  toggleSettingsPanel() {
+    const settingsPanel = this.tocPanel.querySelector('.smart-toc-settings-panel');
+    if (settingsPanel) {
+      const isVisible = settingsPanel.style.display === 'block';
+      settingsPanel.style.display = isVisible ? 'none' : 'block';
+      console.log('Settings panel toggled:', isVisible ? 'hidden' : 'shown');
+    } else {
+      console.error('Settings panel not found');
+    }
+  }
+
+  hideSettingsPanel() {
+    const settingsPanel = this.tocPanel.querySelector('.smart-toc-settings-panel');
+    if (settingsPanel) {
+      settingsPanel.style.display = 'none';
+    }
+  }
+
+  changeFontSize(delta) {
+    const newSize = Math.max(12, Math.min(24, this.settings.fontSize + delta));
+    if (newSize !== this.settings.fontSize) {
+      this.settings.fontSize = newSize;
+      
+      // Apply font size only to content area, not the whole panel
+      this.applyContentFontSize();
+      
+      const display = this.tocPanel.querySelector('.smart-toc-font-size-display');
+      if (display) {
+        display.textContent = newSize + 'px';
+      }
+      
+      this.saveSettings();
+    }
+  }
+
+  changeHighlightDuration(delta) {
+    const newDuration = Math.max(1, Math.min(15, this.settings.highlightDuration + delta));
+    if (newDuration !== this.settings.highlightDuration) {
+      this.settings.highlightDuration = newDuration;
+      
+      const display = this.tocPanel.querySelector('.smart-toc-highlight-duration-display');
+      display.textContent = newDuration + 's';
+      
+      this.saveSettings();
+    }
+  }
+
+  applyContentFontSize() {
+    const tocList = this.tocPanel.querySelector('.smart-toc-list');
+    if (tocList) {
+      tocList.style.fontSize = this.settings.fontSize + 'px';
+      console.log('Applied font size:', this.settings.fontSize + 'px', 'to TOC list');
+    } else {
+      console.log('TOC list not found for font size application');
+    }
+  }
+
+  updateSettingsDisplay() {
+    const fontSizeDisplay = this.tocPanel.querySelector('.smart-toc-font-size-display');
+    const highlightDurationDisplay = this.tocPanel.querySelector('.smart-toc-highlight-duration-display');
+    
+    if (fontSizeDisplay) {
+      fontSizeDisplay.textContent = this.settings.fontSize + 'px';
+    }
+    if (highlightDurationDisplay) {
+      highlightDurationDisplay.textContent = this.settings.highlightDuration + 's';
+    }
+    
+    // Apply the current font size to content
+    this.applyContentFontSize();
+  }
+
+  async saveSettings() {
+    if (typeof chrome !== 'undefined' && chrome.runtime) {
+      chrome.runtime.sendMessage({ 
+        action: 'save-settings', 
+        settings: this.settings 
+      });
+    }
   }
 
   show() {
@@ -511,40 +716,100 @@ class SmartTOC {
   }
 
   makeResizable() {
-    const resizeHandle = this.tocPanel.querySelector('.smart-toc-resize-handle');
+    const resizeHandles = this.tocPanel.querySelectorAll('.smart-toc-resize-handle');
     
-    resizeHandle.addEventListener('mousedown', (e) => {
-      this.isResizing = true;
-      document.addEventListener('mousemove', this.handleResize.bind(this));
-      document.addEventListener('mouseup', this.stopResizing.bind(this));
-      e.preventDefault();
-      e.stopPropagation();
+    resizeHandles.forEach(handle => {
+      handle.addEventListener('mousedown', (e) => {
+        this.isResizing = true;
+        this.resizeDirection = handle.dataset.direction;
+        this.resizeStartX = e.clientX;
+        this.resizeStartY = e.clientY;
+        this.resizeStartWidth = parseInt(window.getComputedStyle(this.tocPanel).width, 10);
+        this.resizeStartHeight = parseInt(window.getComputedStyle(this.tocPanel).height, 10);
+        this.resizeStartLeft = this.tocPanel.offsetLeft;
+        this.resizeStartTop = this.tocPanel.offsetTop;
+        
+        this.tocPanel.classList.add('smart-toc-resizing');
+        document.addEventListener('mousemove', this.handleResize.bind(this));
+        document.addEventListener('mouseup', this.stopResizing.bind(this));
+        e.preventDefault();
+        e.stopPropagation();
+      });
     });
   }
 
   handleResize(e) {
     if (!this.isResizing) return;
     
-    const rect = this.tocPanel.getBoundingClientRect();
-    const width = e.clientX - rect.left;
-    const height = e.clientY - rect.top;
+    const deltaX = e.clientX - this.resizeStartX;
+    const deltaY = e.clientY - this.resizeStartY;
     
     const minWidth = 250;
     const minHeight = 200;
-    const maxWidth = window.innerWidth * 0.5;
+    const maxWidth = window.innerWidth * 0.8;
     const maxHeight = window.innerHeight * 0.8;
     
-    if (width >= minWidth && width <= maxWidth) {
-      this.tocPanel.style.width = width + 'px';
+    let newWidth = this.resizeStartWidth;
+    let newHeight = this.resizeStartHeight;
+    let newLeft = this.resizeStartLeft;
+    let newTop = this.resizeStartTop;
+    
+    switch (this.resizeDirection) {
+      case 'right':
+        newWidth = Math.max(minWidth, Math.min(maxWidth, this.resizeStartWidth + deltaX));
+        break;
+        
+      case 'left':
+        newWidth = Math.max(minWidth, Math.min(maxWidth, this.resizeStartWidth - deltaX));
+        newLeft = this.resizeStartLeft + (this.resizeStartWidth - newWidth);
+        break;
+        
+      case 'bottom':
+        newHeight = Math.max(minHeight, Math.min(maxHeight, this.resizeStartHeight + deltaY));
+        break;
+        
+      case 'top':
+        newHeight = Math.max(minHeight, Math.min(maxHeight, this.resizeStartHeight - deltaY));
+        newTop = this.resizeStartTop + (this.resizeStartHeight - newHeight);
+        break;
+        
+      case 'bottom-right':
+        newWidth = Math.max(minWidth, Math.min(maxWidth, this.resizeStartWidth + deltaX));
+        newHeight = Math.max(minHeight, Math.min(maxHeight, this.resizeStartHeight + deltaY));
+        break;
+        
+      case 'bottom-left':
+        newWidth = Math.max(minWidth, Math.min(maxWidth, this.resizeStartWidth - deltaX));
+        newHeight = Math.max(minHeight, Math.min(maxHeight, this.resizeStartHeight + deltaY));
+        newLeft = this.resizeStartLeft + (this.resizeStartWidth - newWidth);
+        break;
+        
+      case 'top-right':
+        newWidth = Math.max(minWidth, Math.min(maxWidth, this.resizeStartWidth + deltaX));
+        newHeight = Math.max(minHeight, Math.min(maxHeight, this.resizeStartHeight - deltaY));
+        newTop = this.resizeStartTop + (this.resizeStartHeight - newHeight);
+        break;
+        
+      case 'top-left':
+        newWidth = Math.max(minWidth, Math.min(maxWidth, this.resizeStartWidth - deltaX));
+        newHeight = Math.max(minHeight, Math.min(maxHeight, this.resizeStartHeight - deltaY));
+        newLeft = this.resizeStartLeft + (this.resizeStartWidth - newWidth);
+        newTop = this.resizeStartTop + (this.resizeStartHeight - newHeight);
+        break;
     }
     
-    if (height >= minHeight && height <= maxHeight) {
-      this.tocPanel.style.height = height + 'px';
-    }
+    this.tocPanel.style.width = newWidth + 'px';
+    this.tocPanel.style.height = newHeight + 'px';
+    this.tocPanel.style.left = newLeft + 'px';
+    this.tocPanel.style.top = newTop + 'px';
+    this.tocPanel.style.right = 'auto';
+    this.tocPanel.style.bottom = 'auto';
   }
 
   stopResizing() {
     this.isResizing = false;
+    this.resizeDirection = null;
+    this.tocPanel.classList.remove('smart-toc-resizing');
     document.removeEventListener('mousemove', this.handleResize.bind(this));
     document.removeEventListener('mouseup', this.stopResizing.bind(this));
   }

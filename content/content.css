@@ -10,7 +10,6 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   z-index: 2147483647;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-  font-size: 14px;
   line-height: 1.4;
   opacity: 0;
   transform: translateX(20px);
@@ -36,6 +35,8 @@
   border-radius: 8px 8px 0 0;
   cursor: move;
   user-select: none;
+  position: relative;
+  font-size: 14px; /* Fixed header font size */
 }
 
 .smart-toc-title {
@@ -87,12 +88,14 @@
   text-align: center;
   color: #656d76;
   font-style: italic;
+  font-size: 14px; /* Fixed size for messages */
 }
 
 .smart-toc-list {
   list-style: none;
   margin: 0;
   padding: 0;
+  font-size: 16px; /* Default list font size */
 }
 
 .smart-toc-item {
@@ -205,19 +208,86 @@
   background: #a8b0b8;
 }
 
+/* Resize handles */
 .smart-toc-resize-handle {
   position: absolute;
-  bottom: 0;
-  right: 0;
-  width: 16px;
-  height: 16px;
-  cursor: nw-resize;
-  background: linear-gradient(-45deg, transparent 0%, transparent 30%, #d0d7de 30%, #d0d7de 35%, transparent 35%, transparent 65%, #d0d7de 65%, #d0d7de 70%, transparent 70%);
   opacity: 0.6;
+  transition: opacity 0.2s ease;
 }
 
 .smart-toc-resize-handle:hover {
   opacity: 1;
+}
+
+/* Corner handles */
+.smart-toc-resize-handle.corner {
+  width: 16px;
+  height: 16px;
+}
+
+.smart-toc-resize-handle.bottom-right {
+  bottom: 0;
+  right: 0;
+  cursor: nw-resize;
+  background: linear-gradient(-45deg, transparent 0%, transparent 30%, #d0d7de 30%, #d0d7de 35%, transparent 35%, transparent 65%, #d0d7de 65%, #d0d7de 70%, transparent 70%);
+}
+
+.smart-toc-resize-handle.bottom-left {
+  bottom: 0;
+  left: 0;
+  cursor: ne-resize;
+  background: linear-gradient(45deg, transparent 0%, transparent 30%, #d0d7de 30%, #d0d7de 35%, transparent 35%, transparent 65%, #d0d7de 65%, #d0d7de 70%, transparent 70%);
+}
+
+.smart-toc-resize-handle.top-right {
+  top: 0;
+  right: 0;
+  cursor: ne-resize;
+  background: linear-gradient(135deg, transparent 0%, transparent 30%, #d0d7de 30%, #d0d7de 35%, transparent 35%, transparent 65%, #d0d7de 65%, #d0d7de 70%, transparent 70%);
+}
+
+.smart-toc-resize-handle.top-left {
+  top: 0;
+  left: 0;
+  cursor: nw-resize;
+  background: linear-gradient(-135deg, transparent 0%, transparent 30%, #d0d7de 30%, #d0d7de 35%, transparent 35%, transparent 65%, #d0d7de 65%, #d0d7de 70%, transparent 70%);
+}
+
+/* Edge handles */
+.smart-toc-resize-handle.edge {
+  background: #d0d7de;
+}
+
+.smart-toc-resize-handle.top {
+  top: 0;
+  left: 16px;
+  right: 16px;
+  height: 4px;
+  cursor: n-resize;
+}
+
+.smart-toc-resize-handle.bottom {
+  bottom: 0;
+  left: 16px;
+  right: 16px;
+  height: 4px;
+  cursor: n-resize;
+}
+
+.smart-toc-resize-handle.left {
+  left: 0;
+  top: 16px;
+  bottom: 16px;
+  width: 4px;
+  cursor: e-resize;
+}
+
+.smart-toc-resize-handle.right {
+  right: 0;
+  top: 16px;
+  bottom: 16px;
+  width: 4px;
+  cursor: e-resize;
 }
 
 .smart-toc-panel.smart-toc-dragging {
@@ -271,11 +341,116 @@ body.smart-toc-glance-mode strong:hover {
 }
 
 .smart-toc-panel.smart-toc-collapsed {
-  height: auto;
-  min-height: auto;
-  max-height: none;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  overflow: visible;
 }
 
 .smart-toc-expand {
   display: none;
+}
+
+/* Settings panel styles */
+.smart-toc-settings-panel {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  width: 200px;
+  background: white;
+  border: 1px solid #e1e5e9;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  padding: 12px;
+  z-index: 2147483647;
+  display: none;
+}
+
+.smart-toc-settings-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+
+.smart-toc-settings-item:last-child {
+  margin-bottom: 0;
+}
+
+.smart-toc-settings-label {
+  color: #24292f;
+  font-weight: 500;
+}
+
+.smart-toc-font-controls {
+  display: flex;
+  gap: 2px;
+}
+
+.smart-toc-font-btn {
+  width: 24px;
+  height: 24px;
+  border: 1px solid #d0d7de;
+  background: white;
+  border-radius: 3px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: bold;
+  color: #24292f;
+  transition: all 0.2s ease;
+}
+
+.smart-toc-font-btn:hover {
+  background: #f6f8fa;
+  border-color: #0969da;
+}
+
+.smart-toc-font-size-display {
+  min-width: 32px;
+  text-align: center;
+  font-size: 12px;
+  color: #656d76;
+}
+
+/* Highlight animation for clicked elements */
+@keyframes smart-toc-highlight {
+  0% {
+    background-color: rgba(255, 235, 59, 0.8);
+    box-shadow: 0 0 0 4px rgba(255, 235, 59, 0.3);
+  }
+  100% {
+    background-color: transparent;
+    box-shadow: 0 0 0 0px rgba(255, 235, 59, 0);
+  }
+}
+
+.smart-toc-highlighted {
+  animation: smart-toc-highlight var(--smart-toc-highlight-duration, 5s) ease-out forwards;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+/* Copy notification styles */
+.smart-toc-notification {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-size: 14px;
+  z-index: 2147483648;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.smart-toc-notification.show {
+  opacity: 1;
 }

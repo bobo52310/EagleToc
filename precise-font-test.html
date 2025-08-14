@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>精確字體測試</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .test-info {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .expected-behavior {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .check-item {
+            margin: 8px 0;
+        }
+        .check-item::before {
+            content: "✅ ";
+            color: green;
+        }
+        .avoid-item {
+            margin: 8px 0;
+        }
+        .avoid-item::before {
+            content: "❌ ";
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-info">
+        <h3>🎯 測試重點</h3>
+        <p>測試字體大小調整功能是否<strong>只影響目錄列表項目</strong>，不影響其他元素。</p>
+    </div>
+
+    <div class="expected-behavior">
+        <h3>預期行為</h3>
+        <div class="check-item">目錄列表項目字體會隨 +/- 按鈕變化</div>
+        <div class="check-item">工具列標題 "Table of Contents" 保持固定大小</div>
+        <div class="check-item">按鈕圖示 ⚙️📁📂📋× 保持固定大小</div>
+        <div class="check-item">設定面板文字保持固定大小</div>
+        <div class="check-item">載入訊息 "Analyzing page structure..." 保持固定大小</div>
+        
+        <h4>避免的錯誤行為</h4>
+        <div class="avoid-item">工具列標題字體跟著變化</div>
+        <div class="avoid-item">按鈕圖示大小跟著變化</div>
+        <div class="avoid-item">設定面板字體跟著變化</div>
+    </div>
+
+    <h1>測試用標題結構</h1>
+    <p>以下標題將出現在 TOC 中，請測試它們的字體大小調整：</p>
+
+    <h1>1. 第一級標題</h1>
+    <p>這是最高層級的標題，在 TOC 中應該是粗體顯示。</p>
+
+    <h2>1.1 第二級標題</h2>
+    <p>第二層級標題，在 TOC 中會有適當縮排。</p>
+
+    <h3>1.1.1 第三級標題</h3>
+    <p>第三層級標題，字體應該較小且有更深的縮排。</p>
+
+    <h2>1.2 另一個第二級標題</h2>
+    <p>用於測試平行層級的顯示效果。</p>
+
+    <h1>2. 字體大小測試章節</h1>
+    <p>專門用來測試字體大小變化效果。</p>
+
+    <h2>2.1 最小字體測試 (12px)</h2>
+    <p>將字體調到最小時的顯示效果。</p>
+
+    <h2>2.2 預設字體測試 (16px)</h2>
+    <p>預設字體大小的顯示效果。</p>
+
+    <h2>2.3 最大字體測試 (24px)</h2>
+    <p>將字體調到最大時的顯示效果。</p>
+
+    <h3>2.3.1 大字體子項目</h3>
+    <p>測試大字體下的子項目縮排是否正確。</p>
+
+    <h1>3. 測試步驟</h1>
+    <p>請按照以下步驟進行測試：</p>
+
+    <h2>3.1 開啟 TOC</h2>
+    <p>點擊瀏覽器擴充功能圖示。</p>
+
+    <h2>3.2 觀察初始狀態</h2>
+    <p>注意工具列和目錄列表的字體大小。</p>
+
+    <h2>3.3 開啟設定</h2>
+    <p>點擊 ⚙️ 按鈕開啟設定面板。</p>
+
+    <h2>3.4 調整字體</h2>
+    <p>使用字體大小的 + 和 - 按鈕。</p>
+
+    <h2>3.5 檢查結果</h2>
+    <p>確認只有目錄項目的字體改變了。</p>
+
+    <h1>4. 預期結果</h1>
+
+    <h2>4.1 目錄項目</h2>
+    <p>這些項目的字體大小應該會變化：</p>
+    <ul>
+        <li>"1. 第一級標題"</li>
+        <li>"1.1 第二級標題"</li>
+        <li>"1.1.1 第三級標題"</li>
+        <li>等等所有目錄項目...</li>
+    </ul>
+
+    <h2>4.2 固定大小元素</h2>
+    <p>這些元素的字體大小應該保持不變：</p>
+    <ul>
+        <li>工具列標題 "Table of Contents"</li>
+        <li>所有按鈕圖示</li>
+        <li>設定面板中的 "字體大小" 標籤</li>
+        <li>設定面板中的 "高亮時間" 標籤</li>
+        <li>載入訊息</li>
+    </ul>
+
+    <script>
+        console.log('Precise font test page loaded');
+        
+        // Monitor for Smart TOC initialization
+        setTimeout(() => {
+            if (window.smartTOC) {
+                console.log('Smart TOC detected:', window.smartTOC);
+                console.log('Current font size setting:', window.smartTOC.settings?.fontSize);
+            }
+        }, 1000);
+    </script>
+</body>
+</html>

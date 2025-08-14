@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>收合功能測試</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .test-info {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+        .expected-behavior {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .issue-description {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .test-step {
+            margin: 10px 0;
+            padding: 10px;
+            background: #f8f9fa;
+            border-left: 4px solid #007bff;
+        }
+    </style>
+</head>
+<body>
+    <div class="issue-description">
+        <h2>🐛 問題描述</h2>
+        <p><strong>問題：</strong>點擊收合按鈕（📁）後，視窗內容變空白但大小不變</p>
+        <p><strong>預期行為：</strong>視窗應該只保留標題列，高度自動調整為最小</p>
+    </div>
+
+    <div class="test-info">
+        <h2>🔧 修復內容</h2>
+        <p>已修復收合狀態的CSS，強制重置最小高度限制：</p>
+        <ul>
+            <li><code>min-height: 0 !important</code> - 移除200px最小高度限制</li>
+            <li><code>height: auto !important</code> - 允許高度自動調整</li>
+            <li><code>overflow: visible</code> - 確保內容正確顯示</li>
+        </ul>
+    </div>
+
+    <div class="expected-behavior">
+        <h3>✅ 預期的正確行為</h3>
+        <div class="test-step">
+            <strong>步驟 1：</strong>開啟 TOC 面板 → 應該顯示完整的目錄列表
+        </div>
+        <div class="test-step">
+            <strong>步驟 2：</strong>點擊📁收合按鈕 → 面板高度縮小，只顯示標題列
+        </div>
+        <div class="test-step">
+            <strong>步驟 3：</strong>點擊📂展開按鈕 → 面板恢復原始大小，顯示完整內容
+        </div>
+        <div class="test-step">
+            <strong>步驟 4：</strong>收合狀態下調整大小手柄應該隱藏
+        </div>
+    </div>
+
+    <h1>測試標題結構</h1>
+    <p>以下內容用於生成足夠的目錄項目，方便測試收合/展開效果。</p>
+
+    <h2>1. 收合功能基本測試</h2>
+    <p>測試基本的收合和展開功能。</p>
+
+    <h3>1.1 收合狀態檢查</h3>
+    <p>收合後應該：</p>
+    <ul>
+        <li>內容區域完全隱藏</li>
+        <li>面板高度自動縮小到只有標題列</li>
+        <li>收合按鈕（📁）隱藏</li>
+        <li>展開按鈕（📂）顯示</li>
+        <li>調整大小手柄隱藏</li>
+    </ul>
+
+    <h3>1.2 展開狀態檢查</h3>
+    <p>展開後應該：</p>
+    <ul>
+        <li>內容區域完全顯示</li>
+        <li>面板恢復到收合前的大小</li>
+        <li>展開按鈕（📂）隱藏</li>
+        <li>收合按鈕（📁）顯示</li>
+        <li>調整大小手柄顯示</li>
+    </ul>
+
+    <h2>2. 互動功能測試</h2>
+
+    <h3>2.1 拖曳功能</h3>
+    <p>收合狀態下，拖曳標題列應該仍然可以移動面板位置。</p>
+
+    <h3>2.2 其他按鈕</h3>
+    <p>收合狀態下，其他按鈕（設定、複製、關閉）應該仍然可用。</p>
+
+    <h3>2.3 鍵盤快捷鍵</h3>
+    <p>Escape 和 Alt+T 快捷鍵應該仍然有效。</p>
+
+    <h2>3. 視覺效果測試</h2>
+
+    <h3>3.1 動畫效果</h3>
+    <p>收合和展開應該有平滑的過渡動畫。</p>
+
+    <h3>3.2 按鈕狀態</h3>
+    <p>按鈕圖示應該正確切換（📁 ↔ 📂）。</p>
+
+    <h3>3.3 內容保持</h3>
+    <p>展開後內容應該與收合前完全相同。</p>
+
+    <h2>4. 邊界情況測試</h2>
+
+    <h3>4.1 快速切換</h3>
+    <p>快速點擊收合/展開按鈕應該正常工作。</p>
+
+    <h3>4.2 調整大小後收合</h3>
+    <p>手動調整大小後，收合和展開應該正常工作。</p>
+
+    <h3>4.3 位置移動後收合</h3>
+    <p>拖曳移動位置後，收合和展開應該正常工作。</p>
+
+    <h2>5. 測試步驟總結</h2>
+    <ol>
+        <li>開啟 Smart TOC 擴充功能</li>
+        <li>觀察初始狀態（應顯示完整內容）</li>
+        <li>點擊📁收合按鈕</li>
+        <li>檢查面板是否正確縮小</li>
+        <li>點擊📂展開按鈕</li>
+        <li>檢查面板是否正確恢復</li>
+        <li>重複測試確保功能穩定</li>
+    </ol>
+
+    <h1>更多測試內容</h1>
+    <h2>A. 第一部分</h2>
+    <h3>A.1 子部分</h3>
+    <h4>A.1.1 詳細內容</h4>
+    <h2>B. 第二部分</h2>
+    <h3>B.1 子部分</h3>
+    <h3>B.2 另一個子部分</h3>
+    <h2>C. 第三部分</h2>
+    <h3>C.1 最終測試</h3>
+
+    <script>
+        console.log('Collapse functionality test page loaded');
+        
+        // 監控面板狀態變化
+        setTimeout(() => {
+            if (window.smartTOC) {
+                console.log('Smart TOC detected');
+                
+                // 監聽收合狀態變化
+                const observer = new MutationObserver((mutations) => {
+                    mutations.forEach((mutation) => {
+                        if (mutation.target.classList.contains('smart-toc-panel')) {
+                            const isCollapsed = mutation.target.classList.contains('smart-toc-collapsed');
+                            console.log('Panel state changed:', isCollapsed ? 'COLLAPSED' : 'EXPANDED');
+                            
+                            // 檢查面板高度
+                            const height = mutation.target.offsetHeight;
+                            console.log('Panel height:', height + 'px');
+                        }
+                    });
+                });
+                
+                setTimeout(() => {
+                    const panel = document.querySelector('.smart-toc-panel');
+                    if (panel) {
+                        observer.observe(panel, { attributes: true, attributeFilter: ['class'] });
+                    }
+                }, 1000);
+            }
+        }, 1000);
+    </script>
+</body>
+</html>
