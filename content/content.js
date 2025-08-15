@@ -21,7 +21,6 @@ class SmartTOC {
     this.currentTheme = 'auto';
     this.themeMenu = null;
     this.moreMenu = null;
-    this.isPinned = false;
     this.themes = {
       auto: null, // 使用自動偵測
       light: {
@@ -115,7 +114,9 @@ class SmartTOC {
 
   async init() {
     await this.loadSettings();
+    this.cleanupWhitelist(); // 清理白名單中的錯誤項目
     this.createTOCPanel();
+    this.updatePinState(); // 初始化釘選狀態
     this.adaptToPageBackground();
     this.extractHeadings();
     this.setupEventListeners();
@@ -224,7 +225,56 @@ class SmartTOC {
             <span>珊瑚</span>
           </div>
         </div>
-        <div class="smart-toc-settings-panel">
+      </div>
+      <div class="smart-toc-content">
+        <div class="smart-toc-loading">Analyzing page structure...</div>
+      </div>
+      <!-- Resize handles -->
+      <div class="smart-toc-resize-handle corner top-left" data-direction="top-left"></div>
+      <div class="smart-toc-resize-handle edge top" data-direction="top"></div>
+      <div class="smart-toc-resize-handle corner top-right" data-direction="top-right"></div>
+      <div class="smart-toc-resize-handle edge right" data-direction="right"></div>
+      <div class="smart-toc-resize-handle corner bottom-right" data-direction="bottom-right"></div>
+      <div class="smart-toc-resize-handle edge bottom" data-direction="bottom"></div>
+      <div class="smart-toc-resize-handle corner bottom-left" data-direction="bottom-left"></div>
+      <div class="smart-toc-resize-handle edge left" data-direction="left"></div>
+    `;
+    
+    this.tocPanel.style.width = this.settings.tocWidth + 'px';
+    this.tocPanel.style.right = this.settings.tocPosition === 'right' ? '20px' : 'auto';
+    this.tocPanel.style.left = this.settings.tocPosition === 'left' ? '20px' : 'auto';
+    
+    // Apply font size to content area only
+    this.applyContentFontSize();
+    
+    document.body.appendChild(this.tocPanel);
+    this.tocPanel.style.display = 'none';
+    
+    // Create settings modal
+    this.createSettingsModal();
+    
+    // Update settings display with actual values
+    this.updateSettingsDisplay();
+    
+    // Update depth button display
+    this.updateDepthButtonDisplay();
+    
+    // Initialize button visibility
+    setTimeout(() => this.updateCollapseExpandButtons(), 0);
+  }
+
+  createSettingsModal() {
+    // Create settings modal container
+    this.settingsModal = document.createElement('div');
+    this.settingsModal.className = 'smart-toc-settings-modal';
+    this.settingsModal.innerHTML = `
+      <div class="smart-toc-settings-overlay"></div>
+      <div class="smart-toc-settings-dialog">
+        <div class="smart-toc-settings-header">
+          <h3 class="smart-toc-settings-title">Smart TOC 設定</h3>
+          <button class="smart-toc-settings-close" title="關閉設定">×</button>
+        </div>
+        <div class="smart-toc-settings-content">
           <div class="smart-toc-settings-item">
             <span class="smart-toc-settings-label">字體大小</span>
             <div class="smart-toc-font-controls">
@@ -265,38 +315,128 @@ class SmartTOC {
           </div>
         </div>
       </div>
-      <div class="smart-toc-content">
-        <div class="smart-toc-loading">Analyzing page structure...</div>
-      </div>
-      <!-- Resize handles -->
-      <div class="smart-toc-resize-handle corner top-left" data-direction="top-left"></div>
-      <div class="smart-toc-resize-handle edge top" data-direction="top"></div>
-      <div class="smart-toc-resize-handle corner top-right" data-direction="top-right"></div>
-      <div class="smart-toc-resize-handle edge right" data-direction="right"></div>
-      <div class="smart-toc-resize-handle corner bottom-right" data-direction="bottom-right"></div>
-      <div class="smart-toc-resize-handle edge bottom" data-direction="bottom"></div>
-      <div class="smart-toc-resize-handle corner bottom-left" data-direction="bottom-left"></div>
-      <div class="smart-toc-resize-handle edge left" data-direction="left"></div>
     `;
     
-    this.tocPanel.style.width = this.settings.tocWidth + 'px';
-    this.tocPanel.style.right = this.settings.tocPosition === 'right' ? '20px' : 'auto';
-    this.tocPanel.style.left = this.settings.tocPosition === 'left' ? '20px' : 'auto';
+    document.body.appendChild(this.settingsModal);
+    this.settingsModal.style.display = 'none';
     
-    // Apply font size to content area only
-    this.applyContentFontSize();
+    // Add event listeners for modal interactions
+    this.setupSettingsModalEvents();
+  }
+
+  setupSettingsModalEvents() {
+    if (!this.settingsModal) return;
     
-    document.body.appendChild(this.tocPanel);
-    this.tocPanel.style.display = 'none';
+    // Close button
+    const closeBtn = this.settingsModal.querySelector('.smart-toc-settings-close');
+    closeBtn.addEventListener('click', () => {
+      this.hideSettingsPanel();
+    });
     
-    // Update settings display with actual values
-    this.updateSettingsDisplay();
+    // Background overlay click
+    const overlay = this.settingsModal.querySelector('.smart-toc-settings-overlay');
+    overlay.addEventListener('click', () => {
+      this.hideSettingsPanel();
+    });
     
-    // Update depth button display
-    this.updateDepthButtonDisplay();
+    // ESC key to close (with higher priority)
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && this.settingsModal.classList.contains('show')) {
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+        this.hideSettingsPanel();
+      }
+    }, true); // Use capture phase for higher priority
     
-    // Initialize button visibility
-    setTimeout(() => this.updateCollapseExpandButtons(), 0);
+    // Prevent modal dialog click from closing
+    const dialog = this.settingsModal.querySelector('.smart-toc-settings-dialog');
+    dialog.addEventListener('click', (e) => {
+      e.stopPropagation();
+    });
+    
+    // Font size controls
+    const fontIncreaseBtn = this.settingsModal.querySelector('.smart-toc-font-increase');
+    if (fontIncreaseBtn) {
+      fontIncreaseBtn.addEventListener('click', () => this.changeFontSize(1));
+    }
+
+    const fontDecreaseBtn = this.settingsModal.querySelector('.smart-toc-font-decrease');
+    if (fontDecreaseBtn) {
+      fontDecreaseBtn.addEventListener('click', () => this.changeFontSize(-1));
+    }
+
+    // Highlight duration controls
+    const highlightIncreaseBtn = this.settingsModal.querySelector('.smart-toc-highlight-increase');
+    if (highlightIncreaseBtn) {
+      highlightIncreaseBtn.addEventListener('click', () => this.changeHighlightDuration(1));
+    }
+
+    const highlightDecreaseBtn = this.settingsModal.querySelector('.smart-toc-highlight-decrease');
+    if (highlightDecreaseBtn) {
+      highlightDecreaseBtn.addEventListener('click', () => this.changeHighlightDuration(-1));
+    }
+    
+    // Setup whitelist event listeners for modal
+    this.setupModalWhitelistEventListeners();
+  }
+
+  setupModalWhitelistEventListeners() {
+    if (!this.settingsModal) return;
+    
+    const whitelistToggle = this.settingsModal.querySelector('.smart-toc-whitelist-enabled');
+    const whitelistInput = this.settingsModal.querySelector('.smart-toc-whitelist-input');
+    const whitelistAddBtn = this.settingsModal.querySelector('.smart-toc-whitelist-add');
+    const addCurrentBtn = this.settingsModal.querySelector('.smart-toc-whitelist-add-current');
+    const resetBtn = this.settingsModal.querySelector('.smart-toc-whitelist-reset');
+    
+    if (whitelistToggle) {
+      whitelistToggle.addEventListener('change', () => {
+        this.toggleWhitelistEnabled();
+      });
+    }
+    
+    if (whitelistInput) {
+      whitelistInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          this.addDomainFromInput();
+        }
+      });
+    }
+    
+    if (whitelistAddBtn) {
+      whitelistAddBtn.addEventListener('click', () => {
+        this.addDomainFromInput();
+      });
+    }
+    
+    if (addCurrentBtn) {
+      addCurrentBtn.addEventListener('click', () => {
+        if (this.addCurrentDomainToWhitelist()) {
+          this.showNotification(`已新增 ${window.location.hostname} 到白名單`);
+          this.renderWhitelistItems();
+        } else {
+          this.showNotification(`${window.location.hostname} 已在白名單中`);
+        }
+      });
+    }
+    
+    if (resetBtn) {
+      resetBtn.addEventListener('click', () => {
+        this.resetWhitelistToDefault();
+        this.showNotification('白名單已重置為預設值');
+        this.renderWhitelistItems();
+      });
+    }
+    
+    // 初始化白名單顯示
+    this.updateWhitelistUI();
+    this.renderWhitelistItems();
+  }
+
+  // Helper method to get settings container (modal or legacy panel)
+  getSettingsContainer() {
+    return this.settingsModal || this.tocPanel;
   }
 
   extractHeadings() {
@@ -756,8 +896,11 @@ class SmartTOC {
 
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
-        // If search modal is open, close it first, otherwise hide TOC
-        if (this.searchModal && this.searchModal.classList.contains('show')) {
+        // Check priority: Settings Modal > Search Modal > TOC Panel
+        if (this.settingsModal && this.settingsModal.classList.contains('show')) {
+          // Settings modal will handle this with higher priority - do nothing
+          return;
+        } else if (this.searchModal && this.searchModal.classList.contains('show')) {
           this.hideSearchModal();
         } else if (this.isVisible) {
           this.hide();
@@ -885,21 +1028,49 @@ class SmartTOC {
   }
 
   toggleSettingsPanel() {
-    const settingsPanel = this.tocPanel.querySelector('.smart-toc-settings-panel');
-    if (settingsPanel) {
-      const isVisible = settingsPanel.style.display === 'block';
-      settingsPanel.style.display = isVisible ? 'none' : 'block';
-      console.log('Settings panel toggled:', isVisible ? 'hidden' : 'shown');
+    if (!this.settingsModal) {
+      console.error('Settings modal not found');
+      return;
+    }
+    
+    const isVisible = this.settingsModal.classList.contains('show');
+    if (isVisible) {
+      this.hideSettingsPanel();
     } else {
-      console.error('Settings panel not found');
+      this.showSettingsPanel();
     }
   }
 
+  showSettingsPanel() {
+    if (!this.settingsModal) return;
+    
+    // Prevent background scrolling
+    document.body.style.overflow = 'hidden';
+    
+    this.settingsModal.style.display = 'flex';
+    // Force reflow for animation
+    this.settingsModal.offsetHeight;
+    this.settingsModal.classList.add('show');
+    
+    console.log('Settings modal shown');
+  }
+
   hideSettingsPanel() {
-    const settingsPanel = this.tocPanel.querySelector('.smart-toc-settings-panel');
-    if (settingsPanel) {
-      settingsPanel.style.display = 'none';
-    }
+    if (!this.settingsModal) return;
+    
+    this.settingsModal.classList.remove('show');
+    
+    // Restore background scrolling
+    document.body.style.overflow = '';
+    
+    // Hide after animation
+    setTimeout(() => {
+      if (!this.settingsModal.classList.contains('show')) {
+        this.settingsModal.style.display = 'none';
+      }
+    }, 300);
+    
+    console.log('Settings modal hidden');
   }
 
   changeFontSize(delta) {
@@ -910,9 +1081,12 @@ class SmartTOC {
       // Apply font size only to content area, not the whole panel
       this.applyContentFontSize();
       
-      const display = this.tocPanel.querySelector('.smart-toc-font-size-display');
-      if (display) {
-        display.textContent = newSize + 'px';
+      // Update display in settings modal
+      if (this.settingsModal) {
+        const display = this.settingsModal.querySelector('.smart-toc-font-size-display');
+        if (display) {
+          display.textContent = newSize + 'px';
+        }
       }
       
       this.saveSettings();
@@ -924,8 +1098,13 @@ class SmartTOC {
     if (newDuration !== this.settings.highlightDuration) {
       this.settings.highlightDuration = newDuration;
       
-      const display = this.tocPanel.querySelector('.smart-toc-highlight-duration-display');
-      display.textContent = newDuration + 's';
+      // Update display in settings modal
+      if (this.settingsModal) {
+        const display = this.settingsModal.querySelector('.smart-toc-highlight-duration-display');
+        if (display) {
+          display.textContent = newDuration + 's';
+        }
+      }
       
       this.saveSettings();
     }
@@ -942,14 +1121,17 @@ class SmartTOC {
   }
 
   updateSettingsDisplay() {
-    const fontSizeDisplay = this.tocPanel.querySelector('.smart-toc-font-size-display');
-    const highlightDurationDisplay = this.tocPanel.querySelector('.smart-toc-highlight-duration-display');
-    
-    if (fontSizeDisplay) {
-      fontSizeDisplay.textContent = this.settings.fontSize + 'px';
-    }
-    if (highlightDurationDisplay) {
-      highlightDurationDisplay.textContent = this.settings.highlightDuration + 's';
+    // Update displays in settings modal if it exists
+    if (this.settingsModal) {
+      const fontSizeDisplay = this.settingsModal.querySelector('.smart-toc-font-size-display');
+      const highlightDurationDisplay = this.settingsModal.querySelector('.smart-toc-highlight-duration-display');
+      
+      if (fontSizeDisplay) {
+        fontSizeDisplay.textContent = this.settings.fontSize + 'px';
+      }
+      if (highlightDurationDisplay) {
+        highlightDurationDisplay.textContent = this.settings.highlightDuration + 's';
+      }
     }
     
     // Apply the current font size to content
@@ -1097,23 +1279,57 @@ class SmartTOC {
     localStorage.removeItem('smart-toc-notified-domains');
   }
 
+  // 清理白名單中的錯誤項目（完整 URL 等）
+  cleanupWhitelist() {
+    if (!this.settings.autoShowWhitelist) return;
+    
+    console.log('Before cleanup:', this.settings.autoShowWhitelist);
+    
+    const cleanWhitelist = this.settings.autoShowWhitelist.filter(item => {
+      // 移除包含路徑的完整 URL
+      if (item.includes('/') && !item.startsWith('*.')) {
+        console.log('Removing invalid URL:', item);
+        return false;
+      }
+      
+      // 移除過長的項目（可能是完整 URL）
+      if (item.length > 100) {
+        console.log('Removing too long item:', item.substring(0, 50) + '...');
+        return false;
+      }
+      
+      return true;
+    });
+    
+    // 如果有變化，保存設定
+    if (cleanWhitelist.length !== this.settings.autoShowWhitelist.length) {
+      this.settings.autoShowWhitelist = cleanWhitelist;
+      this.saveSettings();
+      console.log('After cleanup:', this.settings.autoShowWhitelist);
+    }
+  }
+
   isInWhitelist(domain) {
+    if (!domain) return false;
+    
+    // 清理域名格式
+    domain = domain.replace(/^https?:\/\//, '').replace(/\/.*$/, '').toLowerCase();
+    
     const whitelist = this.settings.autoShowWhitelist || [];
     
     return whitelist.some(pattern => {
-      // 移除協議前綴 (如果有)
-      pattern = pattern.replace(/^https?:\/\//, '');
-      domain = domain.replace(/^https?:\/\//, '');
+      // 移除協議前綴並轉為小寫
+      const cleanPattern = pattern.replace(/^https?:\/\//, '').toLowerCase();
       
       // 完全匹配
-      if (pattern === domain) {
+      if (cleanPattern === domain) {
         return true;
       }
       
       // 檢查是否包含萬用字元
-      if (pattern.includes('*')) {
+      if (cleanPattern.includes('*')) {
         // 將萬用字元模式轉換為正則表達式
-        const regexPattern = pattern
+        const regexPattern = cleanPattern
           .replace(/[.+?^${}()|[\]\\]/g, '\\$&') // 轉義正則特殊字符
           .replace(/\*/g, '.*'); // 將 * 轉換為 .*
         
@@ -1122,18 +1338,44 @@ class SmartTOC {
           return regex.test(domain);
         } catch (e) {
           // 如果正則表達式無效，回退到原始匹配
-          console.warn('Invalid wildcard pattern:', pattern, e);
+          console.warn('Invalid wildcard pattern:', cleanPattern, e);
           return false;
         }
       }
       
       // 子域名匹配 (example.com 也匹配 www.example.com)
-      if (domain.endsWith('.' + pattern)) {
+      if (domain.endsWith('.' + cleanPattern)) {
         return true;
       }
       
       return false;
     });
+  }
+
+  // 釘選功能專用：檢查域名是否精確存在於白名單中 [v2.0]
+  isExactlyInWhitelist(domain) {
+    console.log('🔍 Using NEW isExactlyInWhitelist method v2.0');
+    if (!domain) return false;
+    
+    // 清理域名格式
+    const cleanDomain = domain.replace(/^https?:\/\//, '').replace(/\/.*$/, '').toLowerCase();
+    console.log('🧹 Clean domain:', cleanDomain);
+    
+    const whitelist = this.settings.autoShowWhitelist || [];
+    console.log('📝 Checking against whitelist:', whitelist);
+    
+    const result = whitelist.some(pattern => {
+      // 移除協議前綴並轉為小寫
+      const cleanPattern = pattern.replace(/^https?:\/\//, '').toLowerCase();
+      const isMatch = cleanPattern === cleanDomain;
+      console.log(`🔍 Comparing "${cleanPattern}" === "${cleanDomain}": ${isMatch}`);
+      
+      // 只檢查完全匹配，不做子域名匹配
+      return isMatch;
+    });
+    
+    console.log('🎯 Final result:', result);
+    return result;
   }
 
   addToWhitelist(domain) {
@@ -1151,7 +1393,20 @@ class SmartTOC {
   }
 
   removeFromWhitelist(domain) {
-    const index = this.settings.autoShowWhitelist.indexOf(domain);
+    if (!domain) return false;
+    
+    // 清理域名格式，與 addToWhitelist 保持一致
+    domain = domain.replace(/^https?:\/\//, '').replace(/\/.*$/, '').toLowerCase();
+    
+    const whitelist = this.settings.autoShowWhitelist || [];
+    const index = whitelist.findIndex(pattern => {
+      // 移除協議前綴並轉為小寫
+      const cleanPattern = pattern.replace(/^https?:\/\//, '').toLowerCase();
+      
+      // 只做精確匹配
+      return cleanPattern === domain;
+    });
+    
     if (index > -1) {
       this.settings.autoShowWhitelist.splice(index, 1);
       this.saveSettings();
@@ -1239,7 +1494,8 @@ class SmartTOC {
   }
 
   addDomainFromInput() {
-    const input = this.tocPanel.querySelector('.smart-toc-whitelist-input');
+    const container = this.getSettingsContainer();
+    const input = container.querySelector('.smart-toc-whitelist-input');
     const domain = input.value.trim();
     
     if (!domain) {
@@ -1257,9 +1513,10 @@ class SmartTOC {
   }
 
   updateWhitelistUI() {
-    const toggle = this.tocPanel.querySelector('.smart-toc-whitelist-enabled');
-    const controls = this.tocPanel.querySelector('.smart-toc-whitelist-controls');
-    const list = this.tocPanel.querySelector('.smart-toc-whitelist-list');
+    const container = this.getSettingsContainer();
+    const toggle = container.querySelector('.smart-toc-whitelist-enabled');
+    const controls = container.querySelector('.smart-toc-whitelist-controls');
+    const list = container.querySelector('.smart-toc-whitelist-list');
 
     if (toggle) {
       toggle.checked = this.settings.whitelistEnabled;
@@ -1277,19 +1534,54 @@ class SmartTOC {
   }
 
   renderWhitelistItems() {
-    const listContainer = this.tocPanel.querySelector('.smart-toc-whitelist-list');
+    const container = this.getSettingsContainer();
+    const listContainer = container.querySelector('.smart-toc-whitelist-list');
     if (!listContainer) return;
 
     const whitelist = this.settings.autoShowWhitelist || [];
     
-    listContainer.innerHTML = whitelist.map(domain => `
-      <div class="smart-toc-whitelist-item">
-        <span class="smart-toc-whitelist-domain">${domain}</span>
-        <button class="smart-toc-whitelist-remove" data-domain="${domain}" title="移除">×</button>
+    listContainer.innerHTML = whitelist.map((domain, index) => `
+      <div class="smart-toc-whitelist-item" data-index="${index}">
+        <span class="smart-toc-whitelist-domain" data-original="${domain}">${domain}</span>
+        <input class="smart-toc-whitelist-input-edit" type="text" value="${domain}" style="display: none;">
+        <div class="smart-toc-whitelist-actions">
+          <button class="smart-toc-whitelist-edit" data-index="${index}" title="編輯">✏️</button>
+          <button class="smart-toc-whitelist-save" data-index="${index}" title="保存" style="display: none;">✓</button>
+          <button class="smart-toc-whitelist-cancel" data-index="${index}" title="取消" style="display: none;">✕</button>
+          <button class="smart-toc-whitelist-remove" data-domain="${domain}" title="移除">🗑️</button>
+        </div>
       </div>
     `).join('');
 
-    // 綁定移除按鈕事件
+    this.bindWhitelistItemEvents(listContainer);
+  }
+
+  bindWhitelistItemEvents(listContainer) {
+    // 編輯按鈕事件
+    listContainer.querySelectorAll('.smart-toc-whitelist-edit').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const index = parseInt(e.target.dataset.index);
+        this.startEditWhitelistItem(index);
+      });
+    });
+
+    // 保存按鈕事件
+    listContainer.querySelectorAll('.smart-toc-whitelist-save').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const index = parseInt(e.target.dataset.index);
+        this.saveWhitelistItemEdit(index);
+      });
+    });
+
+    // 取消按鈕事件
+    listContainer.querySelectorAll('.smart-toc-whitelist-cancel').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const index = parseInt(e.target.dataset.index);
+        this.cancelWhitelistItemEdit(index);
+      });
+    });
+
+    // 移除按鈕事件
     listContainer.querySelectorAll('.smart-toc-whitelist-remove').forEach(btn => {
       btn.addEventListener('click', (e) => {
         const domain = e.target.dataset.domain;
@@ -1299,6 +1591,104 @@ class SmartTOC {
         }
       });
     });
+
+    // 輸入框 Enter 鍵事件
+    listContainer.querySelectorAll('.smart-toc-whitelist-input-edit').forEach(input => {
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          const item = input.closest('.smart-toc-whitelist-item');
+          const index = parseInt(item.dataset.index);
+          this.saveWhitelistItemEdit(index);
+        } else if (e.key === 'Escape') {
+          const item = input.closest('.smart-toc-whitelist-item');
+          const index = parseInt(item.dataset.index);
+          this.cancelWhitelistItemEdit(index);
+        }
+      });
+    });
+  }
+
+  startEditWhitelistItem(index) {
+    const listContainer = this.tocPanel.querySelector('.smart-toc-whitelist-list');
+    const item = listContainer.querySelector(`[data-index="${index}"]`);
+    if (!item) return;
+
+    const domainSpan = item.querySelector('.smart-toc-whitelist-domain');
+    const inputEdit = item.querySelector('.smart-toc-whitelist-input-edit');
+    const editBtn = item.querySelector('.smart-toc-whitelist-edit');
+    const saveBtn = item.querySelector('.smart-toc-whitelist-save');
+    const cancelBtn = item.querySelector('.smart-toc-whitelist-cancel');
+
+    // 切換到編輯模式
+    domainSpan.style.display = 'none';
+    inputEdit.style.display = 'block';
+    editBtn.style.display = 'none';
+    saveBtn.style.display = 'inline-block';
+    cancelBtn.style.display = 'inline-block';
+
+    // 選中輸入框內容
+    inputEdit.focus();
+    inputEdit.select();
+  }
+
+  saveWhitelistItemEdit(index) {
+    const listContainer = this.tocPanel.querySelector('.smart-toc-whitelist-list');
+    const item = listContainer.querySelector(`[data-index="${index}"]`);
+    if (!item) return;
+
+    const domainSpan = item.querySelector('.smart-toc-whitelist-domain');
+    const inputEdit = item.querySelector('.smart-toc-whitelist-input-edit');
+    const originalDomain = domainSpan.dataset.original;
+    const newDomain = inputEdit.value.trim();
+
+    if (!newDomain) {
+      this.showNotification('網域名稱不能為空');
+      return;
+    }
+
+    if (newDomain === originalDomain) {
+      // 沒有變化，直接取消編輯
+      this.cancelWhitelistItemEdit(index);
+      return;
+    }
+
+    // 檢查新域名是否已存在
+    if (this.settings.autoShowWhitelist.includes(newDomain)) {
+      this.showNotification(`${newDomain} 已存在於白名單中`);
+      return;
+    }
+
+    // 更新白名單
+    this.settings.autoShowWhitelist[index] = newDomain;
+    this.saveSettings();
+
+    // 顯示成功提示
+    this.showNotification(`已將 ${originalDomain} 更新為 ${newDomain}`);
+
+    // 重新渲染
+    this.renderWhitelistItems();
+  }
+
+  cancelWhitelistItemEdit(index) {
+    const listContainer = this.tocPanel.querySelector('.smart-toc-whitelist-list');
+    const item = listContainer.querySelector(`[data-index="${index}"]`);
+    if (!item) return;
+
+    const domainSpan = item.querySelector('.smart-toc-whitelist-domain');
+    const inputEdit = item.querySelector('.smart-toc-whitelist-input-edit');
+    const editBtn = item.querySelector('.smart-toc-whitelist-edit');
+    const saveBtn = item.querySelector('.smart-toc-whitelist-save');
+    const cancelBtn = item.querySelector('.smart-toc-whitelist-cancel');
+
+    // 恢復原值
+    inputEdit.value = domainSpan.dataset.original;
+
+    // 切換回顯示模式
+    domainSpan.style.display = 'block';
+    inputEdit.style.display = 'none';
+    editBtn.style.display = 'inline-block';
+    saveBtn.style.display = 'none';
+    cancelBtn.style.display = 'none';
   }
 
   show() {
@@ -2612,22 +3002,47 @@ class SmartTOC {
     }
   }
 
-  // 釘選功能相關方法
+  // 釘選功能相關方法 - 將當前網址加入/移除自動啟動白名單 [v2.0]
   togglePin() {
-    this.isPinned = !this.isPinned;
+    console.log('🔥 Using NEW togglePin method v2.0');
+    const currentDomain = window.location.hostname;
+    const isExactlyInWhitelist = this.isExactlyInWhitelist(currentDomain);
+    
+    console.log('🎯 Toggle pin - Current domain:', currentDomain);
+    console.log('🔍 Is exactly in whitelist (NEW METHOD):', isExactlyInWhitelist);
+    console.log('📋 Current whitelist:', this.settings.autoShowWhitelist);
+    
+    if (isExactlyInWhitelist) {
+      const removed = this.removeFromWhitelist(currentDomain);
+      console.log('Remove result:', removed);
+      this.showNotification(`已從白名單移除 ${currentDomain}`);
+    } else {
+      const added = this.addToWhitelist(currentDomain);
+      console.log('Add result:', added);
+      this.showNotification(`已將 ${currentDomain} 加入白名單`);
+    }
+    
     this.updatePinState();
   }
 
   updatePinState() {
+    console.log('🔄 Using NEW updatePinState method v2.0');
     const pinBtn = this.tocPanel.querySelector('.smart-toc-pin');
-    if (this.isPinned) {
+    const currentDomain = window.location.hostname;
+    const isExactlyInWhitelist = this.isExactlyInWhitelist(currentDomain);
+    
+    console.log('🏠 Update pin state - Domain:', currentDomain);
+    console.log('✅ Is exactly in whitelist (NEW METHOD):', isExactlyInWhitelist);
+    console.log('🔘 Button element:', pinBtn);
+    
+    if (isExactlyInWhitelist) {
       pinBtn.classList.add('pinned');
-      this.tocPanel.classList.add('pinned');
-      pinBtn.title = '取消釘選';
+      pinBtn.title = `${currentDomain} 已在白名單中，點擊移除`;
+      console.log('Button set to pinned state');
     } else {
       pinBtn.classList.remove('pinned');
-      this.tocPanel.classList.remove('pinned');
-      pinBtn.title = '釘選面板';
+      pinBtn.title = `將 ${currentDomain} 加入自動啟動白名單`;
+      console.log('Button set to unpinned state');
     }
   }
 
@@ -2645,7 +3060,7 @@ class SmartTOC {
     }
   }
 
-  // 修改原本的拖曳功能以支援釘選狀態
+  // 拖曳功能
   makeDraggable() {
     const header = this.tocPanel.querySelector('.smart-toc-header');
     
@@ -2655,7 +3070,6 @@ class SmartTOC {
     
     header.addEventListener('mousedown', (e) => {
       if (e.target.tagName === 'BUTTON') return;
-      if (this.isPinned) return; // 釘選時不允許拖曳
       
       this.isDragging = true;
       this.tocPanel.classList.add('smart-toc-dragging');
@@ -2698,15 +3112,15 @@ class SmartTOC {
 }
 
 if (typeof window !== 'undefined') {
-  console.log('Smart TOC content script loaded');
+  console.log('🚀 Smart TOC content script loaded [v2.0 - Pin Fix]');
   
   // Prevent multiple initialization
   if (window.smartTOC) {
-    console.log('Smart TOC already exists, cleaning up...');
+    console.log('🔄 Smart TOC already exists, cleaning up...');
     window.smartTOC.destroy();
   }
   
-  console.log('Initializing Smart TOC...');
+  console.log('⚡ Initializing Smart TOC v2.0...');
   window.smartTOC = new SmartTOC();
-  console.log('Smart TOC initialized:', window.smartTOC);
+  console.log('✅ Smart TOC initialized:', window.smartTOC);
 }

@@ -660,21 +660,99 @@ body.smart-toc-glance-mode strong:hover {
   display: none;
 }
 
-/* Settings panel styles */
-.smart-toc-settings-panel {
-  position: absolute;
-  top: 100%;
-  right: 0;
-  width: 280px;
-  max-width: 90vw;
-  background: white;
-  border: 1px solid #e1e5e9;
-  border-radius: 6px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  padding: 12px;
-  z-index: 2147483647;
+/* Settings modal styles */
+.smart-toc-settings-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 2147483648;
   display: none;
-  max-height: 400px;
+  opacity: 0;
+  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.smart-toc-settings-modal.show {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 1;
+}
+
+.smart-toc-settings-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.smart-toc-settings-dialog {
+  position: relative;
+  width: 90%;
+  max-width: 600px;
+  max-height: 80vh;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+  transform: scale(0.9);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.smart-toc-settings-modal.show .smart-toc-settings-dialog {
+  transform: scale(1);
+}
+
+.smart-toc-settings-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-bottom: none;
+  color: white;
+}
+
+.smart-toc-settings-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.smart-toc-settings-close {
+  width: 32px;
+  height: 32px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: #ffffff;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(10px);
+}
+
+.smart-toc-settings-close:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: scale(1.05);
+}
+
+.smart-toc-settings-content {
+  padding: 24px;
+  max-height: calc(80vh - 120px);
   overflow-y: auto;
 }
 
@@ -682,8 +760,21 @@ body.smart-toc-glance-mode strong:hover {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 8px;
-  font-size: 13px;
+  margin-bottom: 16px;
+  padding: 20px 24px;
+  background: #ffffff;
+  border: 2px solid #e1e4e8;
+  border-radius: 12px;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.smart-toc-settings-item:hover {
+  background: #f8f9fa;
+  border-color: #667eea;
+  box-shadow: 0 4px 16px rgba(102, 126, 234, 0.15);
+  transform: translateY(-1px);
 }
 
 .smart-toc-settings-item:last-child {
@@ -691,8 +782,10 @@ body.smart-toc-glance-mode strong:hover {
 }
 
 .smart-toc-settings-label {
-  color: #24292f;
-  font-weight: 500;
+  color: #1a202c;
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: -0.025em;
 }
 
 .smart-toc-font-controls {
@@ -701,47 +794,58 @@ body.smart-toc-glance-mode strong:hover {
 }
 
 .smart-toc-font-btn {
-  width: 24px;
-  height: 24px;
-  border: 1px solid #d0d7de;
-  background: white;
-  border-radius: 3px;
+  width: 32px;
+  height: 32px;
+  border: 2px solid #667eea;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 8px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: bold;
-  color: #24292f;
+  color: #ffffff;
   transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(102, 126, 234, 0.3);
 }
 
 .smart-toc-font-btn:hover {
-  background: #f6f8fa;
-  border-color: #0969da;
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(102, 126, 234, 0.4);
+  background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
 }
 
-.smart-toc-font-size-display {
-  min-width: 32px;
+.smart-toc-font-size-display,
+.smart-toc-highlight-duration-display {
+  min-width: 60px;
   text-align: center;
-  font-size: 12px;
-  color: #656d76;
+  font-size: 16px;
+  font-weight: 700;
+  color: #1a202c;
+  background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 2px solid #e2e8f0;
+  margin: 0 8px;
 }
 
 /* Whitelist styles */
 .smart-toc-whitelist-section {
   flex-direction: column;
   align-items: stretch !important;
-  margin-bottom: 12px !important;
-  border-top: 1px solid #e1e5e9;
-  padding-top: 12px;
+  margin-bottom: 0 !important;
+  border-top: 3px solid #667eea;
+  padding-top: 20px;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+  border-radius: 0 0 12px 12px;
 }
 
 .smart-toc-whitelist-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
 }
 
 .smart-toc-whitelist-toggle {
@@ -859,20 +963,27 @@ body.smart-toc-glance-mode strong:hover {
 }
 
 .smart-toc-whitelist-list {
-  max-height: 120px;
+  max-height: 150px;
   overflow-y: auto;
-  border: 1px solid #e1e5e9;
-  border-radius: 3px;
-  background: #fafbfc;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  background: #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .smart-toc-whitelist-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 4px 6px;
-  border-bottom: 1px solid #e1e5e9;
-  font-size: 11px;
+  padding: 12px 16px;
+  border-bottom: 1px solid #f1f5f9;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.smart-toc-whitelist-item:hover {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.08) 100%);
+  transform: translateX(4px);
 }
 
 .smart-toc-whitelist-item:last-child {
@@ -880,7 +991,9 @@ body.smart-toc-glance-mode strong:hover {
 }
 
 .smart-toc-whitelist-domain {
-  color: #24292f;
+  color: #1a202c;
+  font-weight: 600;
+  font-size: 15px;
   word-break: break-all;
   flex: 1;
 }
@@ -1014,14 +1127,87 @@ body.smart-toc-glance-mode strong:hover {
     background: rgba(0, 122, 255, 0.2);
   }
 
-  /* Settings Panel */
-  .smart-toc-settings-panel {
-    background: #1c1c1e;
-    border-top: 1px solid #38383a;
+  /* Settings Modal */
+  .smart-toc-settings-dialog {
+    background: #1a202c;
+    border-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+  }
+
+  .smart-toc-settings-header {
+    background: linear-gradient(135deg, #4c51bf 0%, #553c9a 100%);
+  }
+
+  .smart-toc-settings-title {
+    color: #ffffff;
+  }
+
+  .smart-toc-settings-close {
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .smart-toc-settings-close:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.4);
+  }
+
+  .smart-toc-settings-item {
+    background: #2d3748;
+    border-color: #4a5568;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+
+  .smart-toc-settings-item:hover {
+    background: #374151;
+    border-color: #667eea;
+    box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);
   }
 
   .smart-toc-settings-label {
-    color: #ffffff;
+    color: #f7fafc;
+  }
+
+  .smart-toc-font-btn {
+    background: linear-gradient(135deg, #4c51bf 0%, #553c9a 100%);
+    border-color: #4c51bf;
+    box-shadow: 0 2px 4px rgba(76, 81, 191, 0.4);
+  }
+
+  .smart-toc-font-btn:hover {
+    background: linear-gradient(135deg, #3730a3 0%, #44337a 100%);
+    box-shadow: 0 4px 8px rgba(76, 81, 191, 0.5);
+  }
+
+  .smart-toc-font-size-display,
+  .smart-toc-highlight-duration-display {
+    color: #f7fafc;
+    background: linear-gradient(135deg, #374151 0%, #4a5568 100%);
+    border-color: #6b7280;
+  }
+
+  .smart-toc-whitelist-section {
+    background: linear-gradient(135deg, rgba(76, 81, 191, 0.1) 0%, rgba(85, 60, 154, 0.1) 100%);
+    border-top-color: #4c51bf;
+  }
+
+  .smart-toc-whitelist-list {
+    background: #2d3748;
+    border-color: #4a5568;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+
+  .smart-toc-whitelist-item {
+    border-bottom-color: #4a5568;
+  }
+
+  .smart-toc-whitelist-item:hover {
+    background: linear-gradient(135deg, rgba(76, 81, 191, 0.15) 0%, rgba(85, 60, 154, 0.15) 100%);
+  }
+
+  .smart-toc-whitelist-domain {
+    color: #f7fafc;
   }
 
   .smart-toc-font-btn {
@@ -1263,6 +1449,22 @@ body.smart-toc-glance-mode strong:hover {
   .smart-toc-theme-option.active {
     background: #1a365d;
   }
+
+  /* Whitelist editing dark mode */
+  .whitelist-item:hover {
+    background: rgba(0, 122, 255, 0.08);
+  }
+
+  .whitelist-item-text {
+    color: #ffffff;
+  }
+
+  .whitelist-item-text.editing {
+    background: #2c2c2e;
+    border-color: #007aff;
+    box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.15);
+    color: #ffffff;
+  }
 }
 
 /* ==================== THEME SYSTEM STYLES ==================== */
@@ -1485,14 +1687,6 @@ body.smart-toc-glance-mode strong:hover {
   background: rgba(9, 105, 218, 0.1);
 }
 
-/* 釘選狀態下的面板樣式 */
-.smart-toc-panel.pinned {
-  cursor: default !important;
-}
-
-.smart-toc-panel.pinned .smart-toc-header {
-  cursor: default !important;
-}
 
 /* 關閉按鈕位置調整 */
 .smart-toc-close {
@@ -1506,4 +1700,138 @@ body.smart-toc-glance-mode strong:hover {
 
 .smart-toc-pin {
   order: 1;
+}
+
+/* Whitelist editing styles */
+.whitelist-item {
+  display: flex;
+  align-items: center;
+  padding: 6px 8px;
+  gap: 10px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.whitelist-item:hover {
+  background: rgba(9, 105, 218, 0.04);
+}
+
+.whitelist-item-text {
+  flex: 1;
+  padding: 4px 8px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  font-size: 13px;
+  color: #24292f;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  transition: all 0.2s ease;
+}
+
+.whitelist-item-text.editing {
+  background: #ffffff;
+  border-color: #0969da;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(9, 105, 218, 0.1);
+}
+
+.whitelist-item-actions {
+  display: flex;
+  gap: 6px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(4px);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.whitelist-item:hover .whitelist-item-actions {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(0);
+}
+
+.whitelist-item-actions button {
+  position: relative;
+  padding: 0;
+  width: 20px;
+  height: 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 500;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.whitelist-item-actions button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.whitelist-item-actions button:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Edit button */
+.whitelist-item-actions .edit-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.whitelist-item-actions .edit-btn:hover {
+  background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+}
+
+/* Delete button */
+.whitelist-item-actions .delete-btn {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+  color: white;
+}
+
+.whitelist-item-actions .delete-btn:hover {
+  background: linear-gradient(135deg, #ff5252 0%, #d63031 100%);
+}
+
+/* Save button */
+.whitelist-item-actions .save-btn {
+  background: linear-gradient(135deg, #00b894 0%, #00a085 100%);
+  color: white;
+}
+
+.whitelist-item-actions .save-btn:hover {
+  background: linear-gradient(135deg, #00cec9 0%, #00b894 100%);
+}
+
+/* Cancel button */
+.whitelist-item-actions .cancel-btn {
+  background: linear-gradient(135deg, #636e72 0%, #2d3436 100%);
+  color: white;
+}
+
+.whitelist-item-actions .cancel-btn:hover {
+  background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+}
+
+/* Button icons using unicode symbols */
+.whitelist-item-actions .edit-btn::after {
+  content: "✏";
+}
+
+.whitelist-item-actions .delete-btn::after {
+  content: "✕";
+}
+
+.whitelist-item-actions .save-btn::after {
+  content: "✓";
+}
+
+.whitelist-item-actions .cancel-btn::after {
+  content: "↶";
 }
