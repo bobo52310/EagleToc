@@ -458,6 +458,9 @@
 .smart-toc-item {
   margin: 0;
   padding: 0;
+  position: relative;
+  display: flex;
+  align-items: center;
 }
 
 .smart-toc-link {
@@ -469,6 +472,49 @@
   transition: all 0.2s ease;
   word-wrap: break-word;
   overflow-wrap: break-word;
+  flex: 1;
+  padding-right: 40px; /* Space for copy button */
+}
+
+/* Copy link button */
+.smart-toc-copy-btn {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 12px;
+  padding: 4px 6px;
+  border-radius: 3px;
+  opacity: 0;
+  transition: all 0.2s ease;
+  color: #656d76;
+  min-width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+.smart-toc-item:hover .smart-toc-copy-btn {
+  opacity: 1;
+}
+
+.smart-toc-copy-btn:hover {
+  background: rgba(0, 0, 0, 0.1);
+  color: #24292f;
+  transform: translateY(-50%) scale(1.1);
+}
+
+.smart-toc-copy-btn.smart-toc-copy-success {
+  background: #28a745;
+  color: white;
+  opacity: 1;
+  font-size: 10px;
+  font-weight: 500;
 }
 
 .smart-toc-link:hover {
@@ -1369,6 +1415,21 @@ body.smart-toc-glance-mode strong:hover {
 
   .smart-toc-item.smart-toc-filtered {
     opacity: 0.5;
+  }
+
+  /* Copy button dark theme */
+  .smart-toc-copy-btn {
+    color: #8b949e;
+  }
+
+  .smart-toc-copy-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+  }
+
+  .smart-toc-copy-btn.smart-toc-copy-success {
+    background: #238636;
+    color: white;
   }
 
   /* Search Modal */

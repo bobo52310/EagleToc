@@ -729,7 +729,21 @@ class SmartTOC {
         this.scrollToHeading(heading);
       });
 
+      // Create copy link button
+      const copyBtn = document.createElement('button');
+      copyBtn.className = 'smart-toc-copy-btn';
+      copyBtn.innerHTML = '🔗';
+      copyBtn.title = '複製連結';
+      copyBtn.setAttribute('aria-label', '複製此標題的連結');
+      
+      copyBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        this.copyHeadingLink(heading, copyBtn);
+      });
+
       li.appendChild(a);
+      li.appendChild(copyBtn);
       ul.appendChild(li);
     });
 
@@ -749,6 +763,53 @@ class SmartTOC {
 
     this.setActiveHeading(heading.id);
     this.highlightElement(element);
+  }
+
+  copyHeadingLink(heading, button) {
+    const url = window.location.origin + window.location.pathname + '#' + heading.id;
+    
+    // Use modern clipboard API if available, fallback to older method
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(url).then(() => {
+        this.showCopyFeedback(button, '已複製!');
+      }).catch(() => {
+        this.fallbackCopyToClipboard(url, button);
+      });
+    } else {
+      this.fallbackCopyToClipboard(url, button);
+    }
+  }
+
+  fallbackCopyToClipboard(text, button) {
+    // Fallback method for older browsers or non-secure contexts
+    const textArea = document.createElement('textarea');
+    textArea.value = text;
+    textArea.style.position = 'fixed';
+    textArea.style.left = '-999999px';
+    textArea.style.top = '-999999px';
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    
+    try {
+      document.execCommand('copy');
+      this.showCopyFeedback(button, '已複製!');
+    } catch (err) {
+      this.showCopyFeedback(button, '複製失敗');
+    } finally {
+      document.body.removeChild(textArea);
+    }
+  }
+
+  showCopyFeedback(button, message) {
+    const originalText = button.innerHTML;
+    button.innerHTML = message;
+    button.classList.add('smart-toc-copy-success');
+    
+    setTimeout(() => {
+      button.innerHTML = originalText;
+      button.classList.remove('smart-toc-copy-success');
+    }, 1500);
   }
 
   highlightElement(element) {
