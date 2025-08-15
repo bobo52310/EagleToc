@@ -160,7 +160,7 @@ class SmartTOC {
         <div class="smart-toc-controls">
           <button class="smart-toc-toggle" title="收合/展開面板">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="12" height="12">
-              <path d="M8 3a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 3zm0 8a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 11zM3 8a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2A.5.5 0 0 1 3 8zm8 0a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2A.5.5 0 0 1 11 8z" fill="currentColor"/>
+              <path d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z" fill="currentColor"/>
             </svg>
           </button>
           <div class="smart-toc-depth-controls">
@@ -186,7 +186,11 @@ class SmartTOC {
           <div class="smart-toc-action-buttons">
             <button class="smart-toc-close" title="關閉">×</button>
             <div class="smart-toc-more-container">
-              <button class="smart-toc-more" title="更多選項">⋯</button>
+              <button class="smart-toc-more" title="更多選項">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="12" height="12">
+                  <path d="M8 9a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zM1.5 9a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zm13 0a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z" fill="currentColor"/>
+                </svg>
+              </button>
               <div class="smart-toc-more-menu">
                 <div class="smart-toc-more-option smart-toc-search-toggle" title="搜尋">
                   <span class="smart-toc-more-icon">🔍</span>
@@ -203,6 +207,10 @@ class SmartTOC {
                 <div class="smart-toc-more-option smart-toc-copy" title="複製">
                   <span class="smart-toc-more-icon">📋</span>
                   <span class="smart-toc-more-text">複製</span>
+                </div>
+                <div class="smart-toc-more-option smart-toc-pin" title="自動開啟/取消自動開啟">
+                  <span class="smart-toc-more-icon">📍</span>
+                  <span class="smart-toc-more-text">自動開啟</span>
                 </div>
               </div>
             </div>
@@ -942,6 +950,15 @@ class SmartTOC {
       this.copyToClipboard();
     });
 
+    const pinOption = this.tocPanel.querySelector('.smart-toc-more-option.smart-toc-pin');
+    pinOption.addEventListener('click', () => {
+      this.hideMoreMenu();
+      this.togglePin();
+    });
+
+    // 初始化釘選按鈕狀態
+    this.updatePinButtonState();
+
 
 
     const depthIncreaseBtn = this.tocPanel.querySelector('.smart-toc-depth-increase');
@@ -1087,7 +1104,18 @@ class SmartTOC {
 
   showNotification(message, duration = 2000, type = 'default') {
     // Remove any existing notification of the same type
-    const selector = type === 'auto-show' ? '.smart-toc-auto-notification' : '.smart-toc-notification';
+    let selector, className;
+    if (type === 'auto-show') {
+      selector = '.smart-toc-auto-notification';
+      className = 'smart-toc-auto-notification';
+    } else if (type === 'pin-action') {
+      selector = '.smart-toc-pin-notification';
+      className = 'smart-toc-pin-notification';
+    } else {
+      selector = '.smart-toc-notification';
+      className = 'smart-toc-notification';
+    }
+    
     const existingNotification = document.querySelector(selector);
     if (existingNotification) {
       existingNotification.remove();
@@ -1095,8 +1123,14 @@ class SmartTOC {
 
     // Create new notification
     const notification = document.createElement('div');
-    notification.className = type === 'auto-show' ? 'smart-toc-auto-notification' : 'smart-toc-notification';
-    notification.textContent = message;
+    notification.className = className;
+    
+    // For pin-action notifications, support multi-line text
+    if (type === 'pin-action') {
+      notification.innerHTML = message.replace(/\n/g, '<br>');
+    } else {
+      notification.textContent = message;
+    }
     document.body.appendChild(notification);
 
     // Show notification
@@ -1106,7 +1140,7 @@ class SmartTOC {
 
     // Hide and remove notification
     setTimeout(() => {
-      if (type === 'auto-show') {
+      if (type === 'auto-show' || type === 'pin-action') {
         notification.classList.add('fade-out');
       } else {
         notification.classList.remove('show');
@@ -3358,23 +3392,48 @@ class SmartTOC {
       success = await this.removeFromWhitelist(currentDomain);
       console.log('Remove result:', success);
       if (success) {
-        this.showNotification(`已從白名單移除 ${currentDomain}`);
+        this.showNotification(`已取消自動開啟\n${currentDomain} 將不會自動顯示 Smart TOC`, 4000, 'pin-action');
       } else {
-        this.showNotification(`移除失敗，請稍後再試`);
+        this.showNotification(`取消失敗，請稍後再試`);
       }
     } else {
       success = await this.addToWhitelist(currentDomain);
       console.log('Add result:', success);
       if (success) {
-        this.showNotification(`已將 ${currentDomain} 加入白名單`);
+        this.showNotification(`已設定自動開啟\n下次訪問 ${currentDomain} 將自動顯示 Smart TOC`, 4000, 'pin-action');
       } else {
-        this.showNotification(`加入失敗，請稍後再試`);
+        this.showNotification(`設定失敗，請稍後再試`);
       }
     }
     
     if (success) {
       // 重新檢查自動顯示條件，可能需要取消或啟動自動顯示
       this.recheckAutoShowConditions();
+      // 更新釘選按鈕狀態
+      this.updatePinButtonState();
+    }
+  }
+
+  // 更新釘選按鈕的顯示狀態
+  updatePinButtonState() {
+    const pinOption = this.tocPanel.querySelector('.smart-toc-more-option.smart-toc-pin');
+    if (!pinOption) return;
+    
+    const currentDomain = window.location.hostname;
+    const isExactlyInWhitelist = this.isExactlyInWhitelist(currentDomain);
+    const iconElement = pinOption.querySelector('.smart-toc-more-icon');
+    const textElement = pinOption.querySelector('.smart-toc-more-text');
+    
+    if (isExactlyInWhitelist) {
+      iconElement.textContent = '📌';
+      textElement.textContent = '取消自動開啟';
+      pinOption.title = '取消自動開啟 Smart TOC';
+      pinOption.style.color = '#d73a49';
+    } else {
+      iconElement.textContent = '📍';
+      textElement.textContent = '自動開啟';
+      pinOption.title = '下次自動開啟 Smart TOC';
+      pinOption.style.color = '';
     }
   }
 
