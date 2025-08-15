@@ -4,6 +4,7 @@ class SmartTOC {
     this.headings = [];
     this.isVisible = false;
     this.wasAutoShown = false; // 標記是否為自動顯示
+    this.autoShowTimeout = null; // 儲存自動顯示的 setTimeout ID
     this.isCollapsed = false;
     this.currentHeading = null;
     this.intersectionObserver = null;
@@ -89,7 +90,6 @@ class SmartTOC {
       tocPosition: 'right',
       tocWidth: 300,
       enableLocalFiles: false,
-      autoShow: false,
       autoShowMinHeadings: 2,
       autoShowDelay: 500,
       fontSize: 16,
@@ -109,12 +109,16 @@ class SmartTOC {
         'vuejs.org'
       ]
     };
-    this.init();
+    
+    // 啟動初始化（不需要等待完成）
+    this.init().catch(error => {
+      console.error('Smart TOC initialization failed:', error);
+    });
   }
 
   async init() {
     await this.loadSettings();
-    this.cleanupWhitelist(); // 清理白名單中的錯誤項目
+    await this.cleanupWhitelist(); // 清理白名單中的錯誤項目
     this.createTOCPanel();
     this.updatePinState(); // 初始化釘選狀態
     this.adaptToPageBackground();
@@ -358,23 +362,23 @@ class SmartTOC {
     // Font size controls
     const fontIncreaseBtn = this.settingsModal.querySelector('.smart-toc-font-increase');
     if (fontIncreaseBtn) {
-      fontIncreaseBtn.addEventListener('click', () => this.changeFontSize(1));
+      fontIncreaseBtn.addEventListener('click', async () => await this.changeFontSize(1));
     }
 
     const fontDecreaseBtn = this.settingsModal.querySelector('.smart-toc-font-decrease');
     if (fontDecreaseBtn) {
-      fontDecreaseBtn.addEventListener('click', () => this.changeFontSize(-1));
+      fontDecreaseBtn.addEventListener('click', async () => await this.changeFontSize(-1));
     }
 
     // Highlight duration controls
     const highlightIncreaseBtn = this.settingsModal.querySelector('.smart-toc-highlight-increase');
     if (highlightIncreaseBtn) {
-      highlightIncreaseBtn.addEventListener('click', () => this.changeHighlightDuration(1));
+      highlightIncreaseBtn.addEventListener('click', async () => await this.changeHighlightDuration(1));
     }
 
     const highlightDecreaseBtn = this.settingsModal.querySelector('.smart-toc-highlight-decrease');
     if (highlightDecreaseBtn) {
-      highlightDecreaseBtn.addEventListener('click', () => this.changeHighlightDuration(-1));
+      highlightDecreaseBtn.addEventListener('click', async () => await this.changeHighlightDuration(-1));
     }
     
     // Setup whitelist event listeners for modal
@@ -391,28 +395,28 @@ class SmartTOC {
     const resetBtn = this.settingsModal.querySelector('.smart-toc-whitelist-reset');
     
     if (whitelistToggle) {
-      whitelistToggle.addEventListener('change', () => {
-        this.toggleWhitelistEnabled();
+      whitelistToggle.addEventListener('change', async () => {
+        await this.toggleWhitelistEnabled();
       });
     }
     
     if (whitelistInput) {
-      whitelistInput.addEventListener('keydown', (e) => {
+      whitelistInput.addEventListener('keydown', async (e) => {
         if (e.key === 'Enter') {
-          this.addDomainFromInput();
+          await this.addDomainFromInput();
         }
       });
     }
     
     if (whitelistAddBtn) {
-      whitelistAddBtn.addEventListener('click', () => {
-        this.addDomainFromInput();
+      whitelistAddBtn.addEventListener('click', async () => {
+        await this.addDomainFromInput();
       });
     }
     
     if (addCurrentBtn) {
-      addCurrentBtn.addEventListener('click', () => {
-        if (this.addCurrentDomainToWhitelist()) {
+      addCurrentBtn.addEventListener('click', async () => {
+        if (await this.addCurrentDomainToWhitelist()) {
           this.showNotification(`已新增 ${window.location.hostname} 到白名單`);
           this.renderWhitelistItems();
         } else {
@@ -422,8 +426,8 @@ class SmartTOC {
     }
     
     if (resetBtn) {
-      resetBtn.addEventListener('click', () => {
-        this.resetWhitelistToDefault();
+      resetBtn.addEventListener('click', async () => {
+        await this.resetWhitelistToDefault();
         this.showNotification('白名單已重置為預設值');
         this.renderWhitelistItems();
       });
@@ -503,10 +507,55 @@ class SmartTOC {
   }
 
   checkAutoShow() {
-    if (this.settings.autoShow && 
-        this.headings.length >= this.settings.autoShowMinHeadings) {
-      setTimeout(() => this.autoShowTOC(), this.settings.autoShowDelay);
+    console.log('🔍 Checking auto show conditions...');
+    
+    // 檢查是否滿足基本條件（標題數量）
+    const hasEnoughHeadings = this.headings.length >= this.settings.autoShowMinHeadings;
+    console.log(`📊 Headings count: ${this.headings.length}, Min required: ${this.settings.autoShowMinHeadings}, Enough: ${hasEnoughHeadings}`);
+    
+    if (!hasEnoughHeadings) {
+      console.log('❌ Not enough headings for auto show');
+      return;
     }
+    
+    // 檢查是否應該自動顯示
+    const shouldShow = this.shouldAutoShowBySettings();
+    console.log(`⚙️ Should auto show: ${shouldShow}`);
+    
+    if (shouldShow) {
+      console.log(`⏰ Scheduling auto show in ${this.settings.autoShowDelay}ms`);
+      // 取消之前的自動顯示排程（如果有的話）
+      if (this.autoShowTimeout) {
+        clearTimeout(this.autoShowTimeout);
+        console.log('🗑️ Cancelled previous auto show timeout');
+      }
+      this.autoShowTimeout = setTimeout(() => {
+        this.autoShowTOC();
+        this.autoShowTimeout = null; // 清除 timeout ID
+      }, this.settings.autoShowDelay);
+    } else {
+      console.log('❌ Auto show conditions not met');
+      // 如果條件不滿足，取消任何待處理的自動顯示
+      if (this.autoShowTimeout) {
+        clearTimeout(this.autoShowTimeout);
+        this.autoShowTimeout = null;
+        console.log('🗑️ Cancelled auto show timeout due to unmet conditions');
+      }
+    }
+  }
+
+  shouldAutoShowBySettings() {
+    const currentDomain = window.location.hostname;
+    console.log(`🌐 Checking auto show for domain: ${currentDomain} (純白名單系統)`);
+    
+    // 純白名單系統：只檢查當前網站是否在白名單中
+    if (this.settings.whitelistEnabled && this.isInWhitelist(currentDomain)) {
+      console.log('✅ Domain is in whitelist, enabling auto show');
+      return true;
+    }
+    
+    console.log('❌ Domain not in whitelist, auto show disabled');
+    return false;
   }
 
   findMainContent() {
@@ -777,14 +826,6 @@ class SmartTOC {
         sendResponse({ success: true, isVisible: this.isVisible });
       } else if (request.action === 'get-status') {
         sendResponse({ isVisible: this.isVisible });
-      } else if (request.action === 'get-disabled-domains') {
-        sendResponse({ disabledDomains: this.getAutoShowDisabledDomains() });
-      } else if (request.action === 'remove-disabled-domain') {
-        this.removeDomainFromDisabledList(request.domain);
-        sendResponse({ success: true });
-      } else if (request.action === 'clear-disabled-domains') {
-        this.clearAllDisabledDomains();
-        sendResponse({ success: true });
       }
       return true; // Important for async response
     });
@@ -854,34 +895,34 @@ class SmartTOC {
     const depthIncreaseBtn = this.tocPanel.querySelector('.smart-toc-depth-increase');
     const depthDecreaseBtn = this.tocPanel.querySelector('.smart-toc-depth-decrease');
     
-    depthIncreaseBtn.addEventListener('click', () => {
+    depthIncreaseBtn.addEventListener('click', async () => {
       this.hideSettingsPanel();
-      this.increaseHeadingDepth();
+      await this.increaseHeadingDepth();
     });
-    depthDecreaseBtn.addEventListener('click', () => {
+    depthDecreaseBtn.addEventListener('click', async () => {
       this.hideSettingsPanel();
-      this.decreaseHeadingDepth();
+      await this.decreaseHeadingDepth();
     });
 
 
     const fontIncreaseBtn = this.tocPanel.querySelector('.smart-toc-font-increase');
     if (fontIncreaseBtn) {
-      fontIncreaseBtn.addEventListener('click', () => this.changeFontSize(1));
+      fontIncreaseBtn.addEventListener('click', async () => await this.changeFontSize(1));
     }
 
     const fontDecreaseBtn = this.tocPanel.querySelector('.smart-toc-font-decrease');
     if (fontDecreaseBtn) {
-      fontDecreaseBtn.addEventListener('click', () => this.changeFontSize(-1));
+      fontDecreaseBtn.addEventListener('click', async () => await this.changeFontSize(-1));
     }
 
     const highlightIncreaseBtn = this.tocPanel.querySelector('.smart-toc-highlight-increase');
     if (highlightIncreaseBtn) {
-      highlightIncreaseBtn.addEventListener('click', () => this.changeHighlightDuration(1));
+      highlightIncreaseBtn.addEventListener('click', async () => await this.changeHighlightDuration(1));
     }
 
     const highlightDecreaseBtn = this.tocPanel.querySelector('.smart-toc-highlight-decrease');
     if (highlightDecreaseBtn) {
-      highlightDecreaseBtn.addEventListener('click', () => this.changeHighlightDuration(-1));
+      highlightDecreaseBtn.addEventListener('click', async () => await this.changeHighlightDuration(-1));
     }
 
     // 白名單相關事件監聽器
@@ -1073,7 +1114,7 @@ class SmartTOC {
     console.log('Settings modal hidden');
   }
 
-  changeFontSize(delta) {
+  async changeFontSize(delta) {
     const newSize = Math.max(12, Math.min(24, this.settings.fontSize + delta));
     if (newSize !== this.settings.fontSize) {
       this.settings.fontSize = newSize;
@@ -1089,11 +1130,11 @@ class SmartTOC {
         }
       }
       
-      this.saveSettings();
+      await this.saveSettings();
     }
   }
 
-  changeHighlightDuration(delta) {
+  async changeHighlightDuration(delta) {
     const newDuration = Math.max(1, Math.min(15, this.settings.highlightDuration + delta));
     if (newDuration !== this.settings.highlightDuration) {
       this.settings.highlightDuration = newDuration;
@@ -1106,7 +1147,7 @@ class SmartTOC {
         }
       }
       
-      this.saveSettings();
+      await this.saveSettings();
     }
   }
 
@@ -1138,23 +1179,23 @@ class SmartTOC {
     this.applyContentFontSize();
   }
 
-  increaseHeadingDepth() {
+  async increaseHeadingDepth() {
     if (this.settings.maxHeadingLevels < 6) {
       this.settings.maxHeadingLevels++;
       this.updateDepthControls();
       this.updateHeadingVisibility();
       this.renderTOC();
-      this.saveSettings();
+      await this.saveSettings();
     }
   }
 
-  decreaseHeadingDepth() {
+  async decreaseHeadingDepth() {
     if (this.settings.maxHeadingLevels > 1) {
       this.settings.maxHeadingLevels--;
       this.updateDepthControls();
       this.updateHeadingVisibility();
       this.renderTOC();
-      this.saveSettings();
+      await this.saveSettings();
     }
   }
 
@@ -1190,12 +1231,126 @@ class SmartTOC {
     this.updateDepthControls();
   }
 
-  async saveSettings() {
+  async saveSettings(retryCount = 0) {
+    const maxRetries = 3;
+    console.log(`💾 Attempting to save settings (attempt ${retryCount + 1}/${maxRetries + 1}):`, this.settings);
+    
     if (typeof chrome !== 'undefined' && chrome.runtime) {
-      chrome.runtime.sendMessage({ 
-        action: 'save-settings', 
-        settings: this.settings 
+      try {
+        const response = await new Promise((resolve, reject) => {
+          console.log('📤 Sending save-settings message to background script');
+          chrome.runtime.sendMessage({ 
+            action: 'save-settings', 
+            settings: this.settings 
+          }, (response) => {
+            console.log('📥 Received response from background script:', response);
+            if (chrome.runtime.lastError) {
+              console.error('🚨 Chrome runtime error:', chrome.runtime.lastError);
+              reject(chrome.runtime.lastError);
+            } else {
+              resolve(response);
+            }
+          });
+        });
+        
+        if (response && response.success) {
+          console.log('✅ Settings saved successfully');
+          return true;
+        } else {
+          console.error('❌ Failed to save settings - Background script returned:', response);
+          
+          // 檢查是否是大小限制問題
+          if (response && response.error && response.error.includes('storage limits')) {
+            console.log('🔄 Storage limit exceeded, trying optimized whitelist save...');
+            return await this.saveWhitelistSeparately(retryCount);
+          }
+          
+          // 如果不是大小問題且還有重試次數，則重試
+          if (retryCount < maxRetries) {
+            console.log(`🔄 Retrying save settings in 1 second... (${retryCount + 1}/${maxRetries})`);
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            return await this.saveSettings(retryCount + 1);
+          }
+          
+          return false;
+        }
+      } catch (error) {
+        console.error('❌ Error saving settings - Exception caught:', error);
+        
+        // 重試機制
+        if (retryCount < maxRetries) {
+          console.log(`🔄 Retrying save settings after error in 1 second... (${retryCount + 1}/${maxRetries})`);
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          return await this.saveSettings(retryCount + 1);
+        }
+        
+        return false;
+      }
+    } else {
+      console.error('❌ Chrome runtime not available for saving settings');
+      return false;
+    }
+  }
+
+  async saveWhitelistSeparately(retryCount = 0) {
+    const maxRetries = 3;
+    console.log(`🗂️ Attempting to save whitelist separately (attempt ${retryCount + 1}/${maxRetries + 1})`);
+    
+    try {
+      // 先儲存非白名單設定
+      const { autoShowWhitelist, ...settingsWithoutWhitelist } = this.settings;
+      
+      const settingsResponse = await new Promise((resolve, reject) => {
+        chrome.runtime.sendMessage({ 
+          action: 'save-settings', 
+          settings: settingsWithoutWhitelist 
+        }, (response) => {
+          if (chrome.runtime.lastError) {
+            reject(chrome.runtime.lastError);
+          } else {
+            resolve(response);
+          }
+        });
       });
+      
+      if (!settingsResponse || !settingsResponse.success) {
+        throw new Error('Failed to save settings without whitelist');
+      }
+      
+      // 再單獨儲存白名單
+      if (autoShowWhitelist) {
+        const whitelistResponse = await new Promise((resolve, reject) => {
+          chrome.runtime.sendMessage({ 
+            action: 'save-whitelist', 
+            whitelist: autoShowWhitelist 
+          }, (response) => {
+            if (chrome.runtime.lastError) {
+              reject(chrome.runtime.lastError);
+            } else {
+              resolve(response);
+            }
+          });
+        });
+        
+        if (!whitelistResponse || !whitelistResponse.success) {
+          throw new Error('Failed to save whitelist separately');
+        }
+      }
+      
+      console.log('✅ Settings and whitelist saved successfully (separately)');
+      return true;
+      
+    } catch (error) {
+      console.error('❌ Error saving settings separately:', error);
+      
+      // 重試機制
+      if (retryCount < maxRetries) {
+        console.log(`🔄 Retrying separate save in 1 second... (${retryCount + 1}/${maxRetries})`);
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        return await this.saveWhitelistSeparately(retryCount + 1);
+      }
+      
+      return false;
     }
   }
 
@@ -1210,42 +1365,15 @@ class SmartTOC {
 
   shouldAutoShow() {
     const currentDomain = window.location.hostname;
+    console.log(`🔍 shouldAutoShow: Checking domain ${currentDomain}`);
     
-    // 如果啟用白名單，先檢查是否在白名單中
-    if (this.settings.whitelistEnabled) {
-      if (!this.isInWhitelist(currentDomain)) {
-        return false;
-      }
-    }
+    // 簡化邏輯：只使用白名單機制，不再使用黑名單
+    const enabledBySettings = this.shouldAutoShowBySettings();
+    console.log(`⚙️ shouldAutoShow: Enabled by settings: ${enabledBySettings}`);
     
-    // 檢查當前域名是否在黑名單中
-    const autoShowDisabledDomains = this.getAutoShowDisabledDomains();
-    if (autoShowDisabledDomains.includes(currentDomain)) {
-      return false;
-    }
-    
-    return true;
+    return enabledBySettings;
   }
 
-  getAutoShowDisabledDomains() {
-    // 從 localStorage 獲取被用戶手動關閉過的域名
-    try {
-      const stored = localStorage.getItem('smart-toc-disabled-domains');
-      return stored ? JSON.parse(stored) : [];
-    } catch {
-      return [];
-    }
-  }
-
-  disableAutoShowForCurrentDomain() {
-    const currentDomain = window.location.hostname;
-    const disabledDomains = this.getAutoShowDisabledDomains();
-    
-    if (!disabledDomains.includes(currentDomain)) {
-      disabledDomains.push(currentDomain);
-      localStorage.setItem('smart-toc-disabled-domains', JSON.stringify(disabledDomains));
-    }
-  }
 
   showAutoDisplayNotification() {
     // 只有在用戶首次在此域名看到自動顯示時才顯示通知
@@ -1268,19 +1396,9 @@ class SmartTOC {
     }
   }
 
-  removeDomainFromDisabledList(domain) {
-    const disabledDomains = this.getAutoShowDisabledDomains();
-    const filteredDomains = disabledDomains.filter(d => d !== domain);
-    localStorage.setItem('smart-toc-disabled-domains', JSON.stringify(filteredDomains));
-  }
-
-  clearAllDisabledDomains() {
-    localStorage.removeItem('smart-toc-disabled-domains');
-    localStorage.removeItem('smart-toc-notified-domains');
-  }
 
   // 清理白名單中的錯誤項目（完整 URL 等）
-  cleanupWhitelist() {
+  async cleanupWhitelist() {
     if (!this.settings.autoShowWhitelist) return;
     
     console.log('Before cleanup:', this.settings.autoShowWhitelist);
@@ -1304,7 +1422,7 @@ class SmartTOC {
     // 如果有變化，保存設定
     if (cleanWhitelist.length !== this.settings.autoShowWhitelist.length) {
       this.settings.autoShowWhitelist = cleanWhitelist;
-      this.saveSettings();
+      await this.saveSettings();
       console.log('After cleanup:', this.settings.autoShowWhitelist);
     }
   }
@@ -1378,25 +1496,183 @@ class SmartTOC {
     return result;
   }
 
-  addToWhitelist(domain) {
-    if (!domain) return false;
-    
-    // 清理域名
-    domain = domain.replace(/^https?:\/\//, '').replace(/\/.*$/, '').toLowerCase();
-    
-    if (!this.isInWhitelist(domain)) {
-      this.settings.autoShowWhitelist.push(domain);
-      this.saveSettings();
-      return true;
+  // 驗證域名格式是否有效
+  isValidDomain(domain) {
+    if (!domain || typeof domain !== 'string') {
+      return false;
     }
-    return false;
+    
+    // 基本域名格式檢查
+    const domainRegex = /^[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+    
+    // 檢查長度限制
+    if (domain.length > 253) {
+      return false;
+    }
+    
+    // 檢查基本格式
+    if (!domainRegex.test(domain)) {
+      return false;
+    }
+    
+    // 檢查是否包含有效的頂級域名
+    const parts = domain.split('.');
+    if (parts.length < 2) {
+      return false;
+    }
+    
+    // 最後一部分應該是有效的 TLD（至少 2 個字符）
+    const tld = parts[parts.length - 1];
+    if (tld.length < 2) {
+      return false;
+    }
+    
+    return true;
   }
 
-  removeFromWhitelist(domain) {
+  // 檢查域名是否在排除列表中（用戶明確 unpin 的域名）
+  isInExcludedList(domain) {
     if (!domain) return false;
     
-    // 清理域名格式，與 addToWhitelist 保持一致
+    // 清理域名格式
     domain = domain.replace(/^https?:\/\//, '').replace(/\/.*$/, '').toLowerCase();
+    
+    const excludedList = this.settings.excludedDomains || [];
+    console.log(`🚫 Checking excluded list for domain: ${domain}`);
+    console.log(`📝 Excluded domains:`, excludedList);
+    
+    return excludedList.includes(domain);
+  }
+
+  // 添加域名到排除列表
+  addToExcludedList(domain) {
+    if (!domain) return;
+    
+    // 清理域名格式
+    domain = domain.replace(/^https?:\/\//, '').replace(/\/.*$/, '').toLowerCase();
+    
+    if (!this.settings.excludedDomains) {
+      this.settings.excludedDomains = [];
+    }
+    
+    // 避免重複添加
+    if (!this.settings.excludedDomains.includes(domain)) {
+      this.settings.excludedDomains.push(domain);
+      console.log(`🚫 Added ${domain} to excluded list`);
+    }
+  }
+
+  // 從排除列表移除域名
+  removeFromExcludedList(domain) {
+    if (!domain) return;
+    
+    // 清理域名格式
+    domain = domain.replace(/^https?:\/\//, '').replace(/\/.*$/, '').toLowerCase();
+    
+    if (!this.settings.excludedDomains) {
+      this.settings.excludedDomains = [];
+      return;
+    }
+    
+    const index = this.settings.excludedDomains.indexOf(domain);
+    if (index !== -1) {
+      this.settings.excludedDomains.splice(index, 1);
+      console.log(`✅ Removed ${domain} from excluded list`);
+    }
+  }
+
+  // 獲取白名單儲存大小信息
+  getWhitelistStorageInfo() {
+    const whitelist = this.settings.autoShowWhitelist || [];
+    const size = JSON.stringify(whitelist).length;
+    const itemCount = whitelist.length;
+    
+    return {
+      size,
+      itemCount,
+      sizeKB: (size / 1024).toFixed(2),
+      percentOfLimit: ((size / 8192) * 100).toFixed(1),
+      canAddMore: size < 6000
+    };
+  }
+
+  async addToWhitelist(domain, retryCount = 0) {
+    const maxRetries = 2;
+    
+    if (!domain) {
+      console.warn('🚨 addToWhitelist: No domain provided');
+      return false;
+    }
+    
+    // 清理域名
+    const originalDomain = domain;
+    domain = domain.replace(/^https?:\/\//, '').replace(/\/.*$/, '').toLowerCase();
+    console.log(`🌍 addToWhitelist: Original domain: ${originalDomain} -> Clean domain: ${domain} (attempt ${retryCount + 1}/${maxRetries + 1})`);
+    
+    // 檢查域名是否已存在
+    if (this.isInWhitelist(domain)) {
+      console.log('ℹ️  addToWhitelist: Domain already in whitelist');
+      return false;
+    }
+    
+    // 驗證域名格式
+    if (!this.isValidDomain(domain)) {
+      console.error('❌ addToWhitelist: Invalid domain format:', domain);
+      return false;
+    }
+    
+    // 檢查白名單大小限制
+    const currentSize = JSON.stringify(this.settings.autoShowWhitelist).length;
+    const estimatedNewSize = currentSize + domain.length + 10; // 加一些緩衝
+    if (estimatedNewSize > 6000) { // 保留安全邊際
+      console.error('❌ addToWhitelist: Whitelist too large, cannot add more domains');
+      return false;
+    }
+    
+    // 添加到本地設定
+    const originalWhitelist = [...this.settings.autoShowWhitelist];
+    this.settings.autoShowWhitelist.push(domain);
+    console.log('📝 addToWhitelist: Added to local settings, saving...');
+    
+    try {
+      const success = await this.saveSettings();
+      
+      if (success) {
+        console.log('✅ addToWhitelist: Successfully added and saved');
+        return true;
+      } else {
+        throw new Error('Save settings returned false');
+      }
+    } catch (error) {
+      console.error('❌ addToWhitelist: Save failed:', error);
+      
+      // 回滾本地更改
+      this.settings.autoShowWhitelist = originalWhitelist;
+      console.log('🔄 Rolled back whitelist to original state');
+      
+      // 重試機制
+      if (retryCount < maxRetries) {
+        console.log(`🔄 Retrying addToWhitelist in 1 second... (${retryCount + 1}/${maxRetries})`);
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        return await this.addToWhitelist(originalDomain, retryCount + 1);
+      }
+      
+      return false;
+    }
+  }
+
+  async removeFromWhitelist(domain, retryCount = 0) {
+    const maxRetries = 2;
+    
+    if (!domain) {
+      console.warn('🚨 removeFromWhitelist: No domain provided');
+      return false;
+    }
+    
+    // 清理域名格式，與 addToWhitelist 保持一致
+    const originalDomain = domain;
+    domain = domain.replace(/^https?:\/\//, '').replace(/\/.*$/, '').toLowerCase();
+    console.log(`🌍 removeFromWhitelist: Original domain: ${originalDomain} -> Clean domain: ${domain} (attempt ${retryCount + 1}/${maxRetries + 1})`);
     
     const whitelist = this.settings.autoShowWhitelist || [];
     const index = whitelist.findIndex(pattern => {
@@ -1407,20 +1683,52 @@ class SmartTOC {
       return cleanPattern === domain;
     });
     
-    if (index > -1) {
-      this.settings.autoShowWhitelist.splice(index, 1);
-      this.saveSettings();
-      return true;
+    if (index === -1) {
+      console.log('ℹ️  removeFromWhitelist: Domain not found in whitelist');
+      return false;
     }
-    return false;
+    
+    // 保存原始白名單以便回滾
+    const originalWhitelist = [...this.settings.autoShowWhitelist];
+    const removedItem = this.settings.autoShowWhitelist[index];
+    
+    // 從本地設定中移除
+    this.settings.autoShowWhitelist.splice(index, 1);
+    console.log('📝 removeFromWhitelist: Removed from local settings, saving...');
+    
+    try {
+      const success = await this.saveSettings();
+      
+      if (success) {
+        console.log('✅ removeFromWhitelist: Successfully removed and saved');
+        return true;
+      } else {
+        throw new Error('Save settings returned false');
+      }
+    } catch (error) {
+      console.error('❌ removeFromWhitelist: Save failed:', error);
+      
+      // 回滾本地更改
+      this.settings.autoShowWhitelist = originalWhitelist;
+      console.log('🔄 Rolled back whitelist to original state');
+      
+      // 重試機制
+      if (retryCount < maxRetries) {
+        console.log(`🔄 Retrying removeFromWhitelist in 1 second... (${retryCount + 1}/${maxRetries})`);
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        return await this.removeFromWhitelist(originalDomain, retryCount + 1);
+      }
+      
+      return false;
+    }
   }
 
-  addCurrentDomainToWhitelist() {
+  async addCurrentDomainToWhitelist() {
     const currentDomain = window.location.hostname;
-    return this.addToWhitelist(currentDomain);
+    return await this.addToWhitelist(currentDomain);
   }
 
-  resetWhitelistToDefault() {
+  async resetWhitelistToDefault() {
     this.settings.autoShowWhitelist = [
       'wikipedia.org',
       '*.wikipedia.org',
@@ -1433,12 +1741,12 @@ class SmartTOC {
       'reactjs.org',
       'vuejs.org'
     ];
-    this.saveSettings();
+    await this.saveSettings();
   }
 
-  toggleWhitelistEnabled() {
+  async toggleWhitelistEnabled() {
     this.settings.whitelistEnabled = !this.settings.whitelistEnabled;
-    this.saveSettings();
+    await this.saveSettings();
     this.updateWhitelistUI();
   }
 
@@ -1450,28 +1758,28 @@ class SmartTOC {
     const resetBtn = this.tocPanel.querySelector('.smart-toc-whitelist-reset');
 
     if (whitelistToggle) {
-      whitelistToggle.addEventListener('change', () => {
-        this.toggleWhitelistEnabled();
+      whitelistToggle.addEventListener('change', async () => {
+        await this.toggleWhitelistEnabled();
       });
     }
 
     if (whitelistInput) {
-      whitelistInput.addEventListener('keydown', (e) => {
+      whitelistInput.addEventListener('keydown', async (e) => {
         if (e.key === 'Enter') {
-          this.addDomainFromInput();
+          await this.addDomainFromInput();
         }
       });
     }
 
     if (whitelistAddBtn) {
-      whitelistAddBtn.addEventListener('click', () => {
-        this.addDomainFromInput();
+      whitelistAddBtn.addEventListener('click', async () => {
+        await this.addDomainFromInput();
       });
     }
 
     if (addCurrentBtn) {
-      addCurrentBtn.addEventListener('click', () => {
-        if (this.addCurrentDomainToWhitelist()) {
+      addCurrentBtn.addEventListener('click', async () => {
+        if (await this.addCurrentDomainToWhitelist()) {
           this.showNotification(`已新增 ${window.location.hostname} 到白名單`);
           this.renderWhitelistItems();
         } else {
@@ -1481,8 +1789,8 @@ class SmartTOC {
     }
 
     if (resetBtn) {
-      resetBtn.addEventListener('click', () => {
-        this.resetWhitelistToDefault();
+      resetBtn.addEventListener('click', async () => {
+        await this.resetWhitelistToDefault();
         this.showNotification('白名單已重置為預設值');
         this.renderWhitelistItems();
       });
@@ -1493,7 +1801,7 @@ class SmartTOC {
     this.renderWhitelistItems();
   }
 
-  addDomainFromInput() {
+  async addDomainFromInput() {
     const container = this.getSettingsContainer();
     const input = container.querySelector('.smart-toc-whitelist-input');
     const domain = input.value.trim();
@@ -1503,7 +1811,7 @@ class SmartTOC {
       return;
     }
 
-    if (this.addToWhitelist(domain)) {
+    if (await this.addToWhitelist(domain)) {
       input.value = '';
       this.showNotification(`已新增 ${domain} 到白名單`);
       this.renderWhitelistItems();
@@ -1567,9 +1875,9 @@ class SmartTOC {
 
     // 保存按鈕事件
     listContainer.querySelectorAll('.smart-toc-whitelist-save').forEach(btn => {
-      btn.addEventListener('click', (e) => {
+      btn.addEventListener('click', async (e) => {
         const index = parseInt(e.target.dataset.index);
-        this.saveWhitelistItemEdit(index);
+        await this.saveWhitelistItemEdit(index);
       });
     });
 
@@ -1583,9 +1891,9 @@ class SmartTOC {
 
     // 移除按鈕事件
     listContainer.querySelectorAll('.smart-toc-whitelist-remove').forEach(btn => {
-      btn.addEventListener('click', (e) => {
+      btn.addEventListener('click', async (e) => {
         const domain = e.target.dataset.domain;
-        if (this.removeFromWhitelist(domain)) {
+        if (await this.removeFromWhitelist(domain)) {
           this.showNotification(`已從白名單移除 ${domain}`);
           this.renderWhitelistItems();
         }
@@ -1594,11 +1902,11 @@ class SmartTOC {
 
     // 輸入框 Enter 鍵事件
     listContainer.querySelectorAll('.smart-toc-whitelist-input-edit').forEach(input => {
-      input.addEventListener('keydown', (e) => {
+      input.addEventListener('keydown', async (e) => {
         if (e.key === 'Enter') {
           const item = input.closest('.smart-toc-whitelist-item');
           const index = parseInt(item.dataset.index);
-          this.saveWhitelistItemEdit(index);
+          await this.saveWhitelistItemEdit(index);
         } else if (e.key === 'Escape') {
           const item = input.closest('.smart-toc-whitelist-item');
           const index = parseInt(item.dataset.index);
@@ -1631,7 +1939,7 @@ class SmartTOC {
     inputEdit.select();
   }
 
-  saveWhitelistItemEdit(index) {
+  async saveWhitelistItemEdit(index) {
     const listContainer = this.tocPanel.querySelector('.smart-toc-whitelist-list');
     const item = listContainer.querySelector(`[data-index="${index}"]`);
     if (!item) return;
@@ -1660,7 +1968,7 @@ class SmartTOC {
 
     // 更新白名單
     this.settings.autoShowWhitelist[index] = newDomain;
-    this.saveSettings();
+    await this.saveSettings();
 
     // 顯示成功提示
     this.showNotification(`已將 ${originalDomain} 更新為 ${newDomain}`);
@@ -1706,10 +2014,9 @@ class SmartTOC {
       this.tocPanel.style.display = 'none';
     }, 300);
     
-    // 只有當 TOC 是自動顯示的情況下，用戶手動關閉才記錄域名偏好
-    if (this.settings.autoShow && this.wasAutoShown) {
-      this.disableAutoShowForCurrentDomain();
-      this.wasAutoShown = false; // 重置標記
+    // 重置自動顯示標記
+    if (this.wasAutoShown) {
+      this.wasAutoShown = false;
     }
   }
 
@@ -3003,7 +3310,7 @@ class SmartTOC {
   }
 
   // 釘選功能相關方法 - 將當前網址加入/移除自動啟動白名單 [v2.0]
-  togglePin() {
+  async togglePin() {
     console.log('🔥 Using NEW togglePin method v2.0');
     const currentDomain = window.location.hostname;
     const isExactlyInWhitelist = this.isExactlyInWhitelist(currentDomain);
@@ -3012,21 +3319,66 @@ class SmartTOC {
     console.log('🔍 Is exactly in whitelist (NEW METHOD):', isExactlyInWhitelist);
     console.log('📋 Current whitelist:', this.settings.autoShowWhitelist);
     
+    let success = false;
+    
     if (isExactlyInWhitelist) {
-      const removed = this.removeFromWhitelist(currentDomain);
-      console.log('Remove result:', removed);
-      this.showNotification(`已從白名單移除 ${currentDomain}`);
+      success = await this.removeFromWhitelist(currentDomain);
+      console.log('Remove result:', success);
+      if (success) {
+        this.showNotification(`已從白名單移除 ${currentDomain}`);
+      } else {
+        this.showNotification(`移除失敗，請稍後再試`);
+      }
     } else {
-      const added = this.addToWhitelist(currentDomain);
-      console.log('Add result:', added);
-      this.showNotification(`已將 ${currentDomain} 加入白名單`);
+      success = await this.addToWhitelist(currentDomain);
+      console.log('Add result:', success);
+      if (success) {
+        this.showNotification(`已將 ${currentDomain} 加入白名單`);
+      } else {
+        this.showNotification(`加入失敗，請稍後再試`);
+      }
     }
     
-    this.updatePinState();
+    if (success) {
+      this.updatePinState();
+      // 重新檢查自動顯示條件，可能需要取消或啟動自動顯示
+      this.recheckAutoShowConditions();
+    }
+  }
+
+  // 重新檢查自動顯示條件（在設定改變後使用）
+  recheckAutoShowConditions() {
+    console.log('🔄 Rechecking auto show conditions after settings change...');
+    
+    // 檢查是否滿足基本條件（標題數量）
+    const hasEnoughHeadings = this.headings.length >= this.settings.autoShowMinHeadings;
+    if (!hasEnoughHeadings) {
+      console.log('❌ Not enough headings, cancelling any pending auto show');
+      if (this.autoShowTimeout) {
+        clearTimeout(this.autoShowTimeout);
+        this.autoShowTimeout = null;
+      }
+      return;
+    }
+    
+    // 檢查是否應該自動顯示
+    const shouldShow = this.shouldAutoShowBySettings();
+    console.log(`⚙️ Should auto show after recheck: ${shouldShow}`);
+    
+    if (!shouldShow) {
+      // 如果不應該自動顯示，取消任何待處理的自動顯示
+      if (this.autoShowTimeout) {
+        clearTimeout(this.autoShowTimeout);
+        this.autoShowTimeout = null;
+        console.log('🗑️ Cancelled pending auto show due to settings change');
+      }
+    }
+    // 注意：如果 shouldShow 為 true，我們不重新啟動自動顯示，
+    // 因為用戶可能是在頁面載入後才加入白名單，此時不應該自動顯示
   }
 
   updatePinState() {
-    console.log('🔄 Using NEW updatePinState method v2.0');
+    console.log('🔄 Using NEW updatePinState method v2.1 - with icon switching');
     const pinBtn = this.tocPanel.querySelector('.smart-toc-pin');
     const currentDomain = window.location.hostname;
     const isExactlyInWhitelist = this.isExactlyInWhitelist(currentDomain);
@@ -3037,12 +3389,14 @@ class SmartTOC {
     
     if (isExactlyInWhitelist) {
       pinBtn.classList.add('pinned');
+      pinBtn.textContent = '📍'; // 已釘選圖示
       pinBtn.title = `${currentDomain} 已在白名單中，點擊移除`;
-      console.log('Button set to pinned state');
+      console.log('📍 Button set to pinned state with filled pin icon');
     } else {
       pinBtn.classList.remove('pinned');
+      pinBtn.textContent = '📌'; // 未釘選圖示
       pinBtn.title = `將 ${currentDomain} 加入自動啟動白名單`;
-      console.log('Button set to unpinned state');
+      console.log('📌 Button set to unpinned state with outline pin icon');
     }
   }
 
@@ -3087,6 +3441,13 @@ class SmartTOC {
   }
 
   destroy() {
+    // 清理自動顯示 timeout
+    if (this.autoShowTimeout) {
+      clearTimeout(this.autoShowTimeout);
+      this.autoShowTimeout = null;
+      console.log('🗑️ Cleared auto show timeout during destroy');
+    }
+    
     if (this.intersectionObserver) {
       this.intersectionObserver.disconnect();
     }

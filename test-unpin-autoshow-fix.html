@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unpin 自動顯示修復測試 - Smart TOC</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1, h2, h3, h4, h5, h6 {
+            color: #2c3e50;
+            margin-top: 2em;
+        }
+        .test-info {
+            background: #e3f2fd;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #2196f3;
+            margin-bottom: 30px;
+        }
+        .test-steps {
+            background: #f3e5f5;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #9c27b0;
+            margin: 20px 0;
+        }
+        .success-criteria {
+            background: #e8f5e8;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #4caf50;
+            margin: 20px 0;
+        }
+        .debug-info {
+            background: #fff3cd;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #ffc107;
+            margin: 20px 0;
+        }
+        .feature-highlight {
+            background: #e8f5e8;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #4caf50;
+            margin: 20px 0;
+        }
+        code {
+            background: #f5f5f5;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+        .console-command {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: monospace;
+            border: 1px solid #dee2e6;
+        }
+        .priority-logic {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Smart TOC Unpin 自動顯示修復測試</h1>
+        
+        <div class="test-info">
+            <h3>🎯 測試目標</h3>
+            <p>驗證 unpin 後能永久阻止自動顯示，即使開啟了全域 autoShow 設定也不會自動顯示。</p>
+            <p><strong>🔧 修復版本</strong>：v3.1 - 添加排除列表機制，解決 autoShow 全域設定覆蓋 unpin 的問題</p>
+        </div>
+
+        <div class="feature-highlight">
+            <h3>🆕 新功能：排除列表機制</h3>
+            <ul>
+                <li><strong>排除列表優先級最高</strong>：即使全域 autoShow 開啟，被 unpin 的網站也不會自動顯示</li>
+                <li><strong>智能管理</strong>：unpin 時自動加入排除列表，重新 pin 時自動移除</li>
+                <li><strong>持久記憶</strong>：用戶的明確意圖被永久記住，直到重新加入白名單</li>
+            </ul>
+        </div>
+
+        <div class="priority-logic">
+            <h3>🔄 新的自動顯示優先級邏輯</h3>
+            <ol>
+                <li><strong>第一優先級</strong>：檢查排除列表 → 如果在列表中，<strong>絕對不自動顯示</strong></li>
+                <li><strong>第二優先級</strong>：檢查白名單 → 如果在白名單中，自動顯示</li>
+                <li><strong>第三優先級</strong>：檢查全域設定 → 如果 autoShow 開啟，自動顯示</li>
+            </ol>
+            <p><strong>這確保了用戶明確 unpin 的決定永遠被尊重！</strong></p>
+        </div>
+
+        <div class="test-steps">
+            <h3>🧪 測試步驟</h3>
+            <ol>
+                <li><strong>準備階段</strong>：
+                    <ul>
+                        <li>確認當前網域不在白名單中</li>
+                        <li>（可選）在設定中開啟全域 autoShow，增加測試嚴格度</li>
+                    </ul>
+                </li>
+                <li><strong>Pin 測試</strong>：
+                    <ul>
+                        <li>手動開啟 Smart TOC</li>
+                        <li>點擊 📌 按鈕加入白名單</li>
+                        <li>確認看到「已將 xxx 加入白名單」通知</li>
+                        <li>觀察按鈕變為 📍</li>
+                    </ul>
+                </li>
+                <li><strong>Unpin 測試</strong>：
+                    <ul>
+                        <li>點擊 📍 按鈕移除白名單</li>
+                        <li>確認看到「已從白名單移除 xxx」通知</li>
+                        <li>觀察按鈕變回 📌</li>
+                        <li><strong>關鍵</strong>：檢查 Console 有「Added xxx to excluded list」</li>
+                    </ul>
+                </li>
+                <li><strong>重新載入測試</strong>：
+                    <ul>
+                        <li>關閉 TOC 面板</li>
+                        <li><strong>重新載入頁面</strong></li>
+                        <li><strong>觀察</strong>：TOC 應該 <strong>絕對不會</strong> 自動顯示</li>
+                        <li>即使全域 autoShow 開啟也不應該顯示</li>
+                    </ul>
+                </li>
+                <li><strong>重新 Pin 測試</strong>：
+                    <ul>
+                        <li>手動開啟 TOC，重新點擊 📌 加入白名單</li>
+                        <li>確認 Console 有「Removed xxx from excluded list」</li>
+                        <li>重新載入頁面，確認恢復自動顯示</li>
+                    </ul>
+                </li>
+            </ol>
+        </div>
+
+        <div class="success-criteria">
+            <h3>✅ 成功標準</h3>
+            <ul>
+                <li><strong>絕對阻止</strong>：unpin 後絕對不自動顯示，即使開啟全域 autoShow</li>
+                <li><strong>排除列表管理</strong>：unpin 時加入排除列表，重新 pin 時移除</li>
+                <li><strong>持久效果</strong>：重新載入、關閉瀏覽器後效果持續</li>
+                <li><strong>可逆操作</strong>：重新 pin 能恢復正常自動顯示功能</li>
+            </ul>
+        </div>
+
+        <div class="debug-info">
+            <h3>🔍 調試信息</h3>
+            <p>關鍵的 Console 日誌信息：</p>
+            <ul>
+                <li><code>🚫 Domain is in excluded list (user explicitly unpinned), blocking auto show</code></li>
+                <li><code>🚫 Added [domain] to excluded list</code></li>
+                <li><code>✅ Removed [domain] from excluded list (re-added to whitelist)</code></li>
+                <li><code>🚫 Checking excluded list for domain: [domain]</code></li>
+            </ul>
+            
+            <h4>手動檢查指令：</h4>
+            <div class="console-command">
+                // 檢查當前域名是否在排除列表中
+                window.smartTOC.isInExcludedList(window.location.hostname)
+                
+                // 查看完整的排除列表
+                window.smartTOC.settings.excludedDomains
+                
+                // 檢查自動顯示邏輯
+                window.smartTOC.shouldAutoShowBySettings()
+                
+                // 手動觸發自動顯示檢查
+                window.smartTOC.checkAutoShow()
+            </div>
+        </div>
+
+        <h2>技術實作說明</h2>
+        
+        <h3>🔧 核心修改</h3>
+        <ul>
+            <li><strong>新增設定項目</strong>：
+                <ul>
+                    <li><code>excludedDomains: []</code> - 儲存用戶明確 unpin 的域名</li>
+                </ul>
+            </li>
+            <li><strong>新增方法</strong>：
+                <ul>
+                    <li><code>isInExcludedList(domain)</code> - 檢查域名是否在排除列表</li>
+                    <li><code>addToExcludedList(domain)</code> - 添加域名到排除列表</li>
+                    <li><code>removeFromExcludedList(domain)</code> - 從排除列表移除域名</li>
+                </ul>
+            </li>
+            <li><strong>修改邏輯</strong>：
+                <ul>
+                    <li><code>shouldAutoShowBySettings()</code> - 排除列表檢查為第一優先級</li>
+                    <li><code>removeFromWhitelist()</code> - 成功後自動加入排除列表</li>
+                    <li><code>addToWhitelist()</code> - 成功後自動從排除列表移除</li>
+                </ul>
+            </li>
+        </ul>
+
+        <h3>📋 解決的問題</h3>
+        <ul>
+            <li><strong>原問題</strong>：全域 autoShow 設定會覆蓋用戶的 unpin 決定</li>
+            <li><strong>解決方案</strong>：排除列表機制確保用戶明確意圖被永久記住</li>
+            <li><strong>用戶體驗</strong>：unpin 真正意味著「我不想在這個網站自動顯示」</li>
+        </ul>
+
+        <h2>測試內容區域</h2>
+        <p>以下標題確保 TOC 有足夠內容顯示：</p>
+        
+        <h3>第一個測試章節</h3>
+        <p>這是第一個章節的內容，用來測試 TOC 功能。</p>
+        
+        <h4>排除列表機制測試</h4>
+        <p>測試新的排除列表功能：</p>
+        <ul>
+            <li>unpin 時自動加入排除列表</li>
+            <li>排除列表優先級高於全域設定</li>
+            <li>重新 pin 時自動移除排除記錄</li>
+        </ul>
+        
+        <h4>優先級邏輯測試</h4>
+        <p>驗證新的三級優先級邏輯：</p>
+        <ol>
+            <li>排除列表檢查（最高）</li>
+            <li>白名單檢查（中等）</li>
+            <li>全域設定檢查（最低）</li>
+        </ol>
+        
+        <h3>第二個測試章節</h3>
+        <p>更多測試內容確保 TOC 正常運作。</p>
+        
+        <h4>邊界情況測試</h4>
+        <p>測試特殊情況：</p>
+        <ul>
+            <li>同時開啟全域 autoShow 和使用白名單</li>
+            <li>重複 pin/unpin 操作</li>
+            <li>設定同步和持久化</li>
+        </ul>
+
+        <h4>向後相容性</h4>
+        <p>確保新功能不影響現有用戶：</p>
+        <ul>
+            <li>現有白名單繼續正常運作</li>
+            <li>未使用過 unpin 的用戶不受影響</li>
+            <li>所有原有功能保持穩定</li>
+        </ul>
+
+        <h2>預期行為</h2>
+        
+        <h3>🎯 完整流程</h3>
+        <ol>
+            <li><strong>初次載入</strong>：檢查排除列表 → 白名單 → 全域設定</li>
+            <li><strong>用戶 pin</strong>：加入白名單 + 從排除列表移除</li>
+            <li><strong>用戶 unpin</strong>：從白名單移除 + 加入排除列表</li>
+            <li><strong>重新載入</strong>：排除列表阻止自動顯示</li>
+        </ol>
+
+        <h3>🔄 狀態管理</h3>
+        <p>系統維護三個狀態列表：</p>
+        <ul>
+            <li><strong>autoShowWhitelist</strong>：允許自動顯示的域名</li>
+            <li><strong>excludedDomains</strong>：用戶明確拒絕自動顯示的域名</li>
+            <li><strong>autoShow (全域)</strong>：全局自動顯示開關</li>
+        </ul>
+        <p><strong>排除列表的優先級永遠最高！</strong></p>
+    </div>
+</body>
+</html>

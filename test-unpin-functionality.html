@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unpin 功能測試 - Smart TOC</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1, h2, h3, h4, h5, h6 {
+            color: #2c3e50;
+            margin-top: 2em;
+        }
+        .test-info {
+            background: #e3f2fd;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #2196f3;
+            margin-bottom: 30px;
+        }
+        .test-steps {
+            background: #f3e5f5;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #9c27b0;
+            margin: 20px 0;
+        }
+        .success-criteria {
+            background: #e8f5e8;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #4caf50;
+            margin: 20px 0;
+        }
+        .debug-info {
+            background: #fff3cd;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #ffc107;
+            margin: 20px 0;
+        }
+        code {
+            background: #f5f5f5;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+        .console-command {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: monospace;
+            border: 1px solid #dee2e6;
+        }
+        .warning {
+            background: #f8d7da;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 4px solid #dc3545;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Smart TOC Unpin 功能測試</h1>
+        
+        <div class="test-info">
+            <h3>🎯 測試目標</h3>
+            <p>驗證 unpin 功能能夠正確取消已排程的自動顯示，防止用戶移除白名單後 TOC 仍然自動出現。</p>
+            <p><strong>🔧 修復內容</strong>：添加了 timeout 管理機制，確保 unpin 時能夠取消待處理的自動顯示。</p>
+        </div>
+
+        <div class="test-steps">
+            <h3>🧪 測試步驟</h3>
+            <ol>
+                <li><strong>準備階段</strong>：
+                    <ul>
+                        <li>確保當前網域不在白名單中</li>
+                        <li>重新載入頁面（應該不會自動顯示）</li>
+                    </ul>
+                </li>
+                <li><strong>Pin 測試</strong>：
+                    <ul>
+                        <li>手動開啟 Smart TOC</li>
+                        <li>點擊 📌 按鈕加入白名單</li>
+                        <li>確認看到「已將 xxx 加入白名單」通知</li>
+                    </ul>
+                </li>
+                <li><strong>立即 Unpin 測試</strong>：
+                    <ul>
+                        <li><strong>不要關閉 TOC</strong></li>
+                        <li>立即再次點擊 📌 按鈕（現在應該是移除）</li>
+                        <li>確認看到「已從白名單移除 xxx」通知</li>
+                    </ul>
+                </li>
+                <li><strong>關鍵測試</strong>：
+                    <ul>
+                        <li>關閉 TOC 面板</li>
+                        <li><strong>重新載入頁面</strong></li>
+                        <li><strong>觀察</strong>：TOC 應該 <strong>不會</strong> 自動顯示</li>
+                    </ul>
+                </li>
+                <li><strong>確認 Console 日誌</strong>：
+                    <ul>
+                        <li>查看是否有 <code>🗑️ Cancelled pending auto show</code></li>
+                        <li>確認沒有 <code>⏰ Scheduling auto show</code></li>
+                    </ul>
+                </li>
+            </ol>
+        </div>
+
+        <div class="success-criteria">
+            <h3>✅ 成功標準</h3>
+            <ul>
+                <li><strong>即時取消</strong>：unpin 時立即取消任何待處理的自動顯示</li>
+                <li><strong>狀態同步</strong>：按鈕狀態正確反映白名單狀態</li>
+                <li><strong>持久效果</strong>：重新載入頁面後不會自動顯示</li>
+                <li><strong>日誌清晰</strong>：Console 顯示清楚的取消訊息</li>
+            </ul>
+        </div>
+
+        <div class="debug-info">
+            <h3>🔍 調試信息</h3>
+            <p>如果 unpin 後仍然自動顯示，請檢查以下 Console 日誌：</p>
+            <ul>
+                <li><code>🔄 Rechecking auto show conditions</code> - 重新檢查條件</li>
+                <li><code>🗑️ Cancelled pending auto show</code> - 成功取消自動顯示</li>
+                <li><code>⚙️ Should auto show after recheck</code> - 重新檢查結果</li>
+            </ul>
+            
+            <h4>預期的 Console 流程：</h4>
+            <div class="console-command">
+                // Pin 時
+                🎯 Toggle pin - Current domain: example.com
+                ✅ addToWhitelist: Successfully added and saved
+                🔄 Rechecking auto show conditions after settings change...
+                
+                // Unpin 時  
+                🎯 Toggle pin - Current domain: example.com
+                ✅ removeFromWhitelist: Successfully removed and saved
+                🔄 Rechecking auto show conditions after settings change...
+                🗑️ Cancelled pending auto show due to settings change
+            </div>
+        </div>
+
+        <div class="warning">
+            <h3>⚠️ 重要說明</h3>
+            <p><strong>關鍵測試點</strong>：必須在 <strong>同一個頁面載入週期</strong> 內完成 pin → unpin 操作，這樣才能測試到 timeout 取消功能。</p>
+            <p>如果先 pin，然後重新載入頁面再 unpin，就測試不到這個問題，因為重新載入會重置所有狀態。</p>
+        </div>
+
+        <h2>測試內容區域</h2>
+        <p>以下標題用來確保滿足自動顯示的最低要求（≥2個標題）：</p>
+        
+        <h3>第一個測試章節</h3>
+        <p>這是第一個章節的內容，用來測試標題偵測。</p>
+        
+        <h4>子章節 1.1</h4>
+        <p>這是一個子章節。</p>
+        
+        <h4>子章節 1.2</h4>
+        <p>另一個子章節。</p>
+        
+        <h3>第二個測試章節</h3>
+        <p>第二個章節的內容。</p>
+        
+        <h4>Timeout 管理機制</h4>
+        <p>修復後的系統會：</p>
+        <ul>
+            <li>儲存 <code>setTimeout</code> 的 ID 在 <code>this.autoShowTimeout</code></li>
+            <li>在 unpin 時呼叫 <code>clearTimeout()</code> 取消排程</li>
+            <li>在 <code>recheckAutoShowConditions()</code> 中重新評估條件</li>
+        </ul>
+        
+        <h4>關鍵改進</h4>
+        <p>相比之前的實作：</p>
+        <ul>
+            <li><strong>即時響應</strong>：設定變更立即影響自動顯示</li>
+            <li><strong>避免競態條件</strong>：正確處理快速 pin/unpin 操作</li>
+            <li><strong>資源清理</strong>：防止記憶體洩漏和不必要的執行</li>
+        </ul>
+
+        <h3>技術實作細節</h3>
+        
+        <h4>新增的屬性</h4>
+        <ul>
+            <li><code>this.autoShowTimeout</code> - 儲存 setTimeout ID</li>
+        </ul>
+        
+        <h4>新增的方法</h4>
+        <ul>
+            <li><code>recheckAutoShowConditions()</code> - 在設定變更後重新檢查</li>
+        </ul>
+        
+        <h4>修改的方法</h4>
+        <ul>
+            <li><code>checkAutoShow()</code> - 加入 timeout 管理</li>
+            <li><code>togglePin()</code> - 加入重新檢查呼叫</li>
+            <li><code>destroy()</code> - 加入 timeout 清理</li>
+        </ul>
+
+        <h2>預期行為</h2>
+        
+        <h3>正常流程</h3>
+        <ol>
+            <li>頁面載入，檢查自動顯示條件</li>
+            <li>如果滿足條件，排程 500ms 後自動顯示</li>
+            <li>如果用戶在 500ms 內 unpin，取消自動顯示</li>
+            <li>重新載入頁面時，由於不在白名單中，不會自動顯示</li>
+        </ol>
+
+        <h3>邊界情況</h3>
+        <ul>
+            <li><strong>快速 pin/unpin</strong>：正確處理連續操作</li>
+            <li><strong>已經顯示的情況</strong>：不影響已經顯示的 TOC</li>
+            <li><strong>頁面清理</strong>：destroy() 時正確清理所有 timeout</li>
+        </ul>
+    </div>
+</body>
+</html>

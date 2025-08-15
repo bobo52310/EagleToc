@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>白名單自動顯示功能測試 - Smart TOC</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1, h2, h3, h4, h5, h6 {
+            color: #2c3e50;
+            margin-top: 2em;
+        }
+        .test-info {
+            background: #e3f2fd;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #2196f3;
+            margin-bottom: 30px;
+        }
+        .test-steps {
+            background: #f3e5f5;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #9c27b0;
+            margin: 20px 0;
+        }
+        .success-criteria {
+            background: #e8f5e8;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #4caf50;
+            margin: 20px 0;
+        }
+        .debug-info {
+            background: #fff3cd;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #ffc107;
+            margin: 20px 0;
+        }
+        code {
+            background: #f5f5f5;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+        .console-command {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: monospace;
+            border: 1px solid #dee2e6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Smart TOC 白名單自動顯示功能測試</h1>
+        
+        <div class="test-info">
+            <h3>🎯 測試目標</h3>
+            <p>驗證白名單網站能夠自動顯示 Smart TOC，無需用戶手動開啟。</p>
+            <p><strong>📝 注意</strong>：已移除黑名單機制，現在純粹依據白名單控制自動顯示，邏輯更加簡潔。</p>
+        </div>
+
+        <div class="test-steps">
+            <h3>🧪 測試步驟</h3>
+            <ol>
+                <li><strong>確認當前網域</strong>：檢查這個測試頁面的域名</li>
+                <li><strong>添加到白名單</strong>：
+                    <ul>
+                        <li>點擊擴充套件圖示開啟 Smart TOC</li>
+                        <li>點擊 📌 按鈕將當前網域加入白名單</li>
+                        <li>確認看到「已將 xxx 加入白名單」通知</li>
+                    </ul>
+                </li>
+                <li><strong>重新載入頁面</strong>：刷新頁面或重新開啟</li>
+                <li><strong>觀察自動顯示</strong>：TOC 應該在頁面載入後自動出現</li>
+                <li><strong>檢查 Console 日誌</strong>：查看詳細的自動顯示邏輯</li>
+            </ol>
+        </div>
+
+        <div class="success-criteria">
+            <h3>✅ 成功標準</h3>
+            <ul>
+                <li><strong>自動出現</strong>：TOC 面板在頁面載入後 500ms 內自動顯示</li>
+                <li><strong>正確偵測</strong>：系統正確識別當前網域在白名單中</li>
+                <li><strong>標題檢測</strong>：至少偵測到 2 個標題（滿足最小要求）</li>
+                <li><strong>狀態通知</strong>：顯示「自動顯示」的相關通知</li>
+            </ul>
+        </div>
+
+        <div class="debug-info">
+            <h3>🔍 調試信息</h3>
+            <p>如果自動顯示沒有啟動，請檢查以下 Console 日誌：</p>
+            <ul>
+                <li><code>🔍 Checking auto show conditions</code> - 開始檢查條件</li>
+                <li><code>📊 Headings count</code> - 標題數量檢查</li>
+                <li><code>🌐 Checking auto show for domain</code> - 域名檢查</li>
+                <li><code>✅ Domain is in whitelist</code> - 白名單確認</li>
+                <li><code>⏰ Scheduling auto show</code> - 排程自動顯示</li>
+            </ul>
+            
+            <h4>手動檢查指令：</h4>
+            <div class="console-command">
+                // 檢查當前域名
+                window.location.hostname
+                
+                // 檢查白名單狀態
+                window.smartTOC.isInWhitelist(window.location.hostname)
+                
+                // 檢查自動顯示設定
+                window.smartTOC.settings.whitelistEnabled
+                
+                // 強制觸發自動顯示檢查
+                window.smartTOC.checkAutoShow()
+            </div>
+        </div>
+
+        <h2>測試內容區域</h2>
+        <p>以下是測試標題結構，確保有足夠的標題讓 TOC 自動顯示：</p>
+        
+        <h3>第一個主要章節</h3>
+        <p>這是第一個章節的內容。Smart TOC 應該能夠偵測到這個標題。</p>
+        
+        <h4>子章節 1.1</h4>
+        <p>這是一個子章節，用來測試階層結構。</p>
+        
+        <h4>子章節 1.2</h4>
+        <p>另一個子章節，確保有足夠的標題數量。</p>
+        
+        <h3>第二個主要章節</h3>
+        <p>第二個主要章節的內容。</p>
+        
+        <h4>子章節 2.1</h4>
+        <p>第二章的子節內容。</p>
+        
+        <h5>更深層的章節</h5>
+        <p>這是第五級標題，用來測試深度偵測。</p>
+        
+        <h3>第三個主要章節</h3>
+        <p>最後一個主要章節。</p>
+        
+        <h4>結論</h4>
+        <p>總結測試結果和觀察到的行為。</p>
+
+        <h2>預期行為說明</h2>
+        
+        <h3>🎯 白名單自動顯示邏輯 (簡化版)</h3>
+        <p>簡化後的邏輯：</p>
+        <ol>
+            <li><strong>標題檢查</strong>：頁面必須有至少 2 個標題</li>
+            <li><strong>白名單檢查</strong>：當前網域必須在白名單中，或手動啟用 autoShow</li>
+            <li><strong>自動顯示</strong>：滿足條件後，在 500ms 延遲後自動顯示</li>
+        </ol>
+        <p><strong>🗑️ 已移除</strong>：黑名單機制（用戶手動關閉記錄），簡化為純白名單控制。</p>
+
+        <h3>🔧 技術實作</h3>
+        <ul>
+            <li><code>checkAutoShow()</code> - 在頁面載入完成後執行</li>
+            <li><code>shouldAutoShowBySettings()</code> - 檢查設定和白名單</li>
+            <li><code>shouldAutoShow()</code> - 最終決定是否顯示</li>
+            <li><code>autoShowTOC()</code> - 執行自動顯示並顯示通知</li>
+        </ul>
+
+        <h3>⚙️ 設定說明</h3>
+        <p>自動顯示有兩種觸發方式：</p>
+        <ul>
+            <li><strong>全域啟用</strong>：設定中的 <code>autoShow: true</code></li>
+            <li><strong>白名單啟用</strong>：網域在 <code>autoShowWhitelist</code> 中</li>
+        </ul>
+        <p>這樣的設計讓用戶可以：</p>
+        <ul>
+            <li>在特定網站（白名單）啟用自動顯示</li>
+            <li>或者在所有網站全域啟用</li>
+            <li>同時保持對個別網站的精細控制</li>
+        </ul>
+
+        <h2>故障排除</h2>
+        
+        <h3>如果 TOC 沒有自動顯示：</h3>
+        <ol>
+            <li><strong>確認白名單</strong>：當前域名是否真的在白名單中？</li>
+            <li><strong>檢查標題數量</strong>：頁面是否有至少 2 個標題？</li>
+            <li><strong>檢查設定</strong>：whitelistEnabled 是否為 true？</li>
+            <li><strong>檢查 Console</strong>：是否有錯誤或警告訊息？</li>
+            <li><strong>重新載入</strong>：清除快取後重新載入頁面</li>
+        </ol>
+
+        <div style="background: #d4edda; padding: 15px; border-radius: 5px; border-left: 4px solid #28a745;">
+            <h4>✅ 邏輯簡化完成</h4>
+            <p>不再需要清除黑名單！現在系統只依據白名單決定是否自動顯示，邏輯更加直觀。</p>
+        </div>
+    </div>
+</body>
+</html>
