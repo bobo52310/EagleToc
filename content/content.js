@@ -125,6 +125,7 @@ class SmartTOC {
     this.setupEventListeners();
     this.setupScrollTracking();
     this.makeDraggable();
+    this.makeResizable();
     this.setupGlanceMode();
     this.createSearchModal();
     this.setupSearch();
@@ -250,6 +251,15 @@ class SmartTOC {
       <div class="smart-toc-content">
         <div class="smart-toc-loading">Analyzing page structure...</div>
       </div>
+      <!-- 調整大小的處理元素 -->
+      <div class="resize-handle resize-handle-right"></div>
+      <div class="resize-handle resize-handle-left"></div>
+      <div class="resize-handle resize-handle-top"></div>
+      <div class="resize-handle resize-handle-bottom"></div>
+      <div class="resize-handle resize-handle-corner-nw"></div>
+      <div class="resize-handle resize-handle-corner-ne"></div>
+      <div class="resize-handle resize-handle-corner-sw"></div>
+      <div class="resize-handle resize-handle-corner-se"></div>
     `;
     
     this.tocPanel.style.width = this.settings.tocWidth + 'px';
@@ -460,11 +470,11 @@ class SmartTOC {
     
     if (potentialContainers.length > 0) {
       potentialContainers.forEach(container => {
-        const containerHeadings = container.querySelectorAll('h1, h2, h3, h4, h5, h6, strong');
+        const containerHeadings = container.querySelectorAll('h1, h2, h3, h4, h5, h6');
         headings = headings.concat(Array.from(containerHeadings));
       });
     } else {
-      headings = Array.from(document.querySelectorAll('h1, h2, h3, h4, h5, h6, strong'));
+      headings = Array.from(document.querySelectorAll('h1, h2, h3, h4, h5, h6'));
     }
 
     // 去除重複的標題元素
@@ -477,12 +487,7 @@ class SmartTOC {
     }
     
     this.headings = headings.map((heading, index) => {
-      let level;
-      if (heading.tagName.toLowerCase() === 'strong') {
-        level = 7; // Assign level 7 to strong tags
-      } else {
-        level = parseInt(heading.tagName.charAt(1));
-      }
+      const level = parseInt(heading.tagName.charAt(1));
       
       return {
         element: heading,
@@ -490,7 +495,7 @@ class SmartTOC {
         level: level,
         id: heading.id || `smart-toc-heading-${index}`,
         index,
-        visible: level <= this.settings.maxHeadingLevels || heading.tagName.toLowerCase() === 'strong'
+        visible: level <= this.settings.maxHeadingLevels
       };
     });
 
@@ -645,39 +650,12 @@ class SmartTOC {
       const style = window.getComputedStyle(heading);
       
       // Basic visibility checks
-      const isVisible = rect.width > 0 && 
-                       rect.height > 0 && 
-                       style.visibility !== 'hidden' && 
-                       style.display !== 'none' &&
-                       heading.textContent.trim().length > 0 &&
-                       !heading.closest('.smart-toc-panel');
-      
-      if (!isVisible) return false;
-      
-      // Additional filtering for strong tags
-      if (heading.tagName.toLowerCase() === 'strong') {
-        const text = heading.textContent.trim();
-        // Filter out very short strong tags (likely just formatting, not headings)
-        if (text.length < 3) return false;
-        
-        // Check if the strong tag appears to be a heading based on context
-        const parent = heading.parentElement;
-        const parentTag = parent?.tagName.toLowerCase();
-        
-        // Skip strong tags that are clearly inline formatting
-        if (parentTag === 'span' || parentTag === 'em' || parentTag === 'i' || parentTag === 'b') {
-          return false;
-        }
-        
-        // Check if it's the only or main content in its parent
-        const parentText = parent?.textContent.trim() || '';
-        const strongText = text;
-        const isMainContent = parentText === strongText || parentText.startsWith(strongText);
-        
-        return isMainContent && text.length >= 3;
-      }
-      
-      return true;
+      return rect.width > 0 && 
+             rect.height > 0 && 
+             style.visibility !== 'hidden' && 
+             style.display !== 'none' &&
+             heading.textContent.trim().length > 0 &&
+             !heading.closest('.smart-toc-panel');
     });
   }
 
@@ -1349,7 +1327,7 @@ class SmartTOC {
 
   updateHeadingVisibility() {
     this.headings.forEach(heading => {
-      heading.visible = heading.level <= this.settings.maxHeadingLevels || heading.element.tagName.toLowerCase() === 'strong';
+      heading.visible = heading.level <= this.settings.maxHeadingLevels;
     });
   }
 
@@ -2219,7 +2197,7 @@ class SmartTOC {
 
     document.addEventListener('mouseover', (e) => {
       if (this.altPressed && !this.isDragging) {
-        const heading = e.target.closest('h1, h2, h3, h4, h5, h6, strong');
+        const heading = e.target.closest('h1, h2, h3, h4, h5, h6');
         if (heading && this.headings.find(h => h.element === heading)) {
           this.showGlance();
         }
@@ -2269,8 +2247,8 @@ class SmartTOC {
             
             const hasHeadings = [...addedNodes, ...removedNodes].some(node => 
               node.nodeType === Node.ELEMENT_NODE && 
-              (node.matches('h1, h2, h3, h4, h5, h6, strong') || 
-               node.querySelector('h1, h2, h3, h4, h5, h6, strong'))
+              (node.matches('h1, h2, h3, h4, h5, h6') || 
+               node.querySelector('h1, h2, h3, h4, h5, h6'))
             );
             
             if (hasHeadings) {
@@ -3493,6 +3471,135 @@ class SmartTOC {
       
       e.preventDefault();
     });
+  }
+
+  // 調整大小功能
+  makeResizable() {
+    const resizeHandles = this.tocPanel.querySelectorAll('.resize-handle');
+    
+    resizeHandles.forEach(handle => {
+      handle.addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        e.stopPropagation(); // 防止觸發拖拽功能
+        
+        const handleClass = Array.from(handle.classList).find(cls => cls.startsWith('resize-handle-'));
+        const resizeType = handleClass.replace('resize-handle-', '');
+        
+        this.isResizing = true;
+        this.resizeType = resizeType;
+        
+        // 記錄初始狀態
+        const rect = this.tocPanel.getBoundingClientRect();
+        this.resizeStart = {
+          x: e.clientX,
+          y: e.clientY,
+          width: rect.width,
+          height: rect.height,
+          left: rect.left,
+          top: rect.top
+        };
+        
+        // 綁定事件處理函數
+        this.boundHandleResize = this.handleResize.bind(this);
+        this.boundStopResize = this.stopResize.bind(this);
+        
+        document.addEventListener('mousemove', this.boundHandleResize);
+        document.addEventListener('mouseup', this.boundStopResize);
+        
+        // 添加調整大小時的樣式
+        this.tocPanel.classList.add('smart-toc-resizing');
+      });
+    });
+  }
+
+  handleResize(e) {
+    if (!this.isResizing) return;
+    
+    const deltaX = e.clientX - this.resizeStart.x;
+    const deltaY = e.clientY - this.resizeStart.y;
+    
+    let newWidth = this.resizeStart.width;
+    let newHeight = this.resizeStart.height;
+    let newLeft = this.tocPanel.style.left;
+    let newTop = this.tocPanel.style.top;
+    
+    // 根據調整類型計算新尺寸和位置
+    switch (this.resizeType) {
+      case 'right':
+        newWidth = Math.max(250, this.resizeStart.width + deltaX);
+        break;
+        
+      case 'left':
+        newWidth = Math.max(250, this.resizeStart.width - deltaX);
+        newLeft = (this.resizeStart.left + deltaX) + 'px';
+        break;
+        
+      case 'bottom':
+        newHeight = Math.max(200, this.resizeStart.height + deltaY);
+        break;
+        
+      case 'top':
+        newHeight = Math.max(200, this.resizeStart.height - deltaY);
+        newTop = (this.resizeStart.top + deltaY) + 'px';
+        break;
+        
+      case 'corner-se': // 右下角
+        newWidth = Math.max(250, this.resizeStart.width + deltaX);
+        newHeight = Math.max(200, this.resizeStart.height + deltaY);
+        break;
+        
+      case 'corner-sw': // 左下角
+        newWidth = Math.max(250, this.resizeStart.width - deltaX);
+        newHeight = Math.max(200, this.resizeStart.height + deltaY);
+        newLeft = (this.resizeStart.left + deltaX) + 'px';
+        break;
+        
+      case 'corner-ne': // 右上角
+        newWidth = Math.max(250, this.resizeStart.width + deltaX);
+        newHeight = Math.max(200, this.resizeStart.height - deltaY);
+        newTop = (this.resizeStart.top + deltaY) + 'px';
+        break;
+        
+      case 'corner-nw': // 左上角
+        newWidth = Math.max(250, this.resizeStart.width - deltaX);
+        newHeight = Math.max(200, this.resizeStart.height - deltaY);
+        newLeft = (this.resizeStart.left + deltaX) + 'px';
+        newTop = (this.resizeStart.top + deltaY) + 'px';
+        break;
+    }
+    
+    // 應用新尺寸和位置
+    this.tocPanel.style.width = newWidth + 'px';
+    this.tocPanel.style.height = newHeight + 'px';
+    
+    if (newLeft !== this.tocPanel.style.left) {
+      this.tocPanel.style.left = newLeft;
+      this.tocPanel.style.right = 'auto';
+    }
+    
+    if (newTop !== this.tocPanel.style.top) {
+      this.tocPanel.style.top = newTop;
+    }
+    
+    // 更新設定中的寬度
+    this.settings.tocWidth = newWidth;
+  }
+
+  stopResize() {
+    if (!this.isResizing) return;
+    
+    this.isResizing = false;
+    this.resizeType = null;
+    
+    // 移除事件監聽器
+    document.removeEventListener('mousemove', this.boundHandleResize);
+    document.removeEventListener('mouseup', this.boundStopResize);
+    
+    // 移除調整大小時的樣式
+    this.tocPanel.classList.remove('smart-toc-resizing');
+    
+    // 保存設定
+    this.saveSettings();
   }
 
   destroy() {

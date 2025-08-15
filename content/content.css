@@ -25,6 +25,114 @@
   -webkit-backdrop-filter: blur(24px) saturate(180%);
 }
 
+/* 調整大小的邊緣區域 */
+.smart-toc-panel .resize-handle {
+  position: absolute;
+  background: transparent;
+  pointer-events: auto;
+}
+
+/* 右邊緣 - 水平調整 */
+.smart-toc-panel .resize-handle-right {
+  top: 0;
+  right: -3px;
+  width: 6px;
+  height: 100%;
+  cursor: ew-resize;
+  z-index: 10;
+}
+
+/* 左邊緣 - 水平調整 */
+.smart-toc-panel .resize-handle-left {
+  top: 0;
+  left: -3px;
+  width: 6px;
+  height: 100%;
+  cursor: ew-resize;
+  z-index: 10;
+}
+
+/* 底邊緣 - 垂直調整 */
+.smart-toc-panel .resize-handle-bottom {
+  bottom: -3px;
+  left: 0;
+  width: 100%;
+  height: 6px;
+  cursor: ns-resize;
+  z-index: 10;
+}
+
+/* 上邊緣 - 垂直調整 */
+.smart-toc-panel .resize-handle-top {
+  top: -3px;
+  left: 0;
+  width: 100%;
+  height: 6px;
+  cursor: ns-resize;
+  z-index: 10;
+}
+
+/* 四個角落 - 對角調整 */
+.smart-toc-panel .resize-handle-corner-nw {
+  top: -3px;
+  left: -3px;
+  width: 12px;
+  height: 12px;
+  cursor: nw-resize;
+  z-index: 11;
+}
+
+.smart-toc-panel .resize-handle-corner-ne {
+  top: -3px;
+  right: -3px;
+  width: 12px;
+  height: 12px;
+  cursor: ne-resize;
+  z-index: 11;
+}
+
+.smart-toc-panel .resize-handle-corner-sw {
+  bottom: -3px;
+  left: -3px;
+  width: 12px;
+  height: 12px;
+  cursor: sw-resize;
+  z-index: 11;
+}
+
+.smart-toc-panel .resize-handle-corner-se {
+  bottom: -3px;
+  right: -3px;
+  width: 12px;
+  height: 12px;
+  cursor: se-resize;
+  z-index: 11;
+}
+
+/* 調整大小時的樣式 */
+.smart-toc-panel.smart-toc-resizing {
+  transition: none !important;
+  user-select: none;
+  pointer-events: auto;
+}
+
+.smart-toc-panel.smart-toc-resizing .smart-toc-content {
+  pointer-events: none;
+}
+
+/* 讓調整大小的邊緣在 hover 時更明顯 */
+.smart-toc-panel .resize-handle:hover {
+  background: rgba(59, 130, 246, 0.1);
+}
+
+.smart-toc-panel .resize-handle-corner-nw:hover,
+.smart-toc-panel .resize-handle-corner-ne:hover,
+.smart-toc-panel .resize-handle-corner-sw:hover,
+.smart-toc-panel .resize-handle-corner-se:hover {
+  background: rgba(59, 130, 246, 0.2);
+  border-radius: 2px;
+}
+
 .smart-toc-panel.smart-toc-visible {
   opacity: 1;
   transform: translateX(0);
@@ -643,8 +751,7 @@ body.smart-toc-glance-mode h2,
 body.smart-toc-glance-mode h3,
 body.smart-toc-glance-mode h4,
 body.smart-toc-glance-mode h5,
-body.smart-toc-glance-mode h6,
-body.smart-toc-glance-mode strong {
+body.smart-toc-glance-mode h6 {
   cursor: help;
   transition: background-color 0.2s ease;
 }
@@ -657,12 +764,6 @@ body.smart-toc-glance-mode h5:hover,
 body.smart-toc-glance-mode h6:hover {
   background-color: rgba(102, 126, 234, 0.1);
   border-radius: 4px;
-}
-
-body.smart-toc-glance-mode strong:hover {
-  background-color: rgba(255, 193, 7, 0.2);
-  border-radius: 4px;
-  padding: 2px 4px;
 }
 
 /* Collapsed panel state */
