@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart TOC 層級階層與摺疊功能測試</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #fafafa;
+        }
+        
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .feature-highlight {
+            background: #e6f3ff;
+            border-left: 4px solid #0969da;
+            padding: 16px;
+            margin: 20px 0;
+            border-radius: 6px;
+        }
+        
+        .test-section {
+            background: #f8f9fa;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 6px;
+            border: 1px solid #e1e5e9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Smart TOC 層級階層與摺疊功能測試</h1>
+        
+        <div class="feature-highlight">
+            <strong>🆕 v2.1 自然樹狀結構：</strong>
+            <ul>
+                <li>🌲 真實樹狀結構 - 正確的 ├─ └─ │ 層級關係</li>
+                <li>📐 遞歸前綴系統 - 根據父子關係自動生成符號</li>
+                <li>🎯 簡化設計 - 移除複雜引導線，純符號顯示</li>
+                <li>🔽 展開/收合按鈕 - 點擊 ▼/▶ 控制子項目顯示</li>
+                <li>💾 狀態記憶 - 自動保存您的展開偏好設定</li>
+                <li>⊞⊟ 全部展開/收合 - 一鍵控制所有項目</li>
+            </ul>
+        </div>
+
+        <h1>第一章 - 基礎概念</h1>
+        <p>這是第一個主要章節，包含多個子章節。</p>
+        
+        <h2>1.1 基本介紹</h2>
+        <p>這是第一章的第一個子章節。</p>
+        
+        <h3>1.1.1 核心概念</h3>
+        <p>更深入的說明內容。</p>
+        
+        <h4>1.1.1.1 實施細節</h4>
+        <p>最細節的實施說明。</p>
+        
+        <h3>1.1.2 相關技術</h3>
+        <p>相關技術的說明。</p>
+        
+        <h2>1.2 進階主題</h2>
+        <p>第一章的第二個子章節。</p>
+        
+        <h3>1.2.1 高級功能</h3>
+        <p>高級功能的詳細說明。</p>
+        
+        <h3>1.2.2 最佳實踐</h3>
+        <p>最佳實踐的指導方針。</p>
+
+        <h1>第二章 - 實際應用</h1>
+        <p>這是第二個主要章節，專注於實際應用。</p>
+        
+        <h2>2.1 使用案例</h2>
+        <p>實際使用案例的介紹。</p>
+        
+        <h3>2.1.1 企業應用</h3>
+        <p>企業級應用的說明。</p>
+        
+        <h4>2.1.1.1 大型專案</h4>
+        <p>大型專案的管理方式。</p>
+        
+        <h4>2.1.1.2 團隊協作</h4>
+        <p>團隊協作的最佳方式。</p>
+        
+        <h3>2.1.2 個人應用</h3>
+        <p>個人使用的場景。</p>
+        
+        <h2>2.2 實施指南</h2>
+        <p>具體的實施步驟指南。</p>
+        
+        <h3>2.2.1 準備階段</h3>
+        <p>實施前的準備工作。</p>
+        
+        <h3>2.2.2 執行階段</h3>
+        <p>具體執行步驟。</p>
+        
+        <h4>2.2.2.1 初始設定</h4>
+        <p>初始設定的詳細說明。</p>
+        
+        <h4>2.2.2.2 調整優化</h4>
+        <p>調整和優化的方法。</p>
+
+        <h1>第三章 - 高級技巧</h1>
+        <p>這是第三個主要章節，涵蓋高級技巧。</p>
+        
+        <h2>3.1 性能優化</h2>
+        <p>系統性能優化的方法。</p>
+        
+        <h3>3.1.1 代碼優化</h3>
+        <p>代碼層面的優化技巧。</p>
+        
+        <h3>3.1.2 架構優化</h3>
+        <p>系統架構的優化方案。</p>
+        
+        <h2>3.2 故障排除</h2>
+        <p>常見問題的排除方法。</p>
+        
+        <h3>3.2.1 常見錯誤</h3>
+        <p>常見錯誤及其解決方案。</p>
+        
+        <h3>3.2.2 調試技巧</h3>
+        <p>有效的調試方法。</p>
+
+        <div class="test-section">
+            <h2>🧪 測試指引</h2>
+            <ol>
+                <li><strong>開啟 Smart TOC：</strong> 按 Alt+T 或點擊擴充套件圖示</li>
+                <li><strong>觀察階層結構：</strong> 注意左側的虛線引導線</li>
+                <li><strong>測試摺疊功能：</strong> 點擊 ▼ 按鈕摺疊子項目</li>
+                <li><strong>測試展開功能：</strong> 點擊 ▶ 按鈕展開子項目</li>
+                <li><strong>測試全部控制：</strong> 使用工具列的 ⊞ ⊟ 按鈕</li>
+                <li><strong>重新載入頁面：</strong> 確認狀態已保存</li>
+                <li><strong>測試深度調整：</strong> 使用 +/- 按鈕調整顯示深度</li>
+                <li><strong>測試搜尋功能：</strong> 確保與新結構相容</li>
+            </ol>
+        </div>
+
+        <div class="feature-highlight">
+            <h3>🎯 預期效果</h3>
+            <ul>
+                <li>清晰的樹狀階層結構，使用虛線連接各層級</li>
+                <li>每個有子項目的標題前都有 ▼ 展開/收合按鈕</li>
+                <li>平滑的動畫過渡效果</li>
+                <li>展開狀態會自動保存到本地儲存</li>
+                <li>與現有功能（搜尋、拖曳、調整大小）完全相容</li>
+            </ul>
+        </div>
+
+        <h1>附錄 A - 參考資料</h1>
+        <h2>A.1 相關文檔</h2>
+        <h2>A.2 工具資源</h2>
+        
+        <h1>附錄 B - 常見問題</h1>
+        <h2>B.1 安裝問題</h2>
+        <h2>B.2 使用問題</h2>
+    </div>
+
+    <!-- 載入 Smart TOC 擴充套件腳本 -->
+    <script src="content/content.js"></script>
+    <link rel="stylesheet" href="content/content.css">
+    
+    <script>
+        // 初始化 Smart TOC
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof SmartTOC !== 'undefined') {
+                window.smartTOC = new SmartTOC();
+                // 自動顯示 TOC 用於測試
+                setTimeout(() => {
+                    if (window.smartTOC && !window.smartTOC.isVisible) {
+                        window.smartTOC.show();
+                    }
+                }, 1000);
+            }
+        });
+    </script>
+</body>
+</html>

@@ -133,7 +133,7 @@
 
 .smart-toc-action-buttons {
   display: flex;
-  gap: 3px;
+  gap: 4px;
   align-items: center;
 }
 
@@ -1371,4 +1371,139 @@ body.smart-toc-glance-mode strong:hover {
 
 .smart-toc-theme-toast.show {
   opacity: 1;
+}
+
+/* 更多選單容器 */
+.smart-toc-more-container {
+  position: relative;
+  display: inline-block;
+}
+
+/* 更多按鈕 */
+.smart-toc-more {
+  background: none;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 3px;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #8b949e;
+  border-radius: 3px;
+  transition: all 0.2s ease;
+  opacity: 0.7;
+}
+
+.smart-toc-more:hover {
+  background: #f3f4f6;
+  color: #656d76;
+  opacity: 1;
+}
+
+/* 更多選單 */
+.smart-toc-more-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: #ffffff;
+  border: 1px solid #e1e5e9;
+  border-radius: 6px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  z-index: 2147483648;
+  min-width: 120px;
+  display: none;
+  overflow: hidden;
+  margin-top: 4px;
+}
+
+.smart-toc-more-menu.show {
+  display: block;
+}
+
+/* 更多選單選項 */
+.smart-toc-more-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+  font-size: 13px;
+  color: #24292f;
+  border: none;
+  width: 100%;
+  text-align: left;
+}
+
+.smart-toc-more-option:hover {
+  background: #f6f8fa;
+}
+
+.smart-toc-more-icon {
+  font-size: 12px;
+  width: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.smart-toc-more-text {
+  flex: 1;
+  font-size: 13px;
+}
+
+/* 釘選按鈕 */
+.smart-toc-pin {
+  background: none;
+  border: none;
+  font-size: 12px;
+  cursor: pointer;
+  padding: 3px;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #8b949e;
+  border-radius: 3px;
+  transition: all 0.2s ease;
+  opacity: 0.7;
+}
+
+.smart-toc-pin:hover {
+  background: #f3f4f6;
+  color: #656d76;
+  opacity: 1;
+}
+
+.smart-toc-pin.pinned {
+  color: #0969da;
+  opacity: 1;
+  background: rgba(9, 105, 218, 0.1);
+}
+
+/* 釘選狀態下的面板樣式 */
+.smart-toc-panel.pinned {
+  cursor: default !important;
+}
+
+.smart-toc-panel.pinned .smart-toc-header {
+  cursor: default !important;
+}
+
+/* 關閉按鈕位置調整 */
+.smart-toc-close {
+  font-size: 16px;
+  order: 3;
+}
+
+.smart-toc-more-container {
+  order: 2;
+}
+
+.smart-toc-pin {
+  order: 1;
 }

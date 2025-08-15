@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pin 白名單功能測試 - Smart TOC</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1, h2, h3, h4, h5, h6 {
+            color: #2c3e50;
+            margin-top: 2em;
+        }
+        .test-info {
+            background: #e3f2fd;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #2196f3;
+            margin-bottom: 30px;
+        }
+        .test-steps {
+            background: #f3e5f5;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #9c27b0;
+            margin: 20px 0;
+        }
+        code {
+            background: #f5f5f5;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Smart TOC Pin 白名單功能測試</h1>
+        
+        <div class="test-info">
+            <h3>📌 新功能說明</h3>
+            <p>這個測試頁面用來驗證新的 Pin 白名單功能。現在您可以直接在工具列使用 📌 按鈕來管理白名單，而不需要在設定面板中操作。</p>
+        </div>
+
+        <div class="test-steps">
+            <h3>🧪 測試步驟 (已修復版本)</h3>
+            <ol>
+                <li>點擊擴充套件圖示開啟 Smart TOC</li>
+                <li>找到工具列中的 📌 按鈕</li>
+                <li>點擊 📌 按鈕查看白名單選單 (排版已修復)</li>
+                <li>測試「📌 總是在此網域顯示」功能 (點擊應有反應)</li>
+                <li>測試「🔗 總是在此 URL 顯示」功能 (點擊應有反應)</li>
+                <li>觀察狀態變化和通知訊息</li>
+                <li>檢查設定面板中的白名單計數</li>
+                <li>檢查瀏覽器開發者工具 Console 是否有 debug 訊息</li>
+            </ol>
+        </div>
+
+        <div class="test-info" style="background: #e8f5e8; border-left-color: #4caf50;">
+            <h3>✅ 完整修復內容 (v2.0)</h3>
+            <ul>
+                <li><strong>排版問題</strong>：完全重新設計選單佈局，固定寬度和正確對齊</li>
+                <li><strong>點擊無反應</strong>：重構事件監聽器邏輯，確保 DOM 完全載入後綁定</li>
+                <li><strong>Pin 狀態顯示</strong>：🎯 新功能！Pin 按鈕會根據白名單狀態變化：
+                    <ul style="margin-top: 5px;">
+                        <li>📌 = 未加入白名單</li>
+                        <li>📍 = 已加入白名單 (綠色)</li>
+                    </ul>
+                </li>
+                <li><strong>動態選單文字</strong>：選項文字會根據當前狀態顯示「新增」或「取消」</li>
+                <li><strong>即時回饋</strong>：狀態變化立即反映在按鈕和選單中</li>
+                <li><strong>視覺效果</strong>：平滑的過渡動畫和更好的 hover 效果</li>
+            </ul>
+        </div>
+
+        <h2>功能測試區域</h2>
+        
+        <h3>📌 Pin 按鈕功能 (v2.0)</h3>
+        <p>全新的智能 Pin 系統提供完整的視覺回饋：</p>
+        <ul>
+            <li><strong>智能按鈕狀態</strong> - 按鈕圖示會根據當前頁面的白名單狀態自動變化</li>
+            <li><strong>動態選單文字</strong> - 選單項目會顯示「新增」或「取消」，清楚表達當前可執行的操作</li>
+            <li><strong>📌/🔗 網域/URL 切換</strong> - 可分別管理網域級別和 URL 級別的白名單</li>
+            <li><strong>即時狀態顯示</strong> - 「當前設定」區域即時反映最新狀態</li>
+        </ul>
+        
+        <h3>🎯 白名單邏輯</h3>
+        <p>系統會智能判斷當前頁面的白名單狀態：</p>
+        <ul>
+            <li>如果當前 URL 已在白名單中，顯示 ✅ 此 URL 已加入白名單</li>
+            <li>如果當前網域已在白名單中，顯示 ✅ 此網域已加入白名單</li>
+            <li>如果都沒有，顯示「未加入白名單」</li>
+        </ul>
+
+        <h3>⚙️ 設定面板整合</h3>
+        <p>設定面板中的白名單區塊已簡化為：</p>
+        <ul>
+            <li>顯示白名單項目數量</li>
+            <li>提供「管理」按鈕查看所有白名單項目</li>
+            <li>主要管理功能移至 📌 按鈕</li>
+        </ul>
+
+        <h2>技術實作細節</h2>
+        
+        <h3>新增的 UI 元素</h3>
+        <p>在工具列 <code>.smart-toc-action-buttons</code> 中新增了：</p>
+        <ul>
+            <li><code>.smart-toc-pin-container</code> - Pin 按鈕容器</li>
+            <li><code>.smart-toc-pin-menu</code> - 下拉選單</li>
+            <li><code>.smart-toc-pin-option</code> - 選單項目</li>
+        </ul>
+
+        <h3>新增的方法</h3>
+        <ul>
+            <li><code>setupPinEventListeners()</code> - 設定 Pin 按鈕事件</li>
+            <li><code>updatePinMenuStatus()</code> - 更新選單狀態顯示</li>
+            <li><code>toggleDomainWhitelist()</code> - 切換網域白名單</li>
+            <li><code>toggleUrlWhitelist()</code> - 切換 URL 白名單</li>
+            <li><code>updateWhitelistCount()</code> - 更新白名單計數</li>
+            <li><code>showWhitelistManagementDialog()</code> - 顯示管理對話框</li>
+        </ul>
+
+        <h2>更多測試內容</h2>
+        
+        <h3>測試標題結構</h3>
+        <p>以下是一些測試標題，用來確保 TOC 功能正常運作：</p>
+        
+        <h4>第四級標題 1</h4>
+        <p>這是第四級標題下的內容。</p>
+        
+        <h4>第四級標題 2</h4>
+        <p>這也是第四級標題下的內容。</p>
+        
+        <h5>第五級標題</h5>
+        <p>這是第五級標題的內容。</p>
+        
+        <h6>第六級標題</h6>
+        <p>這是最深層的標題內容。</p>
+
+        <h3>預期行為</h3>
+        <p>使用新的 Pin 功能後，系統應該：</p>
+        <ul>
+            <li>✅ 立即反映白名單狀態變化</li>
+            <li>✅ 顯示適當的通知訊息</li>
+            <li>✅ 更新設定面板的計數</li>
+            <li>✅ 保持向後相容性</li>
+            <li>✅ 在頁面重新載入後記住設定</li>
+        </ul>
+
+        <h2>問題回報</h2>
+        <p>如果發現任何問題，請檢查：</p>
+        <ul>
+            <li>瀏覽器開發者工具的 Console 是否有錯誤</li>
+            <li>Pin 按鈕是否正確顯示</li>
+            <li>選單項目是否可以正常點擊</li>
+            <li>白名單狀態是否正確更新</li>
+        </ul>
+    </div>
+</body>
+</html>

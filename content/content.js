@@ -20,6 +20,8 @@ class SmartTOC {
     this.selectedResultIndex = -1;
     this.currentTheme = 'auto';
     this.themeMenu = null;
+    this.moreMenu = null;
+    this.isPinned = false;
     this.themes = {
       auto: null, // 使用自動偵測
       light: {
@@ -159,45 +161,67 @@ class SmartTOC {
             <button class="smart-toc-depth-increase" title="增加顯示深度">+</button>
           </div>
           <div class="smart-toc-action-buttons">
-            <button class="smart-toc-search-toggle" title="Toggle search">🔍</button>
-            <div class="smart-toc-theme-container">
-              <button class="smart-toc-theme" title="切換主題 (Alt+T)">🎨</button>
-              <div class="smart-toc-theme-menu">
-                <div class="smart-toc-theme-option" data-theme="auto">
-                  <div class="smart-toc-theme-dot auto"></div>
-                  <span>自動適應</span>
+            <button class="smart-toc-close" title="關閉">×</button>
+            <div class="smart-toc-more-container">
+              <button class="smart-toc-more" title="更多選項">⋯</button>
+              <div class="smart-toc-more-menu">
+                <div class="smart-toc-more-option smart-toc-search-toggle" title="搜尋">
+                  <span class="smart-toc-more-icon">🔍</span>
+                  <span class="smart-toc-more-text">搜尋</span>
                 </div>
-                <div class="smart-toc-theme-option" data-theme="light">
-                  <div class="smart-toc-theme-dot light"></div>
-                  <span>亮色</span>
+                <div class="smart-toc-more-option smart-toc-theme-toggle" title="切換主題">
+                  <span class="smart-toc-more-icon">🎨</span>
+                  <span class="smart-toc-more-text">主題</span>
                 </div>
-                <div class="smart-toc-theme-option" data-theme="dark">
-                  <div class="smart-toc-theme-dot dark"></div>
-                  <span>深色</span>
+                <div class="smart-toc-more-option smart-toc-settings" title="設定">
+                  <span class="smart-toc-more-icon">⚙️</span>
+                  <span class="smart-toc-more-text">設定</span>
                 </div>
-                <div class="smart-toc-theme-option" data-theme="ocean">
-                  <div class="smart-toc-theme-dot ocean"></div>
-                  <span>海洋</span>
+                <div class="smart-toc-more-option smart-toc-copy" title="複製">
+                  <span class="smart-toc-more-icon">📋</span>
+                  <span class="smart-toc-more-text">複製</span>
                 </div>
-                <div class="smart-toc-theme-option" data-theme="forest">
-                  <div class="smart-toc-theme-dot forest"></div>
-                  <span>森林</span>
+                <div class="smart-toc-more-option smart-toc-collapse" title="收合面板">
+                  <span class="smart-toc-more-icon">📁</span>
+                  <span class="smart-toc-more-text">收合</span>
                 </div>
-                <div class="smart-toc-theme-option" data-theme="sunset">
-                  <div class="smart-toc-theme-dot sunset"></div>
-                  <span>日落</span>
-                </div>
-                <div class="smart-toc-theme-option" data-theme="coral">
-                  <div class="smart-toc-theme-dot coral"></div>
-                  <span>珊瑚</span>
+                <div class="smart-toc-more-option smart-toc-expand" title="展開面板" style="display: none;">
+                  <span class="smart-toc-more-icon">📂</span>
+                  <span class="smart-toc-more-text">展開</span>
                 </div>
               </div>
             </div>
-            <button class="smart-toc-settings" title="Settings">⚙️</button>
-            <button class="smart-toc-collapse" title="Collapse panel">📁</button>
-            <button class="smart-toc-expand" title="Expand panel">📂</button>
-            <button class="smart-toc-copy" title="Copy to clipboard">📋</button>
-            <button class="smart-toc-close" title="Close">×</button>
+            <button class="smart-toc-pin" title="釘選面板">📌</button>
+          </div>
+        </div>
+        <div class="smart-toc-theme-menu" style="display: none;">
+          <div class="smart-toc-theme-option" data-theme="auto">
+            <div class="smart-toc-theme-dot auto"></div>
+            <span>自動適應</span>
+          </div>
+          <div class="smart-toc-theme-option" data-theme="light">
+            <div class="smart-toc-theme-dot light"></div>
+            <span>亮色</span>
+          </div>
+          <div class="smart-toc-theme-option" data-theme="dark">
+            <div class="smart-toc-theme-dot dark"></div>
+            <span>深色</span>
+          </div>
+          <div class="smart-toc-theme-option" data-theme="ocean">
+            <div class="smart-toc-theme-dot ocean"></div>
+            <span>海洋</span>
+          </div>
+          <div class="smart-toc-theme-option" data-theme="forest">
+            <div class="smart-toc-theme-dot forest"></div>
+            <span>森林</span>
+          </div>
+          <div class="smart-toc-theme-option" data-theme="sunset">
+            <div class="smart-toc-theme-dot sunset"></div>
+            <span>日落</span>
+          </div>
+          <div class="smart-toc-theme-option" data-theme="coral">
+            <div class="smart-toc-theme-dot coral"></div>
+            <span>珊瑚</span>
           </div>
         </div>
         <div class="smart-toc-settings-panel">
@@ -625,28 +649,66 @@ class SmartTOC {
       return true; // Important for async response
     });
 
+    // 關閉按鈕
     const closeBtn = this.tocPanel.querySelector('.smart-toc-close');
     closeBtn.addEventListener('click', () => {
+      this.hideMoreMenu();
       this.hideSettingsPanel();
       this.hide();
     });
 
-    const collapseBtn = this.tocPanel.querySelector('.smart-toc-collapse');
-    collapseBtn.addEventListener('click', () => {
-      this.hideSettingsPanel();
+    // 釘選按鈕
+    const pinBtn = this.tocPanel.querySelector('.smart-toc-pin');
+    pinBtn.addEventListener('click', () => {
+      this.hideMoreMenu();
+      this.togglePin();
+    });
+
+    // 更多選單按鈕
+    const moreBtn = this.tocPanel.querySelector('.smart-toc-more');
+    const moreMenu = this.tocPanel.querySelector('.smart-toc-more-menu');
+    this.moreMenu = moreMenu;
+    
+    moreBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.toggleMoreMenu();
+    });
+
+    // 更多選單選項事件
+    const searchToggle = this.tocPanel.querySelector('.smart-toc-more-option.smart-toc-search-toggle');
+    searchToggle.addEventListener('click', () => {
+      this.hideMoreMenu();
+      this.showSearchModal();
+    });
+
+    const themeToggle = this.tocPanel.querySelector('.smart-toc-more-option.smart-toc-theme-toggle');
+    themeToggle.addEventListener('click', () => {
+      this.hideMoreMenu();
+      this.showThemeMenu();
+    });
+
+    const settingsOption = this.tocPanel.querySelector('.smart-toc-more-option.smart-toc-settings');
+    settingsOption.addEventListener('click', () => {
+      this.hideMoreMenu();
+      this.toggleSettingsPanel();
+    });
+
+    const copyOption = this.tocPanel.querySelector('.smart-toc-more-option.smart-toc-copy');
+    copyOption.addEventListener('click', () => {
+      this.hideMoreMenu();
+      this.copyToClipboard();
+    });
+
+    const collapseOption = this.tocPanel.querySelector('.smart-toc-more-option.smart-toc-collapse');
+    collapseOption.addEventListener('click', () => {
+      this.hideMoreMenu();
       this.collapsePanel();
     });
 
-    const expandBtn = this.tocPanel.querySelector('.smart-toc-expand');
-    expandBtn.addEventListener('click', () => {
-      this.hideSettingsPanel();
+    const expandOption = this.tocPanel.querySelector('.smart-toc-more-option.smart-toc-expand');
+    expandOption.addEventListener('click', () => {
+      this.hideMoreMenu();
       this.expandPanel();
-    });
-
-    const copyBtn = this.tocPanel.querySelector('.smart-toc-copy');
-    copyBtn.addEventListener('click', () => {
-      this.hideSettingsPanel();
-      this.copyToClipboard();
     });
 
     const depthIncreaseBtn = this.tocPanel.querySelector('.smart-toc-depth-increase');
@@ -661,16 +723,6 @@ class SmartTOC {
       this.decreaseHeadingDepth();
     });
 
-    const settingsBtn = this.tocPanel.querySelector('.smart-toc-settings');
-    if (settingsBtn) {
-      settingsBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        console.log('Settings button clicked');
-        this.toggleSettingsPanel();
-      });
-    } else {
-      console.error('Settings button not found');
-    }
 
     const fontIncreaseBtn = this.tocPanel.querySelector('.smart-toc-font-increase');
     if (fontIncreaseBtn) {
@@ -698,6 +750,7 @@ class SmartTOC {
     document.addEventListener('click', (e) => {
       if (!this.tocPanel.contains(e.target)) {
         this.hideSettingsPanel();
+        this.hideMoreMenu();
       }
     });
 
@@ -750,18 +803,6 @@ class SmartTOC {
     this.updateCollapseExpandButtons();
   }
 
-  updateCollapseExpandButtons() {
-    const collapseBtn = this.tocPanel.querySelector('.smart-toc-collapse');
-    const expandBtn = this.tocPanel.querySelector('.smart-toc-expand');
-    
-    if (this.isCollapsed) {
-      collapseBtn.style.display = 'none';
-      expandBtn.style.display = 'flex';
-    } else {
-      collapseBtn.style.display = 'flex';
-      expandBtn.style.display = 'none';
-    }
-  }
 
   async copyToClipboard() {
     const tocText = this.generateTOCText();
@@ -1290,30 +1331,6 @@ class SmartTOC {
     }
   }
 
-  makeDraggable() {
-    const header = this.tocPanel.querySelector('.smart-toc-header');
-    
-    // Bind methods once
-    this.boundHandleDrag = this.handleDrag.bind(this);
-    this.boundStopDragging = this.stopDragging.bind(this);
-    
-    header.addEventListener('mousedown', (e) => {
-      if (e.target.tagName === 'BUTTON') return;
-      
-      this.isDragging = true;
-      this.tocPanel.classList.add('smart-toc-dragging');
-      const rect = this.tocPanel.getBoundingClientRect();
-      this.dragOffset = {
-        x: e.clientX - rect.left,
-        y: e.clientY - rect.top
-      };
-      
-      document.addEventListener('mousemove', this.boundHandleDrag);
-      document.addEventListener('mouseup', this.boundStopDragging);
-      
-      e.preventDefault();
-    });
-  }
 
   handleDrag(e) {
     if (!this.isDragging) return;
@@ -2522,53 +2539,10 @@ class SmartTOC {
   setupThemeEvents() {
     if (!this.tocPanel) return;
     
-    const themeButton = this.tocPanel.querySelector('.smart-toc-theme');
     const themeMenu = this.tocPanel.querySelector('.smart-toc-theme-menu');
-    const themeContainer = this.tocPanel.querySelector('.smart-toc-theme-container');
-    
-    if (!themeButton || !themeMenu) return;
+    if (!themeMenu) return;
     
     this.themeMenu = themeMenu;
-    
-    // 單擊切換主題
-    themeButton.addEventListener('click', (e) => {
-      e.stopPropagation();
-      this.switchToNextTheme();
-    });
-    
-    // 右鍵或長按顯示選單
-    let longPressTimer;
-    
-    themeButton.addEventListener('mousedown', (e) => {
-      if (e.button === 2) { // 右鍵
-        e.preventDefault();
-        this.toggleThemeMenu();
-      } else if (e.button === 0) { // 左鍵
-        longPressTimer = setTimeout(() => {
-          this.showThemeMenu();
-        }, 500);
-      }
-    });
-    
-    themeButton.addEventListener('mouseup', () => {
-      if (longPressTimer) {
-        clearTimeout(longPressTimer);
-        longPressTimer = null;
-      }
-    });
-    
-    themeButton.addEventListener('mouseleave', () => {
-      if (longPressTimer) {
-        clearTimeout(longPressTimer);
-        longPressTimer = null;
-      }
-    });
-    
-    // 右鍵選單
-    themeButton.addEventListener('contextmenu', (e) => {
-      e.preventDefault();
-      this.toggleThemeMenu();
-    });
     
     // 選單項目點擊
     const themeOptions = themeMenu.querySelectorAll('.smart-toc-theme-option');
@@ -2581,12 +2555,7 @@ class SmartTOC {
       });
     });
     
-    // 點擊外部隱藏選單
-    document.addEventListener('click', (e) => {
-      if (!themeContainer.contains(e.target)) {
-        this.hideThemeMenu();
-      }
-    });
+    // 點擊外部隱藏選單 - 主題選單現在由更多選單中的主題選項觸發
     
     // 鍵盤快捷鍵 Alt+T
     document.addEventListener('keydown', (e) => {
@@ -2617,6 +2586,90 @@ class SmartTOC {
       const isVisible = this.themeMenu.style.display === 'block';
       this.themeMenu.style.display = isVisible ? 'none' : 'block';
     }
+  }
+
+  // 更多選單相關方法
+  showMoreMenu() {
+    if (this.moreMenu) {
+      this.moreMenu.classList.add('show');
+    }
+  }
+
+  hideMoreMenu() {
+    if (this.moreMenu) {
+      this.moreMenu.classList.remove('show');
+    }
+  }
+
+  toggleMoreMenu() {
+    if (this.moreMenu) {
+      const isVisible = this.moreMenu.classList.contains('show');
+      if (isVisible) {
+        this.hideMoreMenu();
+      } else {
+        this.showMoreMenu();
+      }
+    }
+  }
+
+  // 釘選功能相關方法
+  togglePin() {
+    this.isPinned = !this.isPinned;
+    this.updatePinState();
+  }
+
+  updatePinState() {
+    const pinBtn = this.tocPanel.querySelector('.smart-toc-pin');
+    if (this.isPinned) {
+      pinBtn.classList.add('pinned');
+      this.tocPanel.classList.add('pinned');
+      pinBtn.title = '取消釘選';
+    } else {
+      pinBtn.classList.remove('pinned');
+      this.tocPanel.classList.remove('pinned');
+      pinBtn.title = '釘選面板';
+    }
+  }
+
+  // 更新收合/展開按鈕顯示
+  updateCollapseExpandButtons() {
+    const collapseOption = this.tocPanel.querySelector('.smart-toc-more-option.smart-toc-collapse');
+    const expandOption = this.tocPanel.querySelector('.smart-toc-more-option.smart-toc-expand');
+    
+    if (this.isCollapsed) {
+      if (collapseOption) collapseOption.style.display = 'none';
+      if (expandOption) expandOption.style.display = 'flex';
+    } else {
+      if (collapseOption) collapseOption.style.display = 'flex';
+      if (expandOption) expandOption.style.display = 'none';
+    }
+  }
+
+  // 修改原本的拖曳功能以支援釘選狀態
+  makeDraggable() {
+    const header = this.tocPanel.querySelector('.smart-toc-header');
+    
+    // Bind methods once
+    this.boundHandleDrag = this.handleDrag.bind(this);
+    this.boundStopDragging = this.stopDragging.bind(this);
+    
+    header.addEventListener('mousedown', (e) => {
+      if (e.target.tagName === 'BUTTON') return;
+      if (this.isPinned) return; // 釘選時不允許拖曳
+      
+      this.isDragging = true;
+      this.tocPanel.classList.add('smart-toc-dragging');
+      const rect = this.tocPanel.getBoundingClientRect();
+      this.dragOffset = {
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top
+      };
+      
+      document.addEventListener('mousemove', this.boundHandleDrag);
+      document.addEventListener('mouseup', this.boundStopDragging);
+      
+      e.preventDefault();
+    });
   }
 
   destroy() {
