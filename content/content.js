@@ -120,13 +120,11 @@ class SmartTOC {
     await this.loadSettings();
     await this.cleanupWhitelist(); // 清理白名單中的錯誤項目
     this.createTOCPanel();
-    this.updatePinState(); // 初始化釘選狀態
     this.adaptToPageBackground();
     this.extractHeadings();
     this.setupEventListeners();
     this.setupScrollTracking();
     this.makeDraggable();
-    this.makeResizable();
     this.setupGlanceMode();
     this.createSearchModal();
     this.setupSearch();
@@ -160,6 +158,11 @@ class SmartTOC {
     this.tocPanel.innerHTML = `
       <div class="smart-toc-header">
         <div class="smart-toc-controls">
+          <button class="smart-toc-toggle" title="收合/展開面板">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="12" height="12">
+              <path d="M8 3a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 3zm0 8a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 11zM3 8a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2A.5.5 0 0 1 3 8zm8 0a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2A.5.5 0 0 1 11 8z" fill="currentColor"/>
+            </svg>
+          </button>
           <div class="smart-toc-depth-controls">
             <button class="smart-toc-depth-decrease" title="減少顯示深度">−</button>
             <span class="smart-toc-depth-display">H${this.settings.maxHeadingLevels}</span>
@@ -201,17 +204,8 @@ class SmartTOC {
                   <span class="smart-toc-more-icon">📋</span>
                   <span class="smart-toc-more-text">複製</span>
                 </div>
-                <div class="smart-toc-more-option smart-toc-collapse" title="收合面板">
-                  <span class="smart-toc-more-icon">📁</span>
-                  <span class="smart-toc-more-text">收合</span>
-                </div>
-                <div class="smart-toc-more-option smart-toc-expand" title="展開面板" style="display: none;">
-                  <span class="smart-toc-more-icon">📂</span>
-                  <span class="smart-toc-more-text">展開</span>
-                </div>
               </div>
             </div>
-            <button class="smart-toc-pin" title="釘選面板">📌</button>
           </div>
         </div>
         <div class="smart-toc-theme-menu" style="display: none;">
@@ -248,15 +242,6 @@ class SmartTOC {
       <div class="smart-toc-content">
         <div class="smart-toc-loading">Analyzing page structure...</div>
       </div>
-      <!-- Resize handles -->
-      <div class="smart-toc-resize-handle corner top-left" data-direction="top-left"></div>
-      <div class="smart-toc-resize-handle edge top" data-direction="top"></div>
-      <div class="smart-toc-resize-handle corner top-right" data-direction="top-right"></div>
-      <div class="smart-toc-resize-handle edge right" data-direction="right"></div>
-      <div class="smart-toc-resize-handle corner bottom-right" data-direction="bottom-right"></div>
-      <div class="smart-toc-resize-handle edge bottom" data-direction="bottom"></div>
-      <div class="smart-toc-resize-handle corner bottom-left" data-direction="bottom-left"></div>
-      <div class="smart-toc-resize-handle edge left" data-direction="left"></div>
     `;
     
     this.tocPanel.style.width = this.settings.tocWidth + 'px';
@@ -278,8 +263,6 @@ class SmartTOC {
     // Update depth button display
     this.updateDepthButtonDisplay();
     
-    // Initialize button visibility
-    setTimeout(() => this.updateCollapseExpandButtons(), 0);
   }
 
   createSettingsModal() {
@@ -914,11 +897,14 @@ class SmartTOC {
       this.hide();
     });
 
-    // 釘選按鈕
-    const pinBtn = this.tocPanel.querySelector('.smart-toc-pin');
-    pinBtn.addEventListener('click', () => {
-      this.hideMoreMenu();
-      this.togglePin();
+    // Toggle 按鈕（收合/展開）
+    const toggleBtn = this.tocPanel.querySelector('.smart-toc-toggle');
+    toggleBtn.addEventListener('click', () => {
+      if (this.isCollapsed) {
+        this.expandPanel();
+      } else {
+        this.collapsePanel();
+      }
     });
 
     // 更多選單按鈕
@@ -956,17 +942,7 @@ class SmartTOC {
       this.copyToClipboard();
     });
 
-    const collapseOption = this.tocPanel.querySelector('.smart-toc-more-option.smart-toc-collapse');
-    collapseOption.addEventListener('click', () => {
-      this.hideMoreMenu();
-      this.collapsePanel();
-    });
 
-    const expandOption = this.tocPanel.querySelector('.smart-toc-more-option.smart-toc-expand');
-    expandOption.addEventListener('click', () => {
-      this.hideMoreMenu();
-      this.expandPanel();
-    });
 
     const depthIncreaseBtn = this.tocPanel.querySelector('.smart-toc-depth-increase');
     const depthDecreaseBtn = this.tocPanel.querySelector('.smart-toc-depth-decrease');
@@ -1061,7 +1037,6 @@ class SmartTOC {
     this.tocPanel.classList.add('smart-toc-collapsed');
     // Clear any dynamic height that might interfere with collapse
     this.tocPanel.style.removeProperty('height');
-    this.updateCollapseExpandButtons();
   }
 
   expandPanel() {
@@ -1071,7 +1046,6 @@ class SmartTOC {
     if (!this.tocPanel.style.height) {
       this.tocPanel.style.removeProperty('height');
     }
-    this.updateCollapseExpandButtons();
   }
 
 
@@ -2186,125 +2160,6 @@ class SmartTOC {
     }
   }
 
-  makeResizable() {
-    const resizeHandles = this.tocPanel.querySelectorAll('.smart-toc-resize-handle');
-    
-    // Bind methods once
-    this.boundHandleResize = this.handleResize.bind(this);
-    this.boundStopResizing = this.stopResizing.bind(this);
-    
-    resizeHandles.forEach(handle => {
-      handle.addEventListener('mousedown', (e) => {
-        this.isResizing = true;
-        this.resizeDirection = handle.dataset.direction;
-        this.resizeStartX = e.clientX;
-        this.resizeStartY = e.clientY;
-        this.resizeStartWidth = parseInt(window.getComputedStyle(this.tocPanel).width, 10);
-        this.resizeStartHeight = parseInt(window.getComputedStyle(this.tocPanel).height, 10);
-        this.resizeStartLeft = this.tocPanel.offsetLeft;
-        this.resizeStartTop = this.tocPanel.offsetTop;
-        
-        this.tocPanel.classList.add('smart-toc-resizing');
-        document.addEventListener('mousemove', this.boundHandleResize);
-        document.addEventListener('mouseup', this.boundStopResizing);
-        e.preventDefault();
-        e.stopPropagation();
-      });
-    });
-  }
-
-  handleResize(e) {
-    if (!this.isResizing) return;
-    
-    // Store the delta values for requestAnimationFrame
-    this.pendingDeltaX = e.clientX - this.resizeStartX;
-    this.pendingDeltaY = e.clientY - this.resizeStartY;
-    
-    // Use requestAnimationFrame for smooth resizing
-    if (!this.resizeFrameRequest) {
-      this.resizeFrameRequest = requestAnimationFrame(() => {
-        const deltaX = this.pendingDeltaX;
-        const deltaY = this.pendingDeltaY;
-        
-        const minWidth = 250;
-        const minHeight = 200;
-        const maxWidth = window.innerWidth * 0.8;
-        const maxHeight = window.innerHeight * 0.8;
-        
-        let newWidth = this.resizeStartWidth;
-        let newHeight = this.resizeStartHeight;
-        let newLeft = this.resizeStartLeft;
-        let newTop = this.resizeStartTop;
-        
-        switch (this.resizeDirection) {
-          case 'right':
-            newWidth = Math.max(minWidth, Math.min(maxWidth, this.resizeStartWidth + deltaX));
-            break;
-            
-          case 'left':
-            newWidth = Math.max(minWidth, Math.min(maxWidth, this.resizeStartWidth - deltaX));
-            newLeft = this.resizeStartLeft + (this.resizeStartWidth - newWidth);
-            break;
-            
-          case 'bottom':
-            newHeight = Math.max(minHeight, Math.min(maxHeight, this.resizeStartHeight + deltaY));
-            break;
-            
-          case 'top':
-            newHeight = Math.max(minHeight, Math.min(maxHeight, this.resizeStartHeight - deltaY));
-            newTop = this.resizeStartTop + (this.resizeStartHeight - newHeight);
-            break;
-            
-          case 'bottom-right':
-            newWidth = Math.max(minWidth, Math.min(maxWidth, this.resizeStartWidth + deltaX));
-            newHeight = Math.max(minHeight, Math.min(maxHeight, this.resizeStartHeight + deltaY));
-            break;
-            
-          case 'bottom-left':
-            newWidth = Math.max(minWidth, Math.min(maxWidth, this.resizeStartWidth - deltaX));
-            newHeight = Math.max(minHeight, Math.min(maxHeight, this.resizeStartHeight + deltaY));
-            newLeft = this.resizeStartLeft + (this.resizeStartWidth - newWidth);
-            break;
-            
-          case 'top-right':
-            newWidth = Math.max(minWidth, Math.min(maxWidth, this.resizeStartWidth + deltaX));
-            newHeight = Math.max(minHeight, Math.min(maxHeight, this.resizeStartHeight - deltaY));
-            newTop = this.resizeStartTop + (this.resizeStartHeight - newHeight);
-            break;
-            
-          case 'top-left':
-            newWidth = Math.max(minWidth, Math.min(maxWidth, this.resizeStartWidth - deltaX));
-            newHeight = Math.max(minHeight, Math.min(maxHeight, this.resizeStartHeight - deltaY));
-            newLeft = this.resizeStartLeft + (this.resizeStartWidth - newWidth);
-            newTop = this.resizeStartTop + (this.resizeStartHeight - newHeight);
-            break;
-        }
-        
-        this.tocPanel.style.width = newWidth + 'px';
-        this.tocPanel.style.height = newHeight + 'px';
-        this.tocPanel.style.left = newLeft + 'px';
-        this.tocPanel.style.top = newTop + 'px';
-        this.tocPanel.style.right = 'auto';
-        this.tocPanel.style.bottom = 'auto';
-        
-        this.resizeFrameRequest = null;
-      });
-    }
-  }
-
-  stopResizing() {
-    this.isResizing = false;
-    this.resizeDirection = null;
-    this.tocPanel.classList.remove('smart-toc-resizing');
-    document.removeEventListener('mousemove', this.boundHandleResize);
-    document.removeEventListener('mouseup', this.boundStopResizing);
-    
-    // Cancel any pending frame request
-    if (this.resizeFrameRequest) {
-      cancelAnimationFrame(this.resizeFrameRequest);
-      this.resizeFrameRequest = null;
-    }
-  }
 
   setupGlanceMode() {
     document.addEventListener('keydown', (e) => {
@@ -2329,7 +2184,7 @@ class SmartTOC {
     });
 
     document.addEventListener('mouseover', (e) => {
-      if (this.altPressed && !this.isDragging && !this.isResizing) {
+      if (this.altPressed && !this.isDragging) {
         const heading = e.target.closest('h1, h2, h3, h4, h5, h6, strong');
         if (heading && this.headings.find(h => h.element === heading)) {
           this.showGlance();
@@ -3518,7 +3373,6 @@ class SmartTOC {
     }
     
     if (success) {
-      this.updatePinState();
       // 重新檢查自動顯示條件，可能需要取消或啟動自動顯示
       this.recheckAutoShowConditions();
     }
@@ -3555,42 +3409,6 @@ class SmartTOC {
     // 因為用戶可能是在頁面載入後才加入白名單，此時不應該自動顯示
   }
 
-  updatePinState() {
-    console.log('🔄 Using NEW updatePinState method v2.1 - with icon switching');
-    const pinBtn = this.tocPanel.querySelector('.smart-toc-pin');
-    const currentDomain = window.location.hostname;
-    const isExactlyInWhitelist = this.isExactlyInWhitelist(currentDomain);
-    
-    console.log('🏠 Update pin state - Domain:', currentDomain);
-    console.log('✅ Is exactly in whitelist (NEW METHOD):', isExactlyInWhitelist);
-    console.log('🔘 Button element:', pinBtn);
-    
-    if (isExactlyInWhitelist) {
-      pinBtn.classList.add('pinned');
-      pinBtn.textContent = '📍'; // 已釘選圖示
-      pinBtn.title = `${currentDomain} 已在白名單中，點擊移除`;
-      console.log('📍 Button set to pinned state with filled pin icon');
-    } else {
-      pinBtn.classList.remove('pinned');
-      pinBtn.textContent = '📌'; // 未釘選圖示
-      pinBtn.title = `將 ${currentDomain} 加入自動啟動白名單`;
-      console.log('📌 Button set to unpinned state with outline pin icon');
-    }
-  }
-
-  // 更新收合/展開按鈕顯示
-  updateCollapseExpandButtons() {
-    const collapseOption = this.tocPanel.querySelector('.smart-toc-more-option.smart-toc-collapse');
-    const expandOption = this.tocPanel.querySelector('.smart-toc-more-option.smart-toc-expand');
-    
-    if (this.isCollapsed) {
-      if (collapseOption) collapseOption.style.display = 'none';
-      if (expandOption) expandOption.style.display = 'flex';
-    } else {
-      if (collapseOption) collapseOption.style.display = 'flex';
-      if (expandOption) expandOption.style.display = 'none';
-    }
-  }
 
   // 拖曳功能
   makeDraggable() {
