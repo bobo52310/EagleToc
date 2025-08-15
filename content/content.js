@@ -2546,6 +2546,12 @@ class SmartTOC {
         item.classList.remove('selected');
       }
     });
+    
+    // 立即滾動到對應的標題內容
+    if (this.selectedResultIndex >= 0 && this.selectedResultIndex < this.filteredHeadings.length) {
+      const heading = this.filteredHeadings[this.selectedResultIndex];
+      this.scrollToHeading(heading);
+    }
   }
 
   selectCurrentResult() {
