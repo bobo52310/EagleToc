@@ -171,8 +171,14 @@
 }
 
 .smart-toc-search-overlay {
-  /* Remove background overlay for cleaner look */
-  display: none;
+  /* Invisible overlay for click handling */
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  cursor: pointer;
 }
 
 .smart-toc-search-dialog {
@@ -183,9 +189,9 @@
   width: 380px;
   max-width: 400px;
   background: #ffffff !important;
-  border: 1px solid #d0d7de;
-  border-radius: 8px;
-  box-shadow: 0 16px 32px rgba(1, 4, 9, 0.1);
+  border: 1px solid #d1d9e0;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(31, 35, 40, 0.12);
   overflow: hidden;
   transform: translateX(20px) scale(0.95);
   transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
@@ -200,8 +206,8 @@
   display: flex;
   align-items: center;
   padding: 0 20px;
-  border-bottom: 1px solid #d0d7de;
-  background: #ffffff !important;
+  border-bottom: 1px solid #d1d9e0;
+  background: #f8f9fa !important;
 }
 
 .smart-toc-search-input {
@@ -211,21 +217,22 @@
   outline: none;
   background: transparent !important;
   font-size: 18px;
-  font-weight: 400;
+  font-weight: 500;
   color: #1f2328 !important;
   padding: 0 40px 0 0;
   font-family: inherit;
 }
 
 .smart-toc-search-input::placeholder {
-  color: #656d76 !important;
+  color: #8b949e !important;
+  font-weight: 400;
 }
 
 .smart-toc-search-icon {
   position: absolute;
   right: 20px;
   font-size: 18px;
-  color: #656d76 !important;
+  color: #8b949e !important;
   pointer-events: none;
 }
 
@@ -253,9 +260,9 @@
 .smart-toc-search-result-item {
   display: flex;
   align-items: center;
-  padding: 12px 20px;
+  padding: 14px 20px;
   cursor: pointer;
-  border-bottom: 1px solid #d8dee4;
+  border-bottom: 1px solid #eaecef;
   transition: background-color 0.15s ease;
   color: #1f2328 !important;
   background: #ffffff !important;
@@ -277,7 +284,7 @@
 
 .smart-toc-search-result-title {
   font-size: 16px;
-  font-weight: 500;
+  font-weight: 600;
   color: #1f2328 !important;
   line-height: 1.3;
   margin-bottom: 2px;
@@ -288,21 +295,21 @@
 
 .smart-toc-search-result-level {
   font-size: 12px;
-  color: #656d76 !important;
+  color: #8b949e !important;
   font-weight: 400;
 }
 
 .smart-toc-search-footer {
-  padding: 8px 20px;
-  background: #f6f8fa !important;
-  border-top: 1px solid #d0d7de;
+  padding: 10px 20px;
+  background: #f8f9fa !important;
+  border-top: 1px solid #d1d9e0;
 }
 
 .smart-toc-search-tips {
   display: flex;
   gap: 16px;
   font-size: 11px;
-  color: #656d76 !important;
+  color: #8b949e !important;
 }
 
 .smart-toc-search-tips span {
@@ -1324,63 +1331,66 @@ body.smart-toc-glance-mode strong:hover {
 
   /* Search Modal */
   .smart-toc-search-dialog {
-    background: #21262d !important;
-    border: 1px solid #30363d;
-    box-shadow: 0 16px 32px rgba(1, 4, 9, 0.3);
+    background: #0d1117 !important;
+    border: 1px solid #21262d;
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.4);
   }
 
   .smart-toc-search-input-container {
-    border-bottom: 1px solid #30363d;
-    background: #21262d !important;
+    border-bottom: 1px solid #21262d;
+    background: #0d1117 !important;
   }
 
   .smart-toc-search-input {
     background: transparent !important;
-    color: #f0f6fc !important;
+    color: #e6edf3 !important;
+    font-weight: 500;
   }
 
   .smart-toc-search-input::placeholder {
-    color: #7d8590 !important;
+    color: #8b949e !important;
+    font-weight: 400;
   }
 
   .smart-toc-search-icon {
-    color: #7d8590 !important;
+    color: #8b949e !important;
   }
 
   .smart-toc-search-results {
-    background: #21262d !important;
+    background: #0d1117 !important;
   }
 
   .smart-toc-search-result-item {
-    color: #f0f6fc !important;
-    border-bottom: 1px solid #30363d;
-    background: #21262d !important;
+    color: #e6edf3 !important;
+    border-bottom: 1px solid #21262d;
+    background: #0d1117 !important;
   }
 
   .smart-toc-search-result-item:hover {
-    background: #30363d !important;
+    background: #161b22 !important;
   }
 
   .smart-toc-search-result-item.selected {
-    background: #30363d !important;
+    background: #21262d !important;
     color: #58a6ff !important;
   }
 
   .smart-toc-search-result-title {
-    color: #f0f6fc !important;
+    color: #e6edf3 !important;
+    font-weight: 600;
   }
 
   .smart-toc-search-result-level {
-    color: #7d8590 !important;
+    color: #8b949e !important;
   }
 
   .smart-toc-search-footer {
-    background: #161b22 !important;
-    border-top: 1px solid #30363d;
+    background: #010409 !important;
+    border-top: 1px solid #21262d;
   }
 
   .smart-toc-search-tips span {
-    color: #7d8590 !important;
+    color: #8b949e !important;
   }
 
   /* Highlight Animation for Dark Theme */

@@ -2350,6 +2350,21 @@ class SmartTOC {
     if (overlay) {
       overlay.addEventListener('click', () => this.hideSearchModal());
     }
+
+    // 點擊搜尋模態框外部關閉
+    this.searchModal.addEventListener('click', (e) => {
+      if (e.target === this.searchModal) {
+        this.hideSearchModal();
+      }
+    });
+
+    // 阻止點擊對話框內部時關閉模態框
+    const searchDialog = this.searchModal.querySelector('.smart-toc-search-dialog');
+    if (searchDialog) {
+      searchDialog.addEventListener('click', (e) => {
+        e.stopPropagation();
+      });
+    }
   }
 
   showSearchModal() {
