@@ -1238,4 +1238,127 @@ body.smart-toc-glance-mode strong:hover {
   .smart-toc-content::-webkit-scrollbar-thumb:hover {
     background: #58585a;
   }
+  
+  /* Theme menu dark mode */
+  .smart-toc-theme-menu {
+    background: #2c2c2e;
+    border: 1px solid #48484a;
+    color: #ffffff;
+  }
+  
+  .smart-toc-theme-option:hover {
+    background: #3a3a3c;
+  }
+  
+  .smart-toc-theme-option.active {
+    background: #1a365d;
+  }
+}
+
+/* ==================== THEME SYSTEM STYLES ==================== */
+.smart-toc-theme-container {
+  position: relative;
+  display: inline-block;
+}
+
+.smart-toc-theme-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: white;
+  border: 1px solid #e1e5e9;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  padding: 4px;
+  display: none;
+  z-index: 2147483648;
+  min-width: 120px;
+  backdrop-filter: blur(8px);
+}
+
+.smart-toc-theme-option {
+  display: flex;
+  align-items: center;
+  padding: 6px 10px;
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 12px;
+  transition: background-color 0.2s ease;
+  color: #333;
+}
+
+.smart-toc-theme-option:hover {
+  background: #f6f8fa;
+}
+
+.smart-toc-theme-option.active {
+  background: #e6f3ff;
+}
+
+.smart-toc-theme-option.active .smart-toc-theme-dot {
+  border-color: #0969da;
+  box-shadow: 0 0 0 2px rgba(9, 105, 218, 0.2);
+}
+
+.smart-toc-theme-dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  margin-right: 8px;
+  border: 2px solid transparent;
+  position: relative;
+  flex-shrink: 0;
+}
+
+/* Theme dot colors */
+.smart-toc-theme-dot.auto {
+  background: linear-gradient(45deg, #667eea 0%, #764ba2 50%, #22c55e 100%);
+}
+
+.smart-toc-theme-dot.light {
+  background: #ffffff;
+  border: 2px solid #e1e5e9;
+}
+
+.smart-toc-theme-dot.dark {
+  background: #1c1c1e;
+}
+
+.smart-toc-theme-dot.ocean {
+  background: #667eea;
+}
+
+.smart-toc-theme-dot.forest {
+  background: #22c55e;
+}
+
+.smart-toc-theme-dot.sunset {
+  background: #fb923c;
+}
+
+.smart-toc-theme-dot.coral {
+  background: #ff6b6b;
+}
+
+/* Theme Toast */
+.smart-toc-theme-toast {
+  position: absolute;
+  bottom: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 12px;
+  white-space: nowrap;
+  z-index: 2147483649;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  backdrop-filter: blur(4px);
+  pointer-events: none;
+}
+
+.smart-toc-theme-toast.show {
+  opacity: 1;
 }

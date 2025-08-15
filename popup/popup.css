@@ -138,3 +138,47 @@ body {
   overflow: hidden;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background: #1c1c1e;
+    color: #ffffff;
+  }
+  
+  .popup-info {
+    background: #2c2c2e;
+    color: #ffffff;
+  }
+  
+  .info-text {
+    color: #98989a;
+  }
+  
+  .secondary-button {
+    background: #2c2c2e;
+    color: #ffffff;
+    border: 1px solid #48484a;
+  }
+  
+  .secondary-button:hover {
+    background: #3a3a3c;
+    border-color: #6d6d70;
+  }
+  
+  .secondary-button:active {
+    background: #48484a;
+  }
+  
+  .popup-footer {
+    background: #2c2c2e;
+    border-top: 1px solid #48484a;
+  }
+  
+  .version {
+    color: #98989a;
+  }
+  
+  .popup-container {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+}

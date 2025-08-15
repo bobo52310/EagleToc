@@ -18,6 +18,71 @@ class SmartTOC {
     this.filteredHeadings = [];
     this.searchModal = null;
     this.selectedResultIndex = -1;
+    this.currentTheme = 'auto';
+    this.themeMenu = null;
+    this.themes = {
+      auto: null, // 使用自動偵測
+      light: {
+        panelBg: 'rgba(255, 255, 255, 0.95)',
+        headerBg: 'rgba(248, 249, 250, 0.98)',
+        textColor: '#24292f',
+        borderColor: 'rgba(0, 0, 0, 0.1)',
+        shadowColor: 'rgba(0, 0, 0, 0.1)',
+        buttonBg: 'rgba(246, 248, 250, 0.8)',
+        buttonHoverBg: 'rgba(208, 215, 222, 0.8)',
+        itemHoverBg: 'rgba(246, 248, 250, 0.8)'
+      },
+      dark: {
+        panelBg: 'rgba(28, 28, 30, 0.95)',
+        headerBg: 'rgba(44, 44, 46, 0.98)',
+        textColor: '#ffffff',
+        borderColor: 'rgba(255, 255, 255, 0.15)',
+        shadowColor: 'rgba(0, 0, 0, 0.3)',
+        buttonBg: 'rgba(44, 44, 46, 0.8)',
+        buttonHoverBg: 'rgba(58, 58, 60, 0.8)',
+        itemHoverBg: 'rgba(58, 58, 60, 0.6)'
+      },
+      ocean: {
+        panelBg: 'rgba(102, 126, 234, 0.15)',
+        headerBg: 'rgba(102, 126, 234, 0.2)',
+        textColor: '#1a365d',
+        borderColor: 'rgba(102, 126, 234, 0.3)',
+        shadowColor: 'rgba(102, 126, 234, 0.2)',
+        buttonBg: 'rgba(102, 126, 234, 0.1)',
+        buttonHoverBg: 'rgba(102, 126, 234, 0.25)',
+        itemHoverBg: 'rgba(102, 126, 234, 0.15)'
+      },
+      forest: {
+        panelBg: 'rgba(34, 197, 94, 0.15)',
+        headerBg: 'rgba(34, 197, 94, 0.2)',
+        textColor: '#14532d',
+        borderColor: 'rgba(34, 197, 94, 0.3)',
+        shadowColor: 'rgba(34, 197, 94, 0.2)',
+        buttonBg: 'rgba(34, 197, 94, 0.1)',
+        buttonHoverBg: 'rgba(34, 197, 94, 0.25)',
+        itemHoverBg: 'rgba(34, 197, 94, 0.15)'
+      },
+      sunset: {
+        panelBg: 'rgba(251, 146, 60, 0.15)',
+        headerBg: 'rgba(251, 146, 60, 0.2)',
+        textColor: '#7c2d12',
+        borderColor: 'rgba(251, 146, 60, 0.3)',
+        shadowColor: 'rgba(251, 146, 60, 0.2)',
+        buttonBg: 'rgba(251, 146, 60, 0.1)',
+        buttonHoverBg: 'rgba(251, 146, 60, 0.25)',
+        itemHoverBg: 'rgba(251, 146, 60, 0.15)'
+      },
+      coral: {
+        panelBg: 'rgba(255, 107, 107, 0.15)',
+        headerBg: 'rgba(255, 107, 107, 0.2)',
+        textColor: '#7f1d1d',
+        borderColor: 'rgba(255, 107, 107, 0.3)',
+        shadowColor: 'rgba(255, 107, 107, 0.2)',
+        buttonBg: 'rgba(255, 107, 107, 0.1)',
+        buttonHoverBg: 'rgba(255, 107, 107, 0.25)',
+        itemHoverBg: 'rgba(255, 107, 107, 0.15)'
+      }
+    };
     this.settings = {
       maxHeadingLevels: 3,
       tocPosition: 'right',
@@ -28,6 +93,7 @@ class SmartTOC {
       autoShowDelay: 500,
       fontSize: 16,
       highlightDuration: 5,
+      theme: 'auto',
       whitelistEnabled: true,
       autoShowWhitelist: [
         'wikipedia.org',
@@ -48,6 +114,7 @@ class SmartTOC {
   async init() {
     await this.loadSettings();
     this.createTOCPanel();
+    this.adaptToPageBackground();
     this.extractHeadings();
     this.setupEventListeners();
     this.setupScrollTracking();
@@ -57,6 +124,7 @@ class SmartTOC {
     this.createSearchModal();
     this.setupSearch();
     this.setupTooltips();
+    this.setupThemeEvents();
   }
 
   async loadSettings() {
@@ -65,6 +133,10 @@ class SmartTOC {
         chrome.runtime.sendMessage({ action: 'get-settings' }, (response) => {
           if (response) {
             this.settings = { ...this.settings, ...response };
+            // 載入主題設定
+            if (response.theme) {
+              this.currentTheme = response.theme;
+            }
           }
           resolve();
         });
@@ -88,6 +160,39 @@ class SmartTOC {
           </div>
           <div class="smart-toc-action-buttons">
             <button class="smart-toc-search-toggle" title="Toggle search">🔍</button>
+            <div class="smart-toc-theme-container">
+              <button class="smart-toc-theme" title="切換主題 (Alt+T)">🎨</button>
+              <div class="smart-toc-theme-menu">
+                <div class="smart-toc-theme-option" data-theme="auto">
+                  <div class="smart-toc-theme-dot auto"></div>
+                  <span>自動適應</span>
+                </div>
+                <div class="smart-toc-theme-option" data-theme="light">
+                  <div class="smart-toc-theme-dot light"></div>
+                  <span>亮色</span>
+                </div>
+                <div class="smart-toc-theme-option" data-theme="dark">
+                  <div class="smart-toc-theme-dot dark"></div>
+                  <span>深色</span>
+                </div>
+                <div class="smart-toc-theme-option" data-theme="ocean">
+                  <div class="smart-toc-theme-dot ocean"></div>
+                  <span>海洋</span>
+                </div>
+                <div class="smart-toc-theme-option" data-theme="forest">
+                  <div class="smart-toc-theme-dot forest"></div>
+                  <span>森林</span>
+                </div>
+                <div class="smart-toc-theme-option" data-theme="sunset">
+                  <div class="smart-toc-theme-dot sunset"></div>
+                  <span>日落</span>
+                </div>
+                <div class="smart-toc-theme-option" data-theme="coral">
+                  <div class="smart-toc-theme-dot coral"></div>
+                  <span>珊瑚</span>
+                </div>
+              </div>
+            </div>
             <button class="smart-toc-settings" title="Settings">⚙️</button>
             <button class="smart-toc-collapse" title="Collapse panel">📁</button>
             <button class="smart-toc-expand" title="Expand panel">📂</button>
@@ -1813,6 +1918,706 @@ class SmartTOC {
     }
   }
 
+  adaptToPageBackground() {
+    // 偵測網頁背景顏色
+    const backgroundColor = this.detectPageBackground();
+    const isDark = this.isColorDark(backgroundColor);
+    
+    // 根據背景顏色調整 TOC 面板的配色
+    this.applyAdaptiveColors(isDark, backgroundColor);
+  }
+
+  detectPageBackground() {
+    // 嘗試多個元素來獲取最具代表性的背景顏色
+    const elementsToCheck = [
+      document.body,
+      document.documentElement,
+      document.querySelector('main'),
+      document.querySelector('.content'),
+      document.querySelector('#content'),
+      document.querySelector('article'),
+      document.querySelector('.post'),
+      document.querySelector('.page')
+    ].filter(el => el !== null);
+
+    for (let element of elementsToCheck) {
+      const computed = window.getComputedStyle(element);
+      const bgColor = computed.backgroundColor;
+      
+      // 如果背景不是透明的，使用這個顏色
+      if (bgColor && bgColor !== 'rgba(0, 0, 0, 0)' && bgColor !== 'transparent') {
+        return bgColor;
+      }
+    }
+    
+    // 如果所有元素都是透明的，默認為白色
+    return 'rgb(255, 255, 255)';
+  }
+
+  isColorDark(color) {
+    // 將顏色轉換為 RGB 值
+    let rgb = this.parseColor(color);
+    if (!rgb) return false;
+    
+    // 使用相對亮度公式判斷顏色深淺
+    const luminance = (0.299 * rgb.r + 0.587 * rgb.g + 0.114 * rgb.b) / 255;
+    return luminance < 0.5;
+  }
+
+  parseColor(color) {
+    // 處理 rgb() 格式
+    const rgbMatch = color.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
+    if (rgbMatch) {
+      return {
+        r: parseInt(rgbMatch[1]),
+        g: parseInt(rgbMatch[2]),
+        b: parseInt(rgbMatch[3])
+      };
+    }
+    
+    // 處理 rgba() 格式
+    const rgbaMatch = color.match(/rgba\((\d+),\s*(\d+),\s*(\d+),\s*[\d.]+\)/);
+    if (rgbaMatch) {
+      return {
+        r: parseInt(rgbaMatch[1]),
+        g: parseInt(rgbaMatch[2]),
+        b: parseInt(rgbaMatch[3])
+      };
+    }
+    
+    // 處理十六進制格式
+    if (color.startsWith('#')) {
+      const hex = color.slice(1);
+      if (hex.length === 6) {
+        return {
+          r: parseInt(hex.slice(0, 2), 16),
+          g: parseInt(hex.slice(2, 4), 16),
+          b: parseInt(hex.slice(4, 6), 16)
+        };
+      }
+    }
+    
+    return null;
+  }
+
+  adjustBrightness(rgb, factor) {
+    // factor > 1 = 變亮, factor < 1 = 變暗
+    return {
+      r: Math.min(255, Math.max(0, Math.round(rgb.r * factor))),
+      g: Math.min(255, Math.max(0, Math.round(rgb.g * factor))),
+      b: Math.min(255, Math.max(0, Math.round(rgb.b * factor)))
+    };
+  }
+
+  adjustBrightnessAdditive(rgb, amount) {
+    // amount > 0 = 增加亮度, amount < 0 = 減少亮度
+    return {
+      r: Math.min(255, Math.max(0, rgb.r + amount)),
+      g: Math.min(255, Math.max(0, rgb.g + amount)),
+      b: Math.min(255, Math.max(0, rgb.b + amount))
+    };
+  }
+
+  rgbToString(rgb, alpha = 1) {
+    if (alpha < 1) {
+      return `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${alpha})`;
+    }
+    return `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
+  }
+
+  generateHarmonousColors(backgroundColor) {
+    const rgb = this.parseColor(backgroundColor);
+    if (!rgb) {
+      // 預設顏色方案
+      return {
+        panelBg: 'rgba(255, 255, 255, 0.9)',
+        headerBg: 'rgba(248, 249, 250, 0.95)',
+        textColor: '#333333',
+        borderColor: 'rgba(0, 0, 0, 0.1)',
+        shadowColor: 'rgba(0, 0, 0, 0.1)'
+      };
+    }
+
+    const luminance = (0.299 * rgb.r + 0.587 * rgb.g + 0.114 * rgb.b) / 255;
+    const isDark = luminance < 0.5;
+
+    if (isDark) {
+      // 深色背景：使用較亮的相近色調
+      const lighterBg = this.adjustBrightnessAdditive(rgb, 40);
+      const lighterHeader = this.adjustBrightnessAdditive(rgb, 60);
+      
+      return {
+        panelBg: this.rgbToString(lighterBg, 0.85),
+        headerBg: this.rgbToString(lighterHeader, 0.9),
+        textColor: '#e0e0e0',
+        borderColor: 'rgba(255, 255, 255, 0.15)',
+        shadowColor: 'rgba(0, 0, 0, 0.2)',
+        buttonBg: this.rgbToString(this.adjustBrightnessAdditive(rgb, 30), 0.8),
+        buttonHoverBg: this.rgbToString(this.adjustBrightnessAdditive(rgb, 50), 0.8),
+        itemHoverBg: this.rgbToString(this.adjustBrightnessAdditive(rgb, 25), 0.6)
+      };
+    } else {
+      // 淺色背景：使用較暗的相近色調
+      const darkerBg = this.adjustBrightnessAdditive(rgb, -25);
+      const darkerHeader = this.adjustBrightnessAdditive(rgb, -35);
+      
+      return {
+        panelBg: this.rgbToString(darkerBg, 0.85),
+        headerBg: this.rgbToString(darkerHeader, 0.9),
+        textColor: '#333333',
+        borderColor: 'rgba(0, 0, 0, 0.12)',
+        shadowColor: 'rgba(0, 0, 0, 0.1)',
+        buttonBg: this.rgbToString(this.adjustBrightnessAdditive(rgb, -15), 0.8),
+        buttonHoverBg: this.rgbToString(this.adjustBrightnessAdditive(rgb, -30), 0.8),
+        itemHoverBg: this.rgbToString(this.adjustBrightnessAdditive(rgb, -15), 0.6)
+      };
+    }
+  }
+
+  getContrastColor(backgroundColor) {
+    const rgb = this.parseColor(backgroundColor);
+    if (!rgb) return '#333333';
+    
+    const luminance = (0.299 * rgb.r + 0.587 * rgb.g + 0.114 * rgb.b) / 255;
+    return luminance < 0.5 ? '#e0e0e0' : '#333333';
+  }
+
+  applyAdaptiveColors(isDark, backgroundColor) {
+    if (!this.tocPanel) return;
+    
+    // 檢查是否使用預設主題
+    if (this.currentTheme !== 'auto') {
+      this.applyTheme(this.currentTheme);
+      return;
+    }
+    
+    // 生成和諧的配色方案
+    const colors = this.generateHarmonousColors(backgroundColor);
+    
+    // 創建自定義 CSS 變數
+    const customStyle = document.createElement('style');
+    customStyle.id = 'smart-toc-adaptive-colors';
+    
+    // 移除已存在的樣式
+    const existingStyle = document.getElementById('smart-toc-adaptive-colors');
+    if (existingStyle) {
+      existingStyle.remove();
+    }
+    
+    // 使用融合式配色方案
+    const cssRules = `
+      .smart-toc-panel {
+        background: ${colors.panelBg} !important;
+        color: ${colors.textColor} !important;
+        border: 1px solid ${colors.borderColor} !important;
+        box-shadow: 0 4px 16px ${colors.shadowColor} !important;
+        backdrop-filter: blur(8px) !important;
+      }
+      
+      .smart-toc-header {
+        background: ${colors.headerBg} !important;
+        border-bottom: 1px solid ${colors.borderColor} !important;
+        color: ${colors.textColor} !important;
+      }
+      
+      .smart-toc-controls button {
+        color: ${colors.textColor} !important;
+        background: ${colors.buttonBg} !important;
+        opacity: 0.8 !important;
+      }
+      
+      .smart-toc-controls button:hover {
+        background: ${colors.buttonHoverBg} !important;
+        color: ${colors.textColor} !important;
+        opacity: 1 !important;
+      }
+      
+      .smart-toc-item {
+        color: ${colors.textColor} !important;
+      }
+      
+      .smart-toc-item:hover {
+        background: ${colors.itemHoverBg} !important;
+      }
+      
+      .smart-toc-item.active {
+        background: ${isDark ? 'rgba(100, 149, 237, 0.25)' : 'rgba(9, 105, 218, 0.15)'} !important;
+        color: ${isDark ? '#87CEEB' : '#0969da'} !important;
+        border-left: 3px solid ${isDark ? '#87CEEB' : '#0969da'} !important;
+      }
+      
+      .smart-toc-depth-controls {
+        background: ${colors.buttonBg} !important;
+        border: 1px solid ${colors.borderColor} !important;
+      }
+      
+      .smart-toc-depth-controls button {
+        color: ${colors.textColor} !important;
+        background: transparent !important;
+      }
+      
+      .smart-toc-depth-controls button:hover {
+        background: ${colors.buttonHoverBg} !important;
+      }
+      
+      .smart-toc-depth-display {
+        color: ${colors.textColor} !important;
+        background: transparent !important;
+      }
+      
+      .smart-toc-settings-panel {
+        background: ${colors.panelBg} !important;
+        border-top: 1px solid ${colors.borderColor} !important;
+      }
+      
+      .smart-toc-settings-label {
+        color: ${colors.textColor} !important;
+      }
+      
+      .smart-toc-font-size-display {
+        color: ${colors.textColor} !important;
+      }
+      
+      .smart-toc-search-modal {
+        background: ${colors.panelBg} !important;
+        border: 1px solid ${colors.borderColor} !important;
+        box-shadow: 0 8px 24px ${colors.shadowColor} !important;
+      }
+      
+      .smart-toc-search-input {
+        background: ${colors.buttonBg} !important;
+        color: ${colors.textColor} !important;
+        border: 1px solid ${colors.borderColor} !important;
+      }
+      
+      .smart-toc-search-input::placeholder {
+        color: ${isDark ? 'rgba(224, 224, 224, 0.6)' : 'rgba(51, 51, 51, 0.6)'} !important;
+      }
+      
+      .smart-toc-search-results {
+        background: ${colors.panelBg} !important;
+      }
+      
+      .smart-toc-search-result {
+        color: ${colors.textColor} !important;
+      }
+      
+      .smart-toc-search-result:hover,
+      .smart-toc-search-result.selected {
+        background: ${colors.itemHoverBg} !important;
+      }
+      
+      .smart-toc-content {
+        background: ${colors.panelBg} !important;
+        color: ${colors.textColor} !important;
+      }
+      
+      .smart-toc-loading,
+      .smart-toc-no-headings {
+        color: ${colors.textColor} !important;
+      }
+      
+      .smart-toc-link {
+        color: ${colors.textColor} !important;
+      }
+      
+      .smart-toc-item.smart-toc-active {
+        background: ${isDark ? 'rgba(100, 149, 237, 0.25)' : 'rgba(9, 105, 218, 0.15)'} !important;
+        color: ${isDark ? '#87CEEB' : '#0969da'} !important;
+      }
+      
+      .smart-toc-item.smart-toc-active .smart-toc-link {
+        color: ${isDark ? '#87CEEB' : '#0969da'} !important;
+      }
+      
+      .smart-toc-no-search-results {
+        color: ${colors.textColor} !important;
+        opacity: 0.7;
+      }
+      
+      .smart-toc-content::-webkit-scrollbar-track {
+        background: ${colors.buttonBg} !important;
+      }
+      
+      .smart-toc-content::-webkit-scrollbar-thumb {
+        background: ${colors.borderColor} !important;
+      }
+      
+      .smart-toc-content::-webkit-scrollbar-thumb:hover {
+        background: ${colors.buttonHoverBg} !important;
+      }
+    `;
+    
+    customStyle.textContent = cssRules;
+    document.head.appendChild(customStyle);
+  }
+
+  applyTheme(themeName) {
+    if (!this.tocPanel || !this.themes[themeName]) return;
+    
+    const colors = this.themes[themeName];
+    const isDark = themeName === 'dark' || (colors.textColor && colors.textColor.includes('ffffff'));
+    
+    // 創建自定義 CSS 變數
+    const customStyle = document.createElement('style');
+    customStyle.id = 'smart-toc-adaptive-colors';
+    
+    // 移除已存在的樣式
+    const existingStyle = document.getElementById('smart-toc-adaptive-colors');
+    if (existingStyle) {
+      existingStyle.remove();
+    }
+    
+    // 使用主題配色方案
+    const cssRules = `
+      .smart-toc-panel {
+        background: ${colors.panelBg} !important;
+        color: ${colors.textColor} !important;
+        border: 1px solid ${colors.borderColor} !important;
+        box-shadow: 0 4px 16px ${colors.shadowColor} !important;
+        backdrop-filter: blur(8px) !important;
+      }
+      
+      .smart-toc-header {
+        background: ${colors.headerBg} !important;
+        border-bottom: 1px solid ${colors.borderColor} !important;
+        color: ${colors.textColor} !important;
+      }
+      
+      .smart-toc-controls button {
+        color: ${colors.textColor} !important;
+        background: ${colors.buttonBg} !important;
+        opacity: 0.8 !important;
+      }
+      
+      .smart-toc-controls button:hover {
+        background: ${colors.buttonHoverBg} !important;
+        color: ${colors.textColor} !important;
+        opacity: 1 !important;
+      }
+      
+      .smart-toc-item {
+        color: ${colors.textColor} !important;
+      }
+      
+      .smart-toc-item:hover {
+        background: ${colors.itemHoverBg} !important;
+      }
+      
+      .smart-toc-item.active {
+        background: ${isDark ? 'rgba(100, 149, 237, 0.25)' : 'rgba(9, 105, 218, 0.15)'} !important;
+        color: ${isDark ? '#87CEEB' : '#0969da'} !important;
+        border-left: 3px solid ${isDark ? '#87CEEB' : '#0969da'} !important;
+      }
+      
+      .smart-toc-depth-controls {
+        background: ${colors.buttonBg} !important;
+        border: 1px solid ${colors.borderColor} !important;
+      }
+      
+      .smart-toc-depth-controls button {
+        color: ${colors.textColor} !important;
+        background: transparent !important;
+      }
+      
+      .smart-toc-depth-controls button:hover {
+        background: ${colors.buttonHoverBg} !important;
+      }
+      
+      .smart-toc-depth-display {
+        color: ${colors.textColor} !important;
+        background: transparent !important;
+      }
+      
+      .smart-toc-settings-panel {
+        background: ${colors.panelBg} !important;
+        border-top: 1px solid ${colors.borderColor} !important;
+      }
+      
+      .smart-toc-settings-label {
+        color: ${colors.textColor} !important;
+      }
+      
+      .smart-toc-font-size-display {
+        color: ${colors.textColor} !important;
+      }
+      
+      .smart-toc-search-modal {
+        background: ${colors.panelBg} !important;
+        border: 1px solid ${colors.borderColor} !important;
+        box-shadow: 0 8px 24px ${colors.shadowColor} !important;
+      }
+      
+      .smart-toc-search-input {
+        background: ${colors.buttonBg} !important;
+        color: ${colors.textColor} !important;
+        border: 1px solid ${colors.borderColor} !important;
+      }
+      
+      .smart-toc-search-input::placeholder {
+        color: ${isDark ? 'rgba(224, 224, 224, 0.6)' : 'rgba(51, 51, 51, 0.6)'} !important;
+      }
+      
+      .smart-toc-search-results {
+        background: ${colors.panelBg} !important;
+      }
+      
+      .smart-toc-search-result {
+        color: ${colors.textColor} !important;
+      }
+      
+      .smart-toc-search-result:hover,
+      .smart-toc-search-result.selected {
+        background: ${colors.itemHoverBg} !important;
+      }
+      
+      .smart-toc-theme-menu {
+        background: ${colors.panelBg} !important;
+        border: 1px solid ${colors.borderColor} !important;
+        box-shadow: 0 4px 12px ${colors.shadowColor} !important;
+      }
+      
+      .smart-toc-theme-option {
+        color: ${colors.textColor} !important;
+      }
+      
+      .smart-toc-theme-option:hover {
+        background: ${colors.itemHoverBg} !important;
+      }
+      
+      .smart-toc-content {
+        background: ${colors.panelBg} !important;
+        color: ${colors.textColor} !important;
+      }
+      
+      .smart-toc-loading,
+      .smart-toc-no-headings {
+        color: ${colors.textColor} !important;
+      }
+      
+      .smart-toc-link {
+        color: ${colors.textColor} !important;
+      }
+      
+      .smart-toc-item.smart-toc-active {
+        background: ${isDark ? 'rgba(100, 149, 237, 0.25)' : 'rgba(9, 105, 218, 0.15)'} !important;
+        color: ${isDark ? '#87CEEB' : '#0969da'} !important;
+      }
+      
+      .smart-toc-item.smart-toc-active .smart-toc-link {
+        color: ${isDark ? '#87CEEB' : '#0969da'} !important;
+      }
+      
+      .smart-toc-no-search-results {
+        color: ${colors.textColor} !important;
+        opacity: 0.7;
+      }
+      
+      .smart-toc-content::-webkit-scrollbar-track {
+        background: ${colors.buttonBg} !important;
+      }
+      
+      .smart-toc-content::-webkit-scrollbar-thumb {
+        background: ${colors.borderColor} !important;
+      }
+      
+      .smart-toc-content::-webkit-scrollbar-thumb:hover {
+        background: ${colors.buttonHoverBg} !important;
+      }
+    `;
+    
+    customStyle.textContent = cssRules;
+    document.head.appendChild(customStyle);
+    
+    // 更新主題選單的選中狀態
+    this.updateThemeMenuSelection();
+  }
+
+  switchToNextTheme() {
+    const themeKeys = Object.keys(this.themes);
+    const currentIndex = themeKeys.indexOf(this.currentTheme);
+    const nextIndex = (currentIndex + 1) % themeKeys.length;
+    const nextTheme = themeKeys[nextIndex];
+    
+    this.setTheme(nextTheme);
+  }
+
+  setTheme(themeName) {
+    if (!this.themes.hasOwnProperty(themeName)) return;
+    
+    this.currentTheme = themeName;
+    this.settings.theme = themeName;
+    
+    // 儲存到 chrome.storage
+    if (typeof chrome !== 'undefined' && chrome.runtime) {
+      chrome.runtime.sendMessage({
+        action: 'save-settings',
+        settings: { theme: themeName }
+      });
+    }
+    
+    // 應用主題
+    if (themeName === 'auto') {
+      // 重新偵測背景
+      this.adaptToPageBackground();
+    } else {
+      this.applyTheme(themeName);
+    }
+    
+    // 顯示主題切換提示
+    this.showThemeToast(themeName);
+    
+    // 更新主題選單
+    this.updateThemeMenuSelection();
+  }
+
+  updateThemeMenuSelection() {
+    const themeOptions = this.tocPanel.querySelectorAll('.smart-toc-theme-option');
+    themeOptions.forEach(option => {
+      const theme = option.dataset.theme;
+      if (theme === this.currentTheme) {
+        option.classList.add('active');
+      } else {
+        option.classList.remove('active');
+      }
+    });
+  }
+
+  showThemeToast(themeName) {
+    const themeNames = {
+      auto: '自動適應',
+      light: '亮色主題',
+      dark: '深色主題',
+      ocean: '海洋主題',
+      forest: '森林主題',
+      sunset: '日落主題',
+      coral: '珊瑚主題'
+    };
+    
+    // 創建 toast 元素
+    const toast = document.createElement('div');
+    toast.className = 'smart-toc-theme-toast';
+    toast.textContent = `已切換至 ${themeNames[themeName] || themeName}`;
+    
+    // 添加到面板中
+    this.tocPanel.appendChild(toast);
+    
+    // 顯示動畫
+    setTimeout(() => {
+      toast.classList.add('show');
+    }, 10);
+    
+    // 自動隱藏
+    setTimeout(() => {
+      toast.classList.remove('show');
+      setTimeout(() => {
+        if (toast.parentNode) {
+          toast.parentNode.removeChild(toast);
+        }
+      }, 300);
+    }, 1500);
+  }
+
+  setupThemeEvents() {
+    if (!this.tocPanel) return;
+    
+    const themeButton = this.tocPanel.querySelector('.smart-toc-theme');
+    const themeMenu = this.tocPanel.querySelector('.smart-toc-theme-menu');
+    const themeContainer = this.tocPanel.querySelector('.smart-toc-theme-container');
+    
+    if (!themeButton || !themeMenu) return;
+    
+    this.themeMenu = themeMenu;
+    
+    // 單擊切換主題
+    themeButton.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.switchToNextTheme();
+    });
+    
+    // 右鍵或長按顯示選單
+    let longPressTimer;
+    
+    themeButton.addEventListener('mousedown', (e) => {
+      if (e.button === 2) { // 右鍵
+        e.preventDefault();
+        this.toggleThemeMenu();
+      } else if (e.button === 0) { // 左鍵
+        longPressTimer = setTimeout(() => {
+          this.showThemeMenu();
+        }, 500);
+      }
+    });
+    
+    themeButton.addEventListener('mouseup', () => {
+      if (longPressTimer) {
+        clearTimeout(longPressTimer);
+        longPressTimer = null;
+      }
+    });
+    
+    themeButton.addEventListener('mouseleave', () => {
+      if (longPressTimer) {
+        clearTimeout(longPressTimer);
+        longPressTimer = null;
+      }
+    });
+    
+    // 右鍵選單
+    themeButton.addEventListener('contextmenu', (e) => {
+      e.preventDefault();
+      this.toggleThemeMenu();
+    });
+    
+    // 選單項目點擊
+    const themeOptions = themeMenu.querySelectorAll('.smart-toc-theme-option');
+    themeOptions.forEach(option => {
+      option.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const themeName = option.dataset.theme;
+        this.setTheme(themeName);
+        this.hideThemeMenu();
+      });
+    });
+    
+    // 點擊外部隱藏選單
+    document.addEventListener('click', (e) => {
+      if (!themeContainer.contains(e.target)) {
+        this.hideThemeMenu();
+      }
+    });
+    
+    // 鍵盤快捷鍵 Alt+T
+    document.addEventListener('keydown', (e) => {
+      if (e.altKey && e.key === 't') {
+        e.preventDefault();
+        this.switchToNextTheme();
+      }
+    });
+    
+    // 初始化主題選單狀態
+    this.updateThemeMenuSelection();
+  }
+
+  showThemeMenu() {
+    if (this.themeMenu) {
+      this.themeMenu.style.display = 'block';
+    }
+  }
+
+  hideThemeMenu() {
+    if (this.themeMenu) {
+      this.themeMenu.style.display = 'none';
+    }
+  }
+
+  toggleThemeMenu() {
+    if (this.themeMenu) {
+      const isVisible = this.themeMenu.style.display === 'block';
+      this.themeMenu.style.display = isVisible ? 'none' : 'block';
+    }
+  }
+
   destroy() {
     if (this.intersectionObserver) {
       this.intersectionObserver.disconnect();
@@ -1828,6 +2633,11 @@ class SmartTOC {
     }
     if (this.tooltip && this.tooltip.parentNode) {
       this.tooltip.parentNode.removeChild(this.tooltip);
+    }
+    // 清理自適應配色樣式
+    const adaptiveStyle = document.getElementById('smart-toc-adaptive-colors');
+    if (adaptiveStyle) {
+      adaptiveStyle.remove();
     }
     document.body.classList.remove('smart-toc-glance-mode');
   }

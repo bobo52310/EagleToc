@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart TOC 自適應配色測試</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 40px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            transition: all 0.3s ease;
+        }
+        
+        .theme-light {
+            background: #ffffff;
+            color: #333333;
+        }
+        
+        .theme-dark {
+            background: #1a1a1a;
+            color: #e0e0e0;
+        }
+        
+        .theme-blue {
+            background: #2c3e50;
+            color: #ecf0f1;
+        }
+        
+        .theme-green {
+            background: #27ae60;
+            color: #ffffff;
+        }
+        
+        .theme-purple {
+            background: #8e44ad;
+            color: #ffffff;
+        }
+        
+        .theme-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #ffffff;
+        }
+        
+        .theme-coral {
+            background: #ff6b6b;
+            color: #ffffff;
+        }
+        
+        .theme-teal {
+            background: #26d0ce;
+            color: #ffffff;
+        }
+        
+        .theme-orange {
+            background: #ff9500;
+            color: #ffffff;
+        }
+        
+        .theme-indigo {
+            background: #5856d6;
+            color: #ffffff;
+        }
+        
+        .theme-soft-gray {
+            background: #f5f5f7;
+            color: #1d1d1f;
+        }
+        
+        .theme-warm-gray {
+            background: #8e8e93;
+            color: #ffffff;
+        }
+        
+        .theme-midnight {
+            background: #1c1c1e;
+            color: #ffffff;
+        }
+        
+        .theme-sepia {
+            background: #f4f1ea;
+            color: #5c4e3a;
+        }
+        
+        .theme-mint {
+            background: #00d4aa;
+            color: #ffffff;
+        }
+        
+        .theme-pink {
+            background: #ff2d92;
+            color: #ffffff;
+        }
+        
+        .controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .controls button {
+            margin: 5px;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            background: #007aff;
+            color: white;
+        }
+        
+        .controls button:hover {
+            background: #0056cc;
+        }
+        
+        .content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        h1, h2, h3, h4, h5, h6 {
+            margin-top: 2em;
+            margin-bottom: 0.5em;
+        }
+        
+        p {
+            margin-bottom: 1em;
+        }
+        
+        .info-box {
+            background: rgba(0, 0, 0, 0.05);
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #007aff;
+        }
+        
+        .theme-dark .info-box {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .theme-blue .info-box {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .theme-green .info-box,
+        .theme-purple .info-box,
+        .theme-gradient .info-box,
+        .theme-coral .info-box,
+        .theme-teal .info-box,
+        .theme-orange .info-box,
+        .theme-indigo .info-box,
+        .theme-warm-gray .info-box,
+        .theme-midnight .info-box,
+        .theme-mint .info-box,
+        .theme-pink .info-box {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .theme-soft-gray .info-box,
+        .theme-sepia .info-box {
+            background: rgba(0, 0, 0, 0.05);
+        }
+    </style>
+</head>
+<body class="theme-light">
+    <div class="controls">
+        <div><strong>背景主題切換：</strong></div>
+        
+        <div>基本色調：</div>
+        <button onclick="changeTheme('theme-light')">亮色</button>
+        <button onclick="changeTheme('theme-dark')">暗色</button>
+        <button onclick="changeTheme('theme-soft-gray')">淡灰</button>
+        <button onclick="changeTheme('theme-warm-gray')">暖灰</button>
+        <button onclick="changeTheme('theme-midnight')">深夜</button>
+        <button onclick="changeTheme('theme-sepia')">米色</button>
+        
+        <div>彩色主題：</div>
+        <button onclick="changeTheme('theme-blue')">藍色</button>
+        <button onclick="changeTheme('theme-green')">綠色</button>
+        <button onclick="changeTheme('theme-purple')">紫色</button>
+        <button onclick="changeTheme('theme-coral')">珊瑚</button>
+        <button onclick="changeTheme('theme-teal')">青色</button>
+        <button onclick="changeTheme('theme-orange')">橙色</button>
+        <button onclick="changeTheme('theme-indigo')">靛色</button>
+        <button onclick="changeTheme('theme-mint')">薄荷</button>
+        <button onclick="changeTheme('theme-pink')">粉色</button>
+        
+        <div>特殊效果：</div>
+        <button onclick="changeTheme('theme-gradient')">漸層</button>
+    </div>
+
+    <div class="content">
+        <h1>Smart TOC 自適應配色測試頁面</h1>
+        
+        <div class="info-box">
+            <strong>測試說明：</strong>這個頁面用來測試 Smart TOC 擴充套件的融合式自適應配色功能。點擊右上角的按鈕切換不同的背景主題，觀察 TOC 面板是否會自動調整為接近背景色調的配色方案，看起來更自然融合而不突兀。
+        </div>
+
+        <h2>1. 功能概述</h2>
+        <p>Smart TOC 現在具備融合式智能配色功能，能夠：</p>
+        <ul>
+            <li>自動偵測網頁的背景顏色和色調</li>
+            <li>分析背景的明暗程度和色彩特性</li>
+            <li>生成與背景和諧的相近色調配色方案</li>
+            <li>保持適度對比度確保可讀性</li>
+            <li>讓 TOC 面板自然融入網頁視覺風格</li>
+            <li>支援背景模糊效果增強層次感</li>
+        </ul>
+
+        <h2>2. 偵測機制</h2>
+        <p>系統會按優先順序檢查以下元素的背景顏色：</p>
+        
+        <h3>2.1 主要元素</h3>
+        <ul>
+            <li>document.body</li>
+            <li>document.documentElement</li>
+        </ul>
+        
+        <h3>2.2 內容容器</h3>
+        <ul>
+            <li>main 標籤</li>
+            <li>.content 類別</li>
+            <li>#content ID</li>
+            <li>article 標籤</li>
+        </ul>
+        
+        <h3>2.3 特殊容器</h3>
+        <ul>
+            <li>.post 類別</li>
+            <li>.page 類別</li>
+        </ul>
+
+        <h2>3. 融合式配色策略</h2>
+        
+        <h3>3.1 深色背景處理</h3>
+        <p>當偵測到深色背景時，TOC 面板會：</p>
+        <ul>
+            <li>保持原背景色調，增加 40-60 單位亮度</li>
+            <li>使用 85% 透明度創造融合感</li>
+            <li>淡色文字 (#e0e0e0) 確保適度對比</li>
+            <li>柔和的邊框和陰影效果</li>
+            <li>添加背景模糊效果 (backdrop-filter)</li>
+        </ul>
+        
+        <h3>3.2 淺色背景處理</h3>
+        <p>當偵測到淺色背景時，TOC 面板會：</p>
+        <ul>
+            <li>保持原背景色調，減少 25-35 單位亮度</li>
+            <li>使用 85% 透明度保持和諧感</li>
+            <li>深色文字 (#333333) 確保可讀性</li>
+            <li>自然的邊框和陰影效果</li>
+            <li>添加背景模糊增強層次</li>
+        </ul>
+        
+        <h3>3.3 彩色背景處理</h3>
+        <p>當偵測到彩色背景時，系統會：</p>
+        <ul>
+            <li>保持原始色調 (Hue) 不變</li>
+            <li>調整明度創造視覺層次</li>
+            <li>生成同色系的和諧配色方案</li>
+            <li>確保 TOC 看起來像是網頁的原生組件</li>
+        </ul>
+
+        <h2>4. 亮度計算</h2>
+        <p>系統使用標準的相對亮度公式：</p>
+        <p><code>luminance = (0.299 * R + 0.587 * G + 0.114 * B) / 255</code></p>
+        <p>當亮度值小於 0.5 時判定為深色背景。</p>
+
+        <h2>5. 支援的顏色格式</h2>
+        
+        <h3>5.1 RGB 格式</h3>
+        <p>支援 rgb(r, g, b) 和 rgba(r, g, b, a) 格式</p>
+        
+        <h3>5.2 十六進制格式</h3>
+        <p>支援 #RRGGBB 六位數十六進制格式</p>
+        
+        <h3>5.3 預設處理</h3>
+        <p>當背景為透明或無法偵測時，預設為白色背景處理</p>
+
+        <h2>6. 測試指示</h2>
+        <p>請使用右上角的按鈕切換不同背景主題，並觀察：</p>
+        <ol>
+            <li><strong>融合度測試：</strong>TOC 面板是否看起來自然融入背景</li>
+            <li><strong>可讀性測試：</strong>文字對比度是否足夠清晰易讀</li>
+            <li><strong>和諧性測試：</strong>配色是否與背景色調協調一致</li>
+            <li><strong>響應性測試：</strong>切換主題時是否即時更新配色</li>
+            <li><strong>層次感測試：</strong>背景模糊效果是否增強視覺層次</li>
+            <li><strong>交互測試：</strong>按鈕和選項是否在各種背景下都清晰可用</li>
+        </ol>
+        
+        <h3>6.1 重點測試場景</h3>
+        <ul>
+            <li><strong>基本色調：</strong>測試黑白灰基礎配色的適應性</li>
+            <li><strong>彩色主題：</strong>驗證彩色背景下的色調保持和明度調整</li>
+            <li><strong>特殊效果：</strong>測試漸層背景的處理能力</li>
+        </ul>
+
+        <h2>7. 實作細節</h2>
+        
+        <h3>7.1 偵測時機</h3>
+        <p>在 TOC 面板創建後立即執行背景偵測</p>
+        
+        <h3>7.2 樣式應用</h3>
+        <p>使用動態創建的 style 標籤，搭配 !important 確保優先級</p>
+        
+        <h3>7.3 效能考量</h3>
+        <p>只在初始化時執行一次，避免重複計算</p>
+
+        <h2>8. 未來改進</h2>
+        <ul>
+            <li>支援更多顏色格式 (hsl, 顏色名稱等)</li>
+            <li>動態監聽背景變化</li>
+            <li>提供手動配色選項</li>
+            <li>記憶使用者偏好設定</li>
+        </ul>
+
+        <h2>9. 結論</h2>
+        <p>Smart TOC 的自適應配色功能大幅提升了在不同網站上的使用體驗，確保無論在何種背景下都能提供最佳的可讀性和視覺效果。</p>
+    </div>
+
+    <script>
+        function changeTheme(themeClass) {
+            // 移除所有主題類別
+            document.body.className = '';
+            // 應用新主題
+            document.body.className = themeClass;
+            
+            // 通知 Smart TOC 重新偵測背景（如果存在）
+            if (window.smartTOC && window.smartTOC.adaptToPageBackground) {
+                setTimeout(() => {
+                    window.smartTOC.adaptToPageBackground();
+                }, 100);
+            }
+        }
+        
+        // 頁面載入後設定預設主題
+        document.addEventListener('DOMContentLoaded', function() {
+            changeTheme('theme-light');
+        });
+    </script>
+</body>
+</html>
