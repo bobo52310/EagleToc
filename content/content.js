@@ -1786,6 +1786,7 @@ class SmartTOC {
 
   handleSearchKeydown(e) {
     if (e.key === 'Escape') {
+      e.stopPropagation(); // 阻止事件冒泡，避免觸發全域的 ESC 處理器
       this.hideSearchModal();
     } else if (e.key === 'ArrowDown') {
       e.preventDefault();

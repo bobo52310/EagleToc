@@ -159,12 +159,15 @@
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   pointer-events: none; /* Allow clicking through when not focused */
+  background: transparent; /* Ensure no background blur */
 }
 
 .smart-toc-search-modal.show {
   opacity: 1;
   visibility: visible;
   pointer-events: auto;
+  background: transparent !important;
+  backdrop-filter: none !important;
 }
 
 .smart-toc-search-overlay {
@@ -179,10 +182,10 @@
   right: 350px; /* Default position, adjusted by JS based on TOC position */
   width: 380px;
   max-width: 400px;
-  background: #ffffff;
-  border: 1px solid #e1e5e9;
+  background: #ffffff !important;
+  border: 1px solid #d0d7de;
   border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 16px 32px rgba(1, 4, 9, 0.1);
   overflow: hidden;
   transform: translateX(20px) scale(0.95);
   transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
@@ -197,7 +200,8 @@
   display: flex;
   align-items: center;
   padding: 0 20px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  border-bottom: 1px solid #d0d7de;
+  background: #ffffff !important;
 }
 
 .smart-toc-search-input {
@@ -205,23 +209,23 @@
   height: 60px;
   border: none;
   outline: none;
-  background: transparent;
+  background: transparent !important;
   font-size: 18px;
   font-weight: 400;
-  color: #1d1d1f;
+  color: #1f2328 !important;
   padding: 0 40px 0 0;
   font-family: inherit;
 }
 
 .smart-toc-search-input::placeholder {
-  color: #86868b;
+  color: #656d76 !important;
 }
 
 .smart-toc-search-icon {
   position: absolute;
   right: 20px;
   font-size: 18px;
-  color: #86868b;
+  color: #656d76 !important;
   pointer-events: none;
 }
 
@@ -230,6 +234,7 @@
   overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+  background: #ffffff !important;
 }
 
 .smart-toc-search-results::-webkit-scrollbar {
@@ -250,13 +255,15 @@
   align-items: center;
   padding: 12px 20px;
   cursor: pointer;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+  border-bottom: 1px solid #d8dee4;
   transition: background-color 0.15s ease;
+  color: #1f2328 !important;
+  background: #ffffff !important;
 }
 
 .smart-toc-search-result-item:hover,
 .smart-toc-search-result-item.selected {
-  background: rgba(0, 122, 255, 0.08);
+  background: #f6f8fa !important;
 }
 
 .smart-toc-search-result-item:last-child {
@@ -271,7 +278,7 @@
 .smart-toc-search-result-title {
   font-size: 16px;
   font-weight: 500;
-  color: #1d1d1f;
+  color: #1f2328 !important;
   line-height: 1.3;
   margin-bottom: 2px;
   overflow: hidden;
@@ -281,21 +288,21 @@
 
 .smart-toc-search-result-level {
   font-size: 12px;
-  color: #86868b;
+  color: #656d76 !important;
   font-weight: 400;
 }
 
 .smart-toc-search-footer {
   padding: 8px 20px;
-  background: rgba(248, 248, 248, 0.8);
-  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  background: #f6f8fa !important;
+  border-top: 1px solid #d0d7de;
 }
 
 .smart-toc-search-tips {
   display: flex;
   gap: 16px;
   font-size: 11px;
-  color: #86868b;
+  color: #656d76 !important;
 }
 
 .smart-toc-search-tips span {
@@ -1131,60 +1138,63 @@ body.smart-toc-glance-mode strong:hover {
 
   /* Search Modal */
   .smart-toc-search-dialog {
-    background: #1c1c1e;
-    border: 1px solid #38383a;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+    background: #21262d !important;
+    border: 1px solid #30363d;
+    box-shadow: 0 16px 32px rgba(1, 4, 9, 0.3);
   }
 
   .smart-toc-search-input-container {
-    border-bottom: 1px solid #38383a;
+    border-bottom: 1px solid #30363d;
+    background: #21262d !important;
   }
 
   .smart-toc-search-input {
-    background: transparent;
-    color: #ffffff;
+    background: transparent !important;
+    color: #f0f6fc !important;
   }
 
   .smart-toc-search-input::placeholder {
-    color: #98989a;
+    color: #7d8590 !important;
   }
 
   .smart-toc-search-icon {
-    color: #98989a;
+    color: #7d8590 !important;
   }
 
   .smart-toc-search-results {
-    background: #1c1c1e;
+    background: #21262d !important;
   }
 
-  .smart-toc-search-result {
-    color: #ffffff;
+  .smart-toc-search-result-item {
+    color: #f0f6fc !important;
+    border-bottom: 1px solid #30363d;
+    background: #21262d !important;
   }
 
-  .smart-toc-search-result:hover {
-    background: #2c2c2e;
+  .smart-toc-search-result-item:hover {
+    background: #30363d !important;
   }
 
-  .smart-toc-search-result.selected {
-    background: rgba(0, 122, 255, 0.2);
-    color: #007aff;
+  .smart-toc-search-result-item.selected {
+    background: #30363d !important;
+    color: #58a6ff !important;
   }
 
-  .smart-toc-search-result-text {
-    color: #ffffff;
+  .smart-toc-search-result-title {
+    color: #f0f6fc !important;
   }
 
   .smart-toc-search-result-level {
-    color: #98989a;
+    color: #7d8590 !important;
   }
 
   .smart-toc-search-footer {
-    background: #2c2c2e;
-    border-top: 1px solid #38383a;
+    background: #161b22 !important;
+    border-top: 1px solid #30363d;
   }
 
   .smart-toc-search-tips span {
-    color: #98989a;
+    color: #7d8590 !important;
   }
 
   /* Highlight Animation for Dark Theme */
