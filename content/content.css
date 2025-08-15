@@ -146,6 +146,48 @@
   min-width: 24px;
 }
 
+/* Font toolbar controls */
+.smart-toc-font-toolbar-controls {
+  display: flex;
+  align-items: center;
+  background: rgba(76, 175, 80, 0.08);
+  border: 1px solid rgba(76, 175, 80, 0.15);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.smart-toc-font-toolbar-controls button {
+  background: transparent !important;
+  border: none;
+  padding: 3px 4px;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #4caf50;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.smart-toc-font-toolbar-controls button:hover {
+  background: rgba(76, 175, 80, 0.15) !important;
+}
+
+.smart-toc-font-toolbar-controls svg {
+  pointer-events: none;
+}
+
+.smart-toc-font-toolbar-display {
+  font-size: 10px;
+  font-weight: 600;
+  color: #4caf50;
+  padding: 3px 6px;
+  background: rgba(76, 175, 80, 0.1);
+  min-width: 30px;
+  text-align: center;
+}
+
 /* Search Panel next to TOC */
 .smart-toc-search-modal {
   position: fixed;

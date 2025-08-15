@@ -165,6 +165,21 @@ class SmartTOC {
             <span class="smart-toc-depth-display">H${this.settings.maxHeadingLevels}</span>
             <button class="smart-toc-depth-increase" title="增加顯示深度">+</button>
           </div>
+          <div class="smart-toc-font-toolbar-controls">
+            <button class="smart-toc-font-toolbar-decrease" title="減小字體">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="12" height="12">
+                <path d="M4 12V4h1.5l2.25 6h.5L10.5 4H12v8h-1V6.25L9.75 11h-.5L8 6.25V12H4zm0-1h3V6.75L8.25 11h.5L10 6.75V11h1V5H9.5L7.5 10L5.5 5H4v6z" fill="currentColor"/>
+                <path d="M2 14h4v1H2v-1zM10 15h4v-1h-4v1z" fill="currentColor"/>
+              </svg>
+            </button>
+            <span class="smart-toc-font-toolbar-display">${this.settings.fontSize}px</span>
+            <button class="smart-toc-font-toolbar-increase" title="增大字體">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="12" height="12">
+                <path d="M4 12V4h1.5l2.25 6h.5L10.5 4H12v8h-1V6.25L9.75 11h-.5L8 6.25V12H4zm0-1h3V6.75L8.25 11h.5L10 6.75V11h1V5H9.5L7.5 10L5.5 5H4v6z" fill="currentColor"/>
+                <path d="M1 14h6v1H1v-1zM9 15h6v-1H9v1z" fill="currentColor"/>
+              </svg>
+            </button>
+          </div>
           <div class="smart-toc-action-buttons">
             <button class="smart-toc-close" title="關閉">×</button>
             <div class="smart-toc-more-container">
@@ -915,6 +930,17 @@ class SmartTOC {
       fontDecreaseBtn.addEventListener('click', async () => await this.changeFontSize(-1));
     }
 
+    // Toolbar font controls
+    const fontToolbarIncreaseBtn = this.tocPanel.querySelector('.smart-toc-font-toolbar-increase');
+    if (fontToolbarIncreaseBtn) {
+      fontToolbarIncreaseBtn.addEventListener('click', async () => await this.changeFontSize(1));
+    }
+
+    const fontToolbarDecreaseBtn = this.tocPanel.querySelector('.smart-toc-font-toolbar-decrease');
+    if (fontToolbarDecreaseBtn) {
+      fontToolbarDecreaseBtn.addEventListener('click', async () => await this.changeFontSize(-1));
+    }
+
     const highlightIncreaseBtn = this.tocPanel.querySelector('.smart-toc-highlight-increase');
     if (highlightIncreaseBtn) {
       highlightIncreaseBtn.addEventListener('click', async () => await this.changeHighlightDuration(1));
@@ -1130,6 +1156,12 @@ class SmartTOC {
         }
       }
       
+      // Update display in toolbar
+      const toolbarDisplay = this.tocPanel.querySelector('.smart-toc-font-toolbar-display');
+      if (toolbarDisplay) {
+        toolbarDisplay.textContent = newSize + 'px';
+      }
+      
       await this.saveSettings();
     }
   }
@@ -1154,8 +1186,34 @@ class SmartTOC {
   applyContentFontSize() {
     const tocList = this.tocPanel.querySelector('.smart-toc-list');
     if (tocList) {
+      // Set base font size for the list
       tocList.style.fontSize = this.settings.fontSize + 'px';
-      console.log('Applied font size:', this.settings.fontSize + 'px', 'to TOC list');
+      
+      // Calculate relative font sizes for each level based on the base font size
+      const baseFontSize = this.settings.fontSize;
+      const level1Size = baseFontSize;           // H1 uses base font size (16px default)
+      const level2Size = Math.max(11, Math.round(baseFontSize * 0.875)); // 87.5% of base (14px default)
+      const level3Size = Math.max(10, Math.round(baseFontSize * 0.75));  // 75% of base (12px default)
+      const level4Size = Math.max(10, Math.round(baseFontSize * 0.75));  // 75% of base (12px default)
+      const level5Size = Math.max(9, Math.round(baseFontSize * 0.6875)); // 68.75% of base (11px default)
+      const level6Size = Math.max(9, Math.round(baseFontSize * 0.6875)); // 68.75% of base (11px default)
+      
+      // Apply font sizes to each level
+      const level1Links = tocList.querySelectorAll('.smart-toc-level-1 .smart-toc-link');
+      const level2Links = tocList.querySelectorAll('.smart-toc-level-2 .smart-toc-link');
+      const level3Links = tocList.querySelectorAll('.smart-toc-level-3 .smart-toc-link');
+      const level4Links = tocList.querySelectorAll('.smart-toc-level-4 .smart-toc-link');
+      const level5Links = tocList.querySelectorAll('.smart-toc-level-5 .smart-toc-link');
+      const level6Links = tocList.querySelectorAll('.smart-toc-level-6 .smart-toc-link');
+      
+      level1Links.forEach(link => link.style.fontSize = level1Size + 'px');
+      level2Links.forEach(link => link.style.fontSize = level2Size + 'px');
+      level3Links.forEach(link => link.style.fontSize = level3Size + 'px');
+      level4Links.forEach(link => link.style.fontSize = level4Size + 'px');
+      level5Links.forEach(link => link.style.fontSize = level5Size + 'px');
+      level6Links.forEach(link => link.style.fontSize = level6Size + 'px');
+      
+      console.log('Applied font sizes - H1:', level1Size + 'px', 'H2:', level2Size + 'px', 'H3:', level3Size + 'px', 'H4:', level4Size + 'px', 'H5:', level5Size + 'px', 'H6:', level6Size + 'px');
     } else {
       console.log('TOC list not found for font size application');
     }
@@ -2901,6 +2959,25 @@ class SmartTOC {
         background: transparent !important;
       }
       
+      .smart-toc-font-toolbar-controls {
+        background: ${colors.buttonBg} !important;
+        border: 1px solid ${colors.borderColor} !important;
+      }
+      
+      .smart-toc-font-toolbar-controls button {
+        color: ${colors.textColor} !important;
+        background: transparent !important;
+      }
+      
+      .smart-toc-font-toolbar-controls button:hover {
+        background: ${colors.buttonHoverBg} !important;
+      }
+      
+      .smart-toc-font-toolbar-display {
+        color: ${colors.textColor} !important;
+        background: transparent !important;
+      }
+      
       .smart-toc-settings-panel {
         background: ${colors.panelBg} !important;
         border-top: 1px solid ${colors.borderColor} !important;
@@ -3061,6 +3138,25 @@ class SmartTOC {
       }
       
       .smart-toc-depth-display {
+        color: ${colors.textColor} !important;
+        background: transparent !important;
+      }
+      
+      .smart-toc-font-toolbar-controls {
+        background: ${colors.buttonBg} !important;
+        border: 1px solid ${colors.borderColor} !important;
+      }
+      
+      .smart-toc-font-toolbar-controls button {
+        color: ${colors.textColor} !important;
+        background: transparent !important;
+      }
+      
+      .smart-toc-font-toolbar-controls button:hover {
+        background: ${colors.buttonHoverBg} !important;
+      }
+      
+      .smart-toc-font-toolbar-display {
         color: ${colors.textColor} !important;
         background: transparent !important;
       }
