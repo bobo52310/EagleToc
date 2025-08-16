@@ -3397,12 +3397,12 @@ class SmartTOC {
     if (isExactlyInWhitelist) {
       iconElement.textContent = '📌';
       textElement.textContent = '取消自動開啟';
-      pinOption.title = '取消自動開啟 Smart TOC';
+      pinOption.removeAttribute('title');
       pinOption.style.color = '#d73a49';
     } else {
       iconElement.textContent = '📍';
       textElement.textContent = '自動開啟';
-      pinOption.title = '下次自動開啟 Smart TOC';
+      pinOption.removeAttribute('title');
       pinOption.style.color = '';
     }
   }
