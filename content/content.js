@@ -22,6 +22,59 @@ class SmartTOC {
     this.currentTheme = 'auto';
     this.themeMenu = null;
     this.moreMenu = null;
+    // Zen Mode 相關屬性
+    this.zenMode = false;
+    this.zenContainer = null;
+    this.zenScrollContainer = null;
+    this.zenContent = null;
+    // 版本2: 進階控制功能
+    this.zenPaused = false;
+    this.zenSpeed = 'medium'; // 'slow', 'medium', 'fast'
+    this.zenProgress = 0;
+    this.zenAnimationId = null;
+    this.zenStartTime = 0;
+    this.zenDuration = 30000;
+    this.zenControlPanel = null;
+    // 版本3: 個性化設置和主題
+    this.zenTheme = 'classic'; // 'classic', 'starry', 'ocean', 'forest', 'sunset', 'galaxy'
+    this.zenFontSize = 32;
+    this.zenLineSpacing = 80;
+    this.zenBlurLevel = 20;
+    this.zenSettingsPanel = null;
+    this.zenReadingPosition = 0;
+    this.zenThemes = {
+      classic: {
+        background: 'rgba(0, 0, 0, 0.95)',
+        textColor: '#ffffff',
+        accentColor: '#4a90e2'
+      },
+      starry: {
+        background: 'linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 50%, #16213e 100%)',
+        textColor: '#e8f4f8',
+        accentColor: '#ffd700',
+        particles: true
+      },
+      ocean: {
+        background: 'linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #1e3c72 100%)',
+        textColor: '#b8e6ff',
+        accentColor: '#00d4ff'
+      },
+      forest: {
+        background: 'linear-gradient(135deg, #134e5e 0%, #71b280 50%, #134e5e 100%)',
+        textColor: '#d4f1d4',
+        accentColor: '#7dd87d'
+      },
+      sunset: {
+        background: 'linear-gradient(135deg, #ff7b7b 0%, #ff9a56 50%, #ffad56 100%)',
+        textColor: '#fff3e0',
+        accentColor: '#ff6b35'
+      },
+      galaxy: {
+        background: 'linear-gradient(135deg, #2d1b69 0%, #11998e 50%, #38ef7d 100%)',
+        textColor: '#f0fff0',
+        accentColor: '#ff6a88'
+      }
+    };
     this.themes = {
       auto: null, // 使用自動偵測
       light: {
@@ -177,6 +230,11 @@ class SmartTOC {
           <button class="smart-toc-toolbar-search" title="搜尋">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="12" height="12">
               <path d="M6.5 0C2.91 0 0 2.91 0 6.5S2.91 13 6.5 13c1.61 0 3.09-.59 4.23-1.57l4.92 4.92a.75.75 0 1 0 1.06-1.06l-4.92-4.92A6.5 6.5 0 0 0 6.5 0zM1.5 6.5a5 5 0 1 1 10 0 5 5 0 0 1-10 0z" fill="currentColor"/>
+            </svg>
+          </button>
+          <button class="smart-toc-toolbar-zen" title="Zen Mode - 全螢幕閱讀模式">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="12" height="12">
+              <path d="M1.5 1a.5.5 0 0 0-.5.5v4a.5.5 0 0 1-1 0v-4A1.5 1.5 0 0 1 1.5 0h4a.5.5 0 0 1 0 1h-4zM10 .5a.5.5 0 0 1 .5-.5h4A1.5 1.5 0 0 1 16 1.5v4a.5.5 0 0 1-1 0v-4a.5.5 0 0 0-.5-.5h-4a.5.5 0 0 1-.5-.5zM.5 10a.5.5 0 0 1 .5.5v4a.5.5 0 0 0 .5.5h4a.5.5 0 0 1 0 1h-4A1.5 1.5 0 0 1 0 14.5v-4a.5.5 0 0 1 .5-.5zm15 0a.5.5 0 0 1 .5.5v4a1.5 1.5 0 0 1-1.5 1.5h-4a.5.5 0 0 1 0-1h4a.5.5 0 0 0 .5-.5v-4a.5.5 0 0 1 .5-.5z" fill="currentColor"/>
             </svg>
           </button>
           <div class="smart-toc-action-buttons">
@@ -898,6 +956,12 @@ class SmartTOC {
     const toolbarSearchBtn = this.tocPanel.querySelector('.smart-toc-toolbar-search');
     toolbarSearchBtn.addEventListener('click', () => {
       this.showSearchModal();
+    });
+
+    // Zen Mode 按鈕事件
+    const toolbarZenBtn = this.tocPanel.querySelector('.smart-toc-toolbar-zen');
+    toolbarZenBtn.addEventListener('click', () => {
+      this.toggleZenMode();
     });
 
     // 更多選單選項事件
@@ -3594,7 +3658,598 @@ class SmartTOC {
     this.saveSettings();
   }
 
+  // Zen Mode 功能 - 版本1: 基礎跑馬燈效果
+  toggleZenMode() {
+    if (this.zenMode) {
+      this.exitZenMode();
+    } else {
+      this.enterZenMode();
+    }
+  }
+
+  enterZenMode() {
+    if (this.headings.length === 0) {
+      console.log('No headings found for Zen Mode');
+      return;
+    }
+
+    this.zenMode = true;
+    
+    // 載入個人化設置
+    this.loadZenSettings();
+    
+    // 創建 Zen Mode 容器
+    this.createZenContainer();
+    
+    // 生成內容
+    this.generateZenContent();
+    
+    // 開始滾動動畫
+    this.startZenScroll();
+    
+    // 添加鍵盤監聽
+    this.setupZenKeyboardEvents();
+    
+    // 隱藏原始 TOC 面板
+    this.tocPanel.style.display = 'none';
+  }
+
+  exitZenMode() {
+    this.zenMode = false;
+    
+    // 停止動畫
+    if (this.zenAnimationId) {
+      cancelAnimationFrame(this.zenAnimationId);
+      this.zenAnimationId = null;
+    }
+    
+    // 移除 Zen Mode 容器
+    if (this.zenContainer && this.zenContainer.parentNode) {
+      this.zenContainer.parentNode.removeChild(this.zenContainer);
+    }
+    
+    // 清理引用
+    this.zenContainer = null;
+    this.zenScrollContainer = null;
+    this.zenContent = null;
+    this.zenControlPanel = null;
+    
+    // 重置狀態
+    this.zenPaused = false;
+    this.zenProgress = 0;
+    this.zenStartTime = 0;
+    
+    // 顯示原始 TOC 面板
+    this.tocPanel.style.display = '';
+    
+    // 移除鍵盤監聽
+    this.removeZenKeyboardEvents();
+  }
+
+  createZenContainer() {
+    this.zenContainer = document.createElement('div');
+    this.zenContainer.className = 'smart-toc-zen-container zen-v3-premium';
+    
+    this.zenContainer.innerHTML = `
+      <div class="smart-toc-zen-overlay"></div>
+      <div class="smart-toc-zen-scroll-container">
+        <div class="smart-toc-zen-content"></div>
+      </div>
+      <div class="smart-toc-zen-controls">
+        <div class="zen-control-group">
+          <button class="zen-control-btn zen-play-pause" title="暫停/繼續 (空格鍵)">
+            <svg class="zen-play-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
+              <path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0zM1.5 8a6.5 6.5 0 1 0 13 0 6.5 6.5 0 0 0-13 0zm4.879-2.773l4.264 2.559a.25.25 0 0 1 0 .428l-4.264 2.559A.25.25 0 0 1 6 10.559V5.442a.25.25 0 0 1 .379-.215z" fill="currentColor"/>
+            </svg>
+            <svg class="zen-pause-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16" style="display: none;">
+              <path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0zM1.5 8a6.5 6.5 0 1 0 13 0 6.5 6.5 0 0 0-13 0zm2-1.5v3a.5.5 0 0 0 1 0v-3a.5.5 0 0 0-1 0zm3.5 0v3a.5.5 0 0 0 1 0v-3a.5.5 0 0 0-1 0z" fill="currentColor"/>
+            </svg>
+          </button>
+          <div class="zen-speed-controls">
+            <button class="zen-control-btn zen-speed-btn" data-speed="slow" title="慢速">🐌</button>
+            <button class="zen-control-btn zen-speed-btn active" data-speed="medium" title="中速">🚶</button>
+            <button class="zen-control-btn zen-speed-btn" data-speed="fast" title="快速">🏃</button>
+          </div>
+          <button class="zen-control-btn zen-settings-btn" title="個性化設置 (S鍵)">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
+              <path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z" fill="currentColor"/>
+              <path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52l-.094-.319zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.292-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.292c.415.764-.42 1.6-1.185 1.184l-.292-.159a1.873 1.873 0 0 0-2.692 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.693-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.292A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115l.094-.319z" fill="currentColor"/>
+            </svg>
+          </button>
+        </div>
+        <div class="zen-progress-container">
+          <div class="zen-progress-bar">
+            <div class="zen-progress-fill"></div>
+          </div>
+          <span class="zen-progress-text">0%</span>
+        </div>
+      </div>
+      <div class="smart-toc-zen-instructions">
+        <div>ESC: 退出 | 空格: 暫停/繼續 | ↑↓: 手動滾動 | S: 設置</div>
+      </div>
+      <div class="zen-settings-panel" style="display: none;">
+        <div class="zen-settings-content">
+          <h3>🎨 個性化設置</h3>
+          
+          <div class="zen-setting-group">
+            <label>主題選擇</label>
+            <div class="zen-theme-grid">
+              <button class="zen-theme-btn active" data-theme="classic">
+                <div class="theme-preview classic-preview"></div>
+                <span>經典</span>
+              </button>
+              <button class="zen-theme-btn" data-theme="starry">
+                <div class="theme-preview starry-preview"></div>
+                <span>星空</span>
+              </button>
+              <button class="zen-theme-btn" data-theme="ocean">
+                <div class="theme-preview ocean-preview"></div>
+                <span>海洋</span>
+              </button>
+              <button class="zen-theme-btn" data-theme="forest">
+                <div class="theme-preview forest-preview"></div>
+                <span>森林</span>
+              </button>
+              <button class="zen-theme-btn" data-theme="sunset">
+                <div class="theme-preview sunset-preview"></div>
+                <span>夕陽</span>
+              </button>
+              <button class="zen-theme-btn" data-theme="galaxy">
+                <div class="theme-preview galaxy-preview"></div>
+                <span>銀河</span>
+              </button>
+            </div>
+          </div>
+          
+          <div class="zen-setting-group">
+            <label>字體大小: <span class="zen-font-size-value">${this.zenFontSize}px</span></label>
+            <input type="range" class="zen-font-size-slider" min="20" max="60" value="${this.zenFontSize}">
+          </div>
+          
+          <div class="zen-setting-group">
+            <label>行間距: <span class="zen-line-spacing-value">${this.zenLineSpacing}px</span></label>
+            <input type="range" class="zen-line-spacing-slider" min="40" max="120" value="${this.zenLineSpacing}">
+          </div>
+          
+          <div class="zen-setting-group">
+            <label>背景模糊: <span class="zen-blur-value">${this.zenBlurLevel}px</span></label>
+            <input type="range" class="zen-blur-slider" min="0" max="40" value="${this.zenBlurLevel}">
+          </div>
+          
+          <div class="zen-setting-actions">
+            <button class="zen-settings-close">關閉</button>
+            <button class="zen-settings-reset">重置</button>
+          </div>
+        </div>
+      </div>
+    `;
+    
+    this.zenScrollContainer = this.zenContainer.querySelector('.smart-toc-zen-scroll-container');
+    this.zenContent = this.zenContainer.querySelector('.smart-toc-zen-content');
+    this.zenControlPanel = this.zenContainer.querySelector('.smart-toc-zen-controls');
+    this.zenSettingsPanel = this.zenContainer.querySelector('.zen-settings-panel');
+    
+    // 設置控制面板事件
+    this.setupZenControlEvents();
+    
+    // 應用當前主題
+    this.applyZenTheme();
+    
+    document.body.appendChild(this.zenContainer);
+  }
+
+  setupZenControlEvents() {
+    // 播放/暫停按鈕
+    const playPauseBtn = this.zenContainer.querySelector('.zen-play-pause');
+    playPauseBtn.addEventListener('click', () => {
+      this.toggleZenPlayPause();
+    });
+
+    // 速度控制按鈕
+    const speedBtns = this.zenContainer.querySelectorAll('.zen-speed-btn');
+    speedBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        this.setZenSpeed(btn.dataset.speed);
+        
+        // 更新按鈕狀態
+        speedBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+      });
+    });
+
+    // 設置按鈕
+    const settingsBtn = this.zenContainer.querySelector('.zen-settings-btn');
+    settingsBtn.addEventListener('click', () => {
+      this.toggleZenSettings();
+    });
+
+    // 設置面板事件
+    this.setupZenSettingsEvents();
+  }
+
+  toggleZenPlayPause() {
+    this.zenPaused = !this.zenPaused;
+    
+    const playIcon = this.zenContainer.querySelector('.zen-play-icon');
+    const pauseIcon = this.zenContainer.querySelector('.zen-pause-icon');
+    
+    if (this.zenPaused) {
+      playIcon.style.display = 'block';
+      pauseIcon.style.display = 'none';
+    } else {
+      playIcon.style.display = 'none';
+      pauseIcon.style.display = 'block';
+    }
+  }
+
+  setZenSpeed(speed) {
+    this.zenSpeed = speed;
+    
+    // 重新計算持續時間
+    const baseSpeed = 30000; // 基礎30秒
+    switch (speed) {
+      case 'slow':
+        this.zenDuration = baseSpeed * 1.5; // 45秒
+        break;
+      case 'medium':
+        this.zenDuration = baseSpeed; // 30秒
+        break;
+      case 'fast':
+        this.zenDuration = baseSpeed * 0.7; // 21秒
+        break;
+    }
+  }
+
+  updateZenProgress() {
+    if (!this.zenMode || !this.zenStartTime) return;
+    
+    const elapsed = Date.now() - this.zenStartTime;
+    const progress = Math.min(elapsed / this.zenDuration, 1);
+    this.zenProgress = progress;
+    
+    const progressFill = this.zenContainer.querySelector('.zen-progress-fill');
+    const progressText = this.zenContainer.querySelector('.zen-progress-text');
+    
+    if (progressFill && progressText) {
+      progressFill.style.width = `${progress * 100}%`;
+      progressText.textContent = `${Math.round(progress * 100)}%`;
+    }
+  }
+
+  generateZenContent() {
+    const contentHtml = this.headings.map((heading, index) => {
+      const levelClass = `zen-level-${heading.level}`;
+      const spacing = index < this.headings.length - 1 ? 'margin-bottom: 80px;' : '';
+      
+      return `
+        <div class="smart-toc-zen-item ${levelClass}" style="${spacing}" data-index="${index}">
+          <div class="smart-toc-zen-item-text">${heading.text}</div>
+        </div>
+      `;
+    }).join('');
+    
+    // 添加開頭和結尾的空白空間
+    this.zenContent.innerHTML = `
+      <div style="height: 100vh;"></div>
+      ${contentHtml}
+      <div style="height: 100vh;"></div>
+    `;
+  }
+
+  startZenScroll() {
+    // 重置位置到底部
+    this.zenScrollContainer.scrollTop = this.zenScrollContainer.scrollHeight;
+    
+    // 初始化滾動參數
+    this.zenStartTime = Date.now();
+    this.zenPaused = false;
+    const startScrollTop = this.zenScrollContainer.scrollTop;
+    
+    // 設置初始狀態
+    const pauseIcon = this.zenContainer.querySelector('.zen-pause-icon');
+    const playIcon = this.zenContainer.querySelector('.zen-play-icon');
+    pauseIcon.style.display = 'block';
+    playIcon.style.display = 'none';
+    
+    // 開始動畫循環
+    const animateScroll = () => {
+      if (!this.zenMode) {
+        if (this.zenAnimationId) {
+          cancelAnimationFrame(this.zenAnimationId);
+        }
+        return;
+      }
+      
+      if (!this.zenPaused) {
+        const elapsed = Date.now() - this.zenStartTime;
+        const progress = Math.min(elapsed / this.zenDuration, 1);
+        
+        // 使用緩入緩出動畫
+        const easeProgress = 0.5 - 0.5 * Math.cos(progress * Math.PI);
+        
+        this.zenScrollContainer.scrollTop = startScrollTop - (startScrollTop * easeProgress);
+        
+        // 更新進度
+        this.updateZenProgress();
+        
+        // 檢查是否完成
+        if (progress >= 1) {
+          this.onZenScrollComplete();
+          return;
+        }
+      }
+      
+      this.zenAnimationId = requestAnimationFrame(animateScroll);
+    };
+    
+    this.zenAnimationId = requestAnimationFrame(animateScroll);
+  }
+
+  onZenScrollComplete() {
+    // 滾動完成時的處理
+    console.log('Zen Mode scroll completed');
+    
+    // 可以在這裡添加完成後的動作，比如重播選項
+    setTimeout(() => {
+      if (this.zenMode) {
+        // 重置到開始位置，準備重播
+        this.zenScrollContainer.scrollTop = this.zenScrollContainer.scrollHeight;
+        this.zenStartTime = Date.now();
+        this.startZenScroll();
+      }
+    }, 2000);
+  }
+
+  setupZenKeyboardEvents() {
+    this.zenKeyHandler = (e) => {
+      switch (e.key) {
+        case 'Escape':
+          e.preventDefault();
+          this.exitZenMode();
+          break;
+        case ' ':
+        case 'Space':
+          e.preventDefault();
+          this.toggleZenPlayPause();
+          break;
+        case 'ArrowUp':
+          e.preventDefault();
+          this.manualZenScroll(-100);
+          break;
+        case 'ArrowDown':
+          e.preventDefault();
+          this.manualZenScroll(100);
+          break;
+        case '1':
+          e.preventDefault();
+          this.setZenSpeed('slow');
+          this.updateSpeedButtonStates();
+          break;
+        case '2':
+          e.preventDefault();
+          this.setZenSpeed('medium');
+          this.updateSpeedButtonStates();
+          break;
+        case '3':
+          e.preventDefault();
+          this.setZenSpeed('fast');
+          this.updateSpeedButtonStates();
+          break;
+        case 's':
+        case 'S':
+          e.preventDefault();
+          this.toggleZenSettings();
+          break;
+      }
+    };
+    
+    document.addEventListener('keydown', this.zenKeyHandler);
+  }
+
+  manualZenScroll(delta) {
+    if (!this.zenMode) return;
+    
+    const currentScrollTop = this.zenScrollContainer.scrollTop;
+    const newScrollTop = Math.max(0, Math.min(
+      this.zenScrollContainer.scrollHeight - this.zenScrollContainer.clientHeight,
+      currentScrollTop + delta
+    ));
+    
+    this.zenScrollContainer.scrollTop = newScrollTop;
+  }
+
+  updateSpeedButtonStates() {
+    const speedBtns = this.zenContainer.querySelectorAll('.zen-speed-btn');
+    speedBtns.forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.speed === this.zenSpeed);
+    });
+  }
+
+  // 版本3: 個性化設置方法
+  toggleZenSettings() {
+    const isVisible = this.zenSettingsPanel.style.display !== 'none';
+    this.zenSettingsPanel.style.display = isVisible ? 'none' : 'block';
+  }
+
+  setupZenSettingsEvents() {
+    // 主題選擇按鈕
+    const themeBtns = this.zenContainer.querySelectorAll('.zen-theme-btn');
+    themeBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        this.setZenTheme(btn.dataset.theme);
+        
+        // 更新按鈕狀態
+        themeBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+      });
+    });
+
+    // 字體大小滑桿
+    const fontSizeSlider = this.zenContainer.querySelector('.zen-font-size-slider');
+    const fontSizeValue = this.zenContainer.querySelector('.zen-font-size-value');
+    fontSizeSlider.addEventListener('input', (e) => {
+      this.zenFontSize = parseInt(e.target.value);
+      fontSizeValue.textContent = this.zenFontSize + 'px';
+      this.updateZenStyles();
+    });
+
+    // 行間距滑桿
+    const lineSpacingSlider = this.zenContainer.querySelector('.zen-line-spacing-slider');
+    const lineSpacingValue = this.zenContainer.querySelector('.zen-line-spacing-value');
+    lineSpacingSlider.addEventListener('input', (e) => {
+      this.zenLineSpacing = parseInt(e.target.value);
+      lineSpacingValue.textContent = this.zenLineSpacing + 'px';
+      this.updateZenStyles();
+    });
+
+    // 背景模糊滑桿
+    const blurSlider = this.zenContainer.querySelector('.zen-blur-slider');
+    const blurValue = this.zenContainer.querySelector('.zen-blur-value');
+    blurSlider.addEventListener('input', (e) => {
+      this.zenBlurLevel = parseInt(e.target.value);
+      blurValue.textContent = this.zenBlurLevel + 'px';
+      this.updateZenStyles();
+    });
+
+    // 關閉按鈕
+    const closeBtn = this.zenContainer.querySelector('.zen-settings-close');
+    closeBtn.addEventListener('click', () => {
+      this.toggleZenSettings();
+    });
+
+    // 重置按鈕
+    const resetBtn = this.zenContainer.querySelector('.zen-settings-reset');
+    resetBtn.addEventListener('click', () => {
+      this.resetZenSettings();
+    });
+  }
+
+  setZenTheme(theme) {
+    this.zenTheme = theme;
+    this.applyZenTheme();
+    this.saveZenSettings();
+  }
+
+  applyZenTheme() {
+    const theme = this.zenThemes[this.zenTheme];
+    if (!theme) return;
+
+    const overlay = this.zenContainer.querySelector('.smart-toc-zen-overlay');
+    overlay.style.background = theme.background;
+    
+    // 添加星空粒子效果
+    if (theme.particles && this.zenTheme === 'starry') {
+      this.createStarryParticles();
+    }
+
+    this.updateZenStyles();
+  }
+
+  updateZenStyles() {
+    const theme = this.zenThemes[this.zenTheme];
+    if (!theme) return;
+
+    const items = this.zenContainer.querySelectorAll('.smart-toc-zen-item-text');
+    items.forEach((item, index) => {
+      item.style.fontSize = this.zenFontSize + 'px';
+      item.style.color = theme.textColor;
+    });
+
+    const zenItems = this.zenContainer.querySelectorAll('.smart-toc-zen-item');
+    zenItems.forEach((item, index) => {
+      if (index < zenItems.length - 1) {
+        item.style.marginBottom = this.zenLineSpacing + 'px';
+      }
+    });
+
+    const overlay = this.zenContainer.querySelector('.smart-toc-zen-overlay');
+    overlay.style.backdropFilter = `blur(${this.zenBlurLevel}px)`;
+    overlay.style.webkitBackdropFilter = `blur(${this.zenBlurLevel}px)`;
+  }
+
+  createStarryParticles() {
+    // 移除現有粒子
+    const existing = this.zenContainer.querySelector('.zen-starry-particles');
+    if (existing) existing.remove();
+
+    // 簡單的星空粒子效果
+    const particles = document.createElement('div');
+    particles.className = 'zen-starry-particles';
+    particles.innerHTML = Array.from({length: 50}, () => 
+      `<div class="zen-star" style="
+        left: ${Math.random() * 100}%; 
+        top: ${Math.random() * 100}%; 
+        animation-delay: ${Math.random() * 3}s;
+      "></div>`
+    ).join('');
+    
+    this.zenContainer.querySelector('.smart-toc-zen-overlay').appendChild(particles);
+  }
+
+  resetZenSettings() {
+    this.zenTheme = 'classic';
+    this.zenFontSize = 32;
+    this.zenLineSpacing = 80;
+    this.zenBlurLevel = 20;
+
+    // 更新滑桿值
+    this.zenContainer.querySelector('.zen-font-size-slider').value = this.zenFontSize;
+    this.zenContainer.querySelector('.zen-font-size-value').textContent = this.zenFontSize + 'px';
+    this.zenContainer.querySelector('.zen-line-spacing-slider').value = this.zenLineSpacing;
+    this.zenContainer.querySelector('.zen-line-spacing-value').textContent = this.zenLineSpacing + 'px';
+    this.zenContainer.querySelector('.zen-blur-slider').value = this.zenBlurLevel;
+    this.zenContainer.querySelector('.zen-blur-value').textContent = this.zenBlurLevel + 'px';
+
+    // 更新主題按鈕狀態
+    this.zenContainer.querySelectorAll('.zen-theme-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.theme === this.zenTheme);
+    });
+
+    this.applyZenTheme();
+    this.saveZenSettings();
+  }
+
+  saveZenSettings() {
+    const settings = {
+      theme: this.zenTheme,
+      fontSize: this.zenFontSize,
+      lineSpacing: this.zenLineSpacing,
+      blurLevel: this.zenBlurLevel,
+      readingPosition: this.zenReadingPosition
+    };
+    
+    localStorage.setItem('zenModeSettings', JSON.stringify(settings));
+  }
+
+  loadZenSettings() {
+    try {
+      const saved = localStorage.getItem('zenModeSettings');
+      if (saved) {
+        const settings = JSON.parse(saved);
+        this.zenTheme = settings.theme || 'classic';
+        this.zenFontSize = settings.fontSize || 32;
+        this.zenLineSpacing = settings.lineSpacing || 80;
+        this.zenBlurLevel = settings.blurLevel || 20;
+        this.zenReadingPosition = settings.readingPosition || 0;
+      }
+    } catch (e) {
+      console.log('Failed to load zen settings:', e);
+    }
+  }
+
+  removeZenKeyboardEvents() {
+    if (this.zenKeyHandler) {
+      document.removeEventListener('keydown', this.zenKeyHandler);
+      this.zenKeyHandler = null;
+    }
+  }
+
   destroy() {
+    // 清理 Zen Mode
+    if (this.zenMode) {
+      this.exitZenMode();
+    }
+    
     // 清理自動顯示 timeout
     if (this.autoShowTimeout) {
       clearTimeout(this.autoShowTimeout);

@@ -2071,3 +2071,749 @@ body.smart-toc-glance-mode h6:hover {
 .whitelist-item-actions .cancel-btn::after {
   content: "↶";
 }
+
+/* Zen Mode 樣式 - 版本1: 基礎跑馬燈效果 */
+.smart-toc-zen-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 2147483647;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  overflow: hidden;
+}
+
+.smart-toc-zen-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.smart-toc-zen-scroll-container {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.smart-toc-zen-content {
+  width: 80%;
+  max-width: 800px;
+  text-align: center;
+  color: #ffffff;
+  padding: 0 40px;
+  box-sizing: border-box;
+}
+
+.smart-toc-zen-item {
+  opacity: 0.9;
+  transition: opacity 0.3s ease;
+  margin: 0 auto;
+  padding: 20px 0;
+}
+
+.smart-toc-zen-item-text {
+  font-size: 32px;
+  line-height: 1.4;
+  font-weight: 300;
+  letter-spacing: 0.5px;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* 不同層級的大綱項目樣式 */
+.smart-toc-zen-item.zen-level-1 .smart-toc-zen-item-text {
+  font-size: 42px;
+  font-weight: 400;
+  color: #ffffff;
+}
+
+.smart-toc-zen-item.zen-level-2 .smart-toc-zen-item-text {
+  font-size: 36px;
+  font-weight: 300;
+  color: #e6e6e6;
+}
+
+.smart-toc-zen-item.zen-level-3 .smart-toc-zen-item-text {
+  font-size: 30px;
+  font-weight: 300;
+  color: #cccccc;
+}
+
+.smart-toc-zen-item.zen-level-4 .smart-toc-zen-item-text {
+  font-size: 26px;
+  font-weight: 300;
+  color: #b3b3b3;
+}
+
+.smart-toc-zen-item.zen-level-5 .smart-toc-zen-item-text {
+  font-size: 24px;
+  font-weight: 300;
+  color: #999999;
+}
+
+.smart-toc-zen-item.zen-level-6 .smart-toc-zen-item-text {
+  font-size: 22px;
+  font-weight: 300;
+  color: #808080;
+}
+
+.smart-toc-zen-instructions {
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 14px;
+  font-weight: 300;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 8px 16px;
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+/* Zen Mode 按鈕樣式 */
+.smart-toc-toolbar-zen {
+  background: none !important;
+  border: none !important;
+  color: inherit !important;
+  cursor: pointer !important;
+  padding: 6px !important;
+  border-radius: 6px !important;
+  transition: all 0.2s ease !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.smart-toc-toolbar-zen:hover {
+  background: rgba(0, 0, 0, 0.05) !important;
+  transform: scale(1.05) !important;
+}
+
+/* 版本2: 進階控制面板樣式 */
+.zen-v2-advanced .smart-toc-zen-controls {
+  position: absolute;
+  top: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border-radius: 20px;
+  padding: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  opacity: 0;
+  animation: zenControlsFadeIn 0.8s ease 1s forwards;
+}
+
+@keyframes zenControlsFadeIn {
+  to {
+    opacity: 1;
+  }
+}
+
+.zen-control-group {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.zen-control-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  color: white;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
+  height: 40px;
+  font-size: 16px;
+}
+
+.zen-control-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: scale(1.05);
+}
+
+.zen-control-btn.active {
+  background: rgba(74, 144, 226, 0.7);
+  border-color: rgba(74, 144, 226, 0.8);
+}
+
+.zen-speed-controls {
+  display: flex;
+  gap: 8px;
+}
+
+.zen-progress-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 280px;
+}
+
+.zen-progress-bar {
+  flex: 1;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.zen-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4a90e2, #7db9e8);
+  border-radius: 3px;
+  transition: width 0.3s ease;
+  width: 0%;
+}
+
+.zen-progress-text {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 12px;
+  font-weight: 500;
+  min-width: 35px;
+  text-align: right;
+}
+
+/* 增強的說明文字 */
+.zen-v2-advanced .smart-toc-zen-instructions {
+  bottom: 20px;
+  background: rgba(0, 0, 0, 0.4);
+  padding: 12px 20px;
+}
+
+.zen-v2-advanced .smart-toc-zen-instructions div {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  font-size: 13px;
+}
+
+/* 淡入淡出動畫增強 */
+.zen-v2-advanced .smart-toc-zen-overlay {
+  animation: zenOverlayFadeIn 1s ease forwards;
+}
+
+.zen-v2-advanced .smart-toc-zen-content {
+  animation: zenContentFadeIn 1.2s ease 0.3s both;
+}
+
+@keyframes zenOverlayFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes zenContentFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 滾動項目的視覺增強 */
+.zen-v2-advanced .smart-toc-zen-item {
+  transition: all 0.4s ease;
+  position: relative;
+}
+
+.zen-v2-advanced .smart-toc-zen-item::before {
+  content: '';
+  position: absolute;
+  left: -20px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 0;
+  background: linear-gradient(135deg, #4a90e2, #7db9e8);
+  border-radius: 2px;
+  transition: height 0.3s ease;
+}
+
+.zen-v2-advanced .smart-toc-zen-item.zen-level-1::before {
+  height: 60px;
+  background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+}
+
+.zen-v2-advanced .smart-toc-zen-item.zen-level-2::before {
+  height: 50px;
+  background: linear-gradient(135deg, #4a90e2, #7db9e8);
+}
+
+.zen-v2-advanced .smart-toc-zen-item.zen-level-3::before {
+  height: 40px;
+  background: linear-gradient(135deg, #26de81, #20bf6b);
+}
+
+/* 響應式設計 */
+@media (max-width: 768px) {
+  .zen-v2-advanced .smart-toc-zen-controls {
+    width: 90%;
+    max-width: 320px;
+    padding: 15px;
+  }
+  
+  .zen-progress-container {
+    width: 220px;
+  }
+  
+  .zen-control-btn {
+    min-width: 36px;
+    height: 36px;
+    font-size: 14px;
+  }
+  
+  .smart-toc-zen-content {
+    width: 90%;
+    padding: 0 20px;
+  }
+  
+  .smart-toc-zen-item.zen-level-1 .smart-toc-zen-item-text {
+    font-size: 32px;
+  }
+  
+  .smart-toc-zen-item.zen-level-2 .smart-toc-zen-item-text {
+    font-size: 28px;
+  }
+  
+  .smart-toc-zen-item.zen-level-3 .smart-toc-zen-item-text {
+    font-size: 24px;
+  }
+  
+  .smart-toc-zen-item.zen-level-4 .smart-toc-zen-item-text {
+    font-size: 22px;
+  }
+  
+  .smart-toc-zen-item.zen-level-5 .smart-toc-zen-item-text {
+    font-size: 20px;
+  }
+  
+  .smart-toc-zen-item.zen-level-6 .smart-toc-zen-item-text {
+    font-size: 18px;
+  }
+}
+
+/* ==================== 版本3: 個性化設置和主題系統 ==================== */
+
+/* 設置面板樣式 */
+.smart-toc-zen-settings-panel {
+  position: absolute;
+  top: 30px;
+  right: 30px;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 20px;
+  padding: 25px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  min-width: 280px;
+  opacity: 0;
+  transform: translateX(20px);
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  z-index: 10;
+}
+
+.smart-toc-zen-settings-panel.show {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.zen-settings-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  color: white;
+}
+
+.zen-settings-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0;
+}
+
+.zen-settings-close {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+  padding: 6px 8px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  font-size: 14px;
+}
+
+.zen-settings-close:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.zen-settings-group {
+  margin-bottom: 20px;
+}
+
+.zen-settings-group:last-child {
+  margin-bottom: 0;
+}
+
+.zen-setting-label {
+  display: block;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.zen-setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+.zen-setting-row:last-child {
+  margin-bottom: 0;
+}
+
+/* 主題選擇器樣式 */
+.zen-theme-selector {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.zen-theme-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.zen-theme-option:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: scale(1.02);
+}
+
+.zen-theme-option.active {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(74, 144, 226, 0.8);
+  box-shadow: 0 0 20px rgba(74, 144, 226, 0.3);
+}
+
+.zen-theme-preview {
+  width: 40px;
+  height: 24px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.zen-theme-name {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 500;
+  text-align: center;
+}
+
+/* 主題預覽顏色 */
+.zen-theme-preview.classic {
+  background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+}
+
+.zen-theme-preview.starry {
+  background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+}
+
+.zen-theme-preview.ocean {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.zen-theme-preview.forest {
+  background: linear-gradient(135deg, #134e5e 0%, #71b280 100%);
+}
+
+.zen-theme-preview.sunset {
+  background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+}
+
+.zen-theme-preview.galaxy {
+  background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+}
+
+/* 滑桿控制樣式 */
+.zen-slider-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.zen-slider {
+  flex: 1;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+  outline: none;
+  cursor: pointer;
+}
+
+.zen-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  background: linear-gradient(135deg, #4a90e2, #7db9e8);
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  transition: all 0.2s ease;
+}
+
+.zen-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(74, 144, 226, 0.4);
+}
+
+.zen-slider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  background: linear-gradient(135deg, #4a90e2, #7db9e8);
+  border-radius: 50%;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.zen-slider-value {
+  min-width: 35px;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 13px;
+  font-weight: 500;
+  text-align: right;
+}
+
+/* 主題應用樣式 */
+.zen-v3-premium .smart-toc-zen-container {
+  transition: all 0.6s ease;
+}
+
+/* Classic 主題 */
+.zen-theme-classic .smart-toc-zen-overlay {
+  background: rgba(0, 0, 0, 0.95);
+}
+
+/* Starry 主題 */
+.zen-theme-starry .smart-toc-zen-overlay {
+  background: radial-gradient(ellipse at bottom, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+  position: relative;
+}
+
+.zen-theme-starry .smart-toc-zen-overlay::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    radial-gradient(2px 2px at 20px 30px, #ffffff, transparent),
+    radial-gradient(2px 2px at 40px 70px, rgba(255, 255, 255, 0.8), transparent),
+    radial-gradient(1px 1px at 60px 120px, #ffffff, transparent),
+    radial-gradient(1px 1px at 80px 160px, rgba(255, 255, 255, 0.6), transparent),
+    radial-gradient(2px 2px at 120px 200px, #ffffff, transparent);
+  background-repeat: repeat;
+  background-size: 200px 200px, 180px 180px, 160px 160px, 140px 140px, 220px 220px;
+  animation: twinkle 3s ease-in-out infinite alternate;
+}
+
+@keyframes twinkle {
+  0% { opacity: 0.3; }
+  100% { opacity: 0.8; }
+}
+
+/* Ocean 主題 */
+.zen-theme-ocean .smart-toc-zen-overlay {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.zen-theme-ocean .smart-toc-zen-item-text {
+  color: #e8f4f8;
+  text-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+/* Forest 主題 */
+.zen-theme-forest .smart-toc-zen-overlay {
+  background: linear-gradient(135deg, #134e5e 0%, #71b280 100%);
+}
+
+.zen-theme-forest .smart-toc-zen-item-text {
+  color: #e8f5e8;
+  text-shadow: 0 2px 8px rgba(19, 78, 94, 0.3);
+}
+
+/* Sunset 主題 */
+.zen-theme-sunset .smart-toc-zen-overlay {
+  background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+}
+
+.zen-theme-sunset .smart-toc-zen-item-text {
+  color: #ffeaa7;
+  text-shadow: 0 2px 8px rgba(250, 112, 154, 0.3);
+}
+
+/* Galaxy 主題 */
+.zen-theme-galaxy .smart-toc-zen-overlay {
+  background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+}
+
+.zen-theme-galaxy .smart-toc-zen-item-text {
+  color: #2d3436;
+  text-shadow: 0 2px 8px rgba(168, 237, 234, 0.3);
+}
+
+/* 粒子效果容器 */
+.zen-particles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.zen-particle {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 50%;
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+    opacity: 0;
+  }
+  50% {
+    transform: translateY(-100vh) rotate(180deg);
+    opacity: 1;
+  }
+}
+
+.zen-particle:nth-child(1) { left: 10%; animation-delay: 0s; }
+.zen-particle:nth-child(2) { left: 20%; animation-delay: 1s; }
+.zen-particle:nth-child(3) { left: 30%; animation-delay: 2s; }
+.zen-particle:nth-child(4) { left: 40%; animation-delay: 3s; }
+.zen-particle:nth-child(5) { left: 50%; animation-delay: 4s; }
+.zen-particle:nth-child(6) { left: 60%; animation-delay: 5s; }
+.zen-particle:nth-child(7) { left: 70%; animation-delay: 0.5s; }
+.zen-particle:nth-child(8) { left: 80%; animation-delay: 1.5s; }
+.zen-particle:nth-child(9) { left: 90%; animation-delay: 2.5s; }
+.zen-particle:nth-child(10) { left: 15%; animation-delay: 3.5s; }
+
+/* 版本3增強說明 */
+.zen-v3-premium .smart-toc-zen-instructions {
+  bottom: 20px;
+  background: rgba(0, 0, 0, 0.4);
+  padding: 12px 20px;
+  border-radius: 20px;
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  font-size: 12px;
+}
+
+.zen-v3-premium .smart-toc-zen-instructions span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* 響應式設計 - 版本3 */
+@media (max-width: 768px) {
+  .smart-toc-zen-settings-panel {
+    top: 20px;
+    right: 20px;
+    left: 20px;
+    min-width: auto;
+    max-width: none;
+  }
+  
+  .zen-theme-selector {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .zen-theme-preview {
+    width: 35px;
+    height: 20px;
+  }
+  
+  .zen-theme-name {
+    font-size: 10px;
+  }
+  
+  .zen-slider-container {
+    gap: 8px;
+  }
+  
+  .zen-slider-value {
+    min-width: 30px;
+    font-size: 12px;
+  }
+}
+
+/* 設置按鈕動畫 */
+.zen-v3-premium .zen-control-btn.settings-btn {
+  background: rgba(138, 43, 226, 0.2);
+  border-color: rgba(138, 43, 226, 0.4);
+}
+
+.zen-v3-premium .zen-control-btn.settings-btn:hover {
+  background: rgba(138, 43, 226, 0.3);
+  border-color: rgba(138, 43, 226, 0.6);
+}
