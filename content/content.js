@@ -184,6 +184,11 @@ class SmartTOC {
               </svg>
             </button>
           </div>
+          <button class="smart-toc-toolbar-search" title="搜尋">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="12" height="12">
+              <path d="M6.5 0C2.91 0 0 2.91 0 6.5S2.91 13 6.5 13c1.61 0 3.09-.59 4.23-1.57l4.92 4.92a.75.75 0 1 0 1.06-1.06l-4.92-4.92A6.5 6.5 0 0 0 6.5 0zM1.5 6.5a5 5 0 1 1 10 0 5 5 0 0 1-10 0z" fill="currentColor"/>
+            </svg>
+          </button>
           <div class="smart-toc-action-buttons">
             <button class="smart-toc-close" title="關閉">×</button>
             <div class="smart-toc-more-container">
@@ -193,25 +198,21 @@ class SmartTOC {
                 </svg>
               </button>
               <div class="smart-toc-more-menu">
-                <div class="smart-toc-more-option smart-toc-search-toggle" title="搜尋">
-                  <span class="smart-toc-more-icon">🔍</span>
-                  <span class="smart-toc-more-text">搜尋</span>
+                <div class="smart-toc-more-option smart-toc-pin" title="自動開啟/取消自動開啟">
+                  <span class="smart-toc-more-icon">📍</span>
+                  <span class="smart-toc-more-text">自動開啟</span>
                 </div>
                 <div class="smart-toc-more-option smart-toc-theme-toggle" title="切換主題">
                   <span class="smart-toc-more-icon">🎨</span>
                   <span class="smart-toc-more-text">主題</span>
                 </div>
-                <div class="smart-toc-more-option smart-toc-settings" title="設定">
-                  <span class="smart-toc-more-icon">⚙️</span>
-                  <span class="smart-toc-more-text">設定</span>
-                </div>
                 <div class="smart-toc-more-option smart-toc-copy" title="複製">
                   <span class="smart-toc-more-icon">📋</span>
                   <span class="smart-toc-more-text">複製</span>
                 </div>
-                <div class="smart-toc-more-option smart-toc-pin" title="自動開啟/取消自動開啟">
-                  <span class="smart-toc-more-icon">📍</span>
-                  <span class="smart-toc-more-text">自動開啟</span>
+                <div class="smart-toc-more-option smart-toc-settings" title="設定">
+                  <span class="smart-toc-more-icon">⚙️</span>
+                  <span class="smart-toc-more-text">設定</span>
                 </div>
               </div>
             </div>
@@ -903,12 +904,13 @@ class SmartTOC {
       this.toggleMoreMenu();
     });
 
-    // 更多選單選項事件
-    const searchToggle = this.tocPanel.querySelector('.smart-toc-more-option.smart-toc-search-toggle');
-    searchToggle.addEventListener('click', () => {
-      this.hideMoreMenu();
+    // 工具列搜尋按鈕事件
+    const toolbarSearchBtn = this.tocPanel.querySelector('.smart-toc-toolbar-search');
+    toolbarSearchBtn.addEventListener('click', () => {
       this.showSearchModal();
     });
+
+    // 更多選單選項事件
 
     const themeToggle = this.tocPanel.querySelector('.smart-toc-more-option.smart-toc-theme-toggle');
     themeToggle.addEventListener('click', () => {
@@ -2312,7 +2314,7 @@ class SmartTOC {
   }
 
   setupSearch() {
-    const searchToggle = this.tocPanel.querySelector('.smart-toc-search-toggle');
+    const searchToggle = this.tocPanel.querySelector('.smart-toc-toolbar-search');
     const modalSearchInput = this.searchModal.querySelector('.smart-toc-search-input');
     const overlay = this.searchModal.querySelector('.smart-toc-search-overlay');
 

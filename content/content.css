@@ -305,6 +305,31 @@
   text-align: center;
 }
 
+/* Toolbar search button */
+.smart-toc-toolbar-search {
+  background: transparent !important;
+  border: none;
+  padding: 4px 6px;
+  cursor: pointer;
+  color: #4caf50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  min-width: 24px;
+  height: 24px;
+  transition: all 0.2s ease;
+}
+
+.smart-toc-toolbar-search:hover {
+  background: rgba(76, 175, 80, 0.15) !important;
+  transform: scale(1.05);
+}
+
+.smart-toc-toolbar-search svg {
+  pointer-events: none;
+}
+
 /* Search Panel next to TOC */
 .smart-toc-search-modal {
   position: fixed;
