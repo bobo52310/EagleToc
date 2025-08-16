@@ -170,19 +170,9 @@ class SmartTOC {
             <button class="smart-toc-depth-increase" title="增加顯示深度">+</button>
           </div>
           <div class="smart-toc-font-toolbar-controls">
-            <button class="smart-toc-font-toolbar-decrease" title="減小字體">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="12" height="12">
-                <path d="M4 12V4h1.5l2.25 6h.5L10.5 4H12v8h-1V6.25L9.75 11h-.5L8 6.25V12H4zm0-1h3V6.75L8.25 11h.5L10 6.75V11h1V5H9.5L7.5 10L5.5 5H4v6z" fill="currentColor"/>
-                <path d="M2 14h4v1H2v-1zM10 15h4v-1h-4v1z" fill="currentColor"/>
-              </svg>
-            </button>
+            <button class="smart-toc-font-toolbar-decrease" title="減小字體">−</button>
             <span class="smart-toc-font-toolbar-display">${this.settings.fontSize}px</span>
-            <button class="smart-toc-font-toolbar-increase" title="增大字體">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="12" height="12">
-                <path d="M4 12V4h1.5l2.25 6h.5L10.5 4H12v8h-1V6.25L9.75 11h-.5L8 6.25V12H4zm0-1h3V6.75L8.25 11h.5L10 6.75V11h1V5H9.5L7.5 10L5.5 5H4v6z" fill="currentColor"/>
-                <path d="M1 14h6v1H1v-1zM9 15h6v-1H9v1z" fill="currentColor"/>
-              </svg>
-            </button>
+            <button class="smart-toc-font-toolbar-increase" title="增大字體">+</button>
           </div>
           <button class="smart-toc-toolbar-search" title="搜尋">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="12" height="12">

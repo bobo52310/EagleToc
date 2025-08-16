@@ -285,6 +285,8 @@
   color: #4caf50;
   cursor: pointer;
   transition: all 0.2s ease;
+  font-size: 14px;
+  font-weight: bold;
 }
 
 .smart-toc-font-toolbar-controls button:hover {
