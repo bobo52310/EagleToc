@@ -198,19 +198,19 @@ class SmartTOC {
                 </svg>
               </button>
               <div class="smart-toc-more-menu">
-                <div class="smart-toc-more-option smart-toc-pin" title="自動開啟/取消自動開啟">
+                <div class="smart-toc-more-option smart-toc-pin">
                   <span class="smart-toc-more-icon">📍</span>
                   <span class="smart-toc-more-text">自動開啟</span>
                 </div>
-                <div class="smart-toc-more-option smart-toc-theme-toggle" title="切換主題">
+                <div class="smart-toc-more-option smart-toc-theme-toggle">
                   <span class="smart-toc-more-icon">🎨</span>
                   <span class="smart-toc-more-text">主題</span>
                 </div>
-                <div class="smart-toc-more-option smart-toc-copy" title="複製">
+                <div class="smart-toc-more-option smart-toc-copy">
                   <span class="smart-toc-more-icon">📋</span>
                   <span class="smart-toc-more-text">複製</span>
                 </div>
-                <div class="smart-toc-more-option smart-toc-settings" title="設定">
+                <div class="smart-toc-more-option smart-toc-settings">
                   <span class="smart-toc-more-icon">⚙️</span>
                   <span class="smart-toc-more-text">設定</span>
                 </div>
