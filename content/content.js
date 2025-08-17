@@ -8,6 +8,9 @@ class SmartTOC {
     this.isCollapsed = false;
     this.currentHeading = null;
     this.intersectionObserver = null;
+    this.scrollListener = null; // 版本2: 增強滾動事件監聽器
+    this.scrollTimeout = null; // 防抖用的 timeout
+    this.isScrolling = false; // 滾動狀態標記
     this.isDragging = false;
     this.isResizing = false;
     this.dragOffset = { x: 0, y: 0 };
@@ -849,31 +852,156 @@ class SmartTOC {
   }
 
   setupScrollTracking() {
+    // 版本2: 增強滾動同步 - 添加防抖、smooth scrolling和視覺反饋
+    // 移除現有的 Intersection Observer
     if (this.intersectionObserver) {
       this.intersectionObserver.disconnect();
+      this.intersectionObserver = null;
     }
 
-    const options = {
-      root: null,
-      rootMargin: '-20% 0px -70% 0px',
-      threshold: 0
+    // 移除現有的滾動監聽器（如果存在）
+    if (this.scrollListener) {
+      window.removeEventListener('scroll', this.scrollListener);
+    }
+
+    // 創建增強的滾動事件監聽器（帶防抖）
+    this.scrollListener = () => {
+      // 標記正在滾動
+      this.isScrolling = true;
+      this.addScrollingVisualFeedback();
+
+      // 防抖處理：清除之前的 timeout
+      if (this.scrollTimeout) {
+        clearTimeout(this.scrollTimeout);
+      }
+
+      // 立即更新活動標題（提供即時反饋）
+      this.updateActiveHeadingOnScrollEnhanced();
+
+      // 設置防抖 timeout
+      this.scrollTimeout = setTimeout(() => {
+        this.isScrolling = false;
+        this.removeScrollingVisualFeedback();
+        // 最終確認活動標題
+        this.updateActiveHeadingOnScrollEnhanced();
+      }, 150); // 150ms 防抖延遲
     };
 
-    this.intersectionObserver = new IntersectionObserver((entries) => {
-      let visibleHeadings = entries.filter(entry => entry.isIntersecting);
-      
-      if (visibleHeadings.length > 0) {
-        const topHeading = visibleHeadings.reduce((prev, current) => {
-          return (prev.boundingClientRect.top < current.boundingClientRect.top) ? prev : current;
-        });
-        
-        this.setActiveHeading(topHeading.target.id);
-      }
-    }, options);
+    // 添加滾動事件監聽器
+    window.addEventListener('scroll', this.scrollListener, { passive: true });
+  }
+
+  updateActiveHeadingOnScrollEnhanced() {
+    // 增強版本：帶防抖和視覺反饋的滾動同步
+    if (!this.headings || this.headings.length === 0) return;
+
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    const windowHeight = window.innerHeight;
+    const offset = windowHeight * 0.25; // 25% 的視窗高度作為偏移
+
+    let activeHeading = null;
+    let minDistance = Infinity;
 
     this.headings.forEach(heading => {
-      this.intersectionObserver.observe(heading.element);
+      const element = heading.element;
+      if (!element) return;
+
+      const rect = element.getBoundingClientRect();
+      const absoluteTop = scrollTop + rect.top;
+      
+      // 計算標題到理想位置的距離
+      const idealPosition = scrollTop + offset;
+      const distance = Math.abs(absoluteTop - idealPosition);
+      
+      // 優先選擇在視窗中且距離理想位置最近的標題
+      if (rect.top <= offset * 1.5 && rect.bottom >= -50 && distance < minDistance) {
+        minDistance = distance;
+        activeHeading = heading;
+      }
     });
+
+    // 如果沒有找到合適的標題，使用第一個可見標題
+    if (!activeHeading) {
+      for (const heading of this.headings) {
+        const rect = heading.element.getBoundingClientRect();
+        if (rect.bottom > 0 && rect.top <= windowHeight) {
+          activeHeading = heading;
+          break;
+        }
+      }
+    }
+
+    // 設置活動標題並添加視覺反饋
+    if (activeHeading && activeHeading.id !== this.currentHeading) {
+      this.setActiveHeadingWithFeedback(activeHeading.id);
+    }
+  }
+
+  setActiveHeadingWithFeedback(headingId) {
+    if (this.currentHeading === headingId) return;
+
+    // 移除之前的活動狀態
+    const previousActive = this.tocPanel?.querySelector('.smart-toc-active');
+    if (previousActive) {
+      previousActive.classList.remove('smart-toc-active');
+      previousActive.classList.add('smart-toc-fading');
+      setTimeout(() => {
+        previousActive.classList.remove('smart-toc-fading');
+      }, 300);
+    }
+
+    this.currentHeading = headingId;
+    this.updateCurrentHeadingWithAnimation();
+  }
+
+  updateCurrentHeadingWithAnimation() {
+    const tocLinks = this.tocPanel.querySelectorAll('.smart-toc-link');
+    tocLinks.forEach(link => {
+      if (link.dataset.headingId === this.currentHeading) {
+        link.classList.add('smart-toc-active', 'smart-toc-highlighting');
+        this.scrollTOCToActiveItemSmooth(link);
+        
+        // 移除高亮動畫類
+        setTimeout(() => {
+          link.classList.remove('smart-toc-highlighting');
+        }, 300);
+      } else {
+        link.classList.remove('smart-toc-active');
+      }
+    });
+  }
+
+  scrollTOCToActiveItemSmooth(activeLink) {
+    const tocContent = this.tocPanel.querySelector('.smart-toc-content');
+    if (!tocContent || !activeLink) return;
+
+    const containerHeight = tocContent.clientHeight;
+    const linkTop = activeLink.offsetTop;
+    const linkHeight = activeLink.offsetHeight;
+    const currentScroll = tocContent.scrollTop;
+
+    // 計算理想的滾動位置（將活動項目置中）
+    const idealScroll = linkTop - (containerHeight / 2) + (linkHeight / 2);
+
+    // 使用平滑滾動
+    tocContent.scrollTo({
+      top: idealScroll,
+      behavior: 'smooth'
+    });
+  }
+
+  addScrollingVisualFeedback() {
+    // 添加滾動中的視覺反饋
+    if (this.tocPanel) {
+      this.tocPanel.classList.add('smart-toc-scrolling');
+    }
+  }
+
+  removeScrollingVisualFeedback() {
+    // 移除滾動中的視覺反饋
+    if (this.tocPanel) {
+      this.tocPanel.classList.remove('smart-toc-scrolling');
+    }
   }
 
   setActiveHeading(headingId) {
@@ -4341,6 +4469,15 @@ class SmartTOC {
     
     if (this.intersectionObserver) {
       this.intersectionObserver.disconnect();
+    }
+    // 版本2: 清理增強滾動監聽器和 timeout
+    if (this.scrollListener) {
+      window.removeEventListener('scroll', this.scrollListener);
+      this.scrollListener = null;
+    }
+    if (this.scrollTimeout) {
+      clearTimeout(this.scrollTimeout);
+      this.scrollTimeout = null;
     }
     if (this.mutationObserver) {
       this.mutationObserver.disconnect();
