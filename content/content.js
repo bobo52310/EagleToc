@@ -3947,8 +3947,8 @@ class SmartTOC {
     const startScrollTop = this.zenScrollContainer.scrollTop;
     const maxScrollTop = this.zenScrollContainer.scrollHeight - this.zenScrollContainer.clientHeight;
     
-    // 版本2增強：顯示方向指示器
-    this.showDirectionIndicator('向下');
+    // 版本2增強：顯示方向指示器 (已移除，避免干擾用戶)
+    // this.showDirectionIndicator('向下');
     
     // 設置初始狀態
     const pauseIcon = this.zenContainer.querySelector('.zen-pause-icon');
@@ -4067,9 +4067,9 @@ class SmartTOC {
     // 版本2增強：平滑轉場動畫
     this.smoothScrollTo(newScrollTop);
     
-    // 版本2增強：顯示方向指示
-    const direction = delta > 0 ? '向下' : '向上';
-    this.showDirectionIndicator(direction);
+    // 版本2增強：顯示方向指示 (已移除，避免干擾用戶)
+    // const direction = delta > 0 ? '向下' : '向上';
+    // this.showDirectionIndicator(direction);
     
     // 版本2增強：短暂停止手動滾動狀態
     clearTimeout(this.zenManualScrollTimeout);
