@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # Smart TOC Zen Mode 啟動腳本
-# 啟動版本3: 個性化設置和主題系統
+# 啟動增強版: 智能手動滾動與視覺回饋系統
 
-echo "🚀 Smart TOC Zen Mode 版本3 測試環境"
+echo "🚀 Smart TOC Zen Mode 增強版測試環境"
 echo "=============================================="
 
 # 檢查是否有 Python 或 Node.js 可用於建立簡單的 HTTP 服務器
@@ -54,9 +54,9 @@ rm -f /tmp/zen_mode_server.pid
 # 設置目錄
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-echo "🌟 啟動 Zen Mode 版本3 服務器..."
+echo "🌟 啟動 Zen Mode 增強版服務器..."
 echo "   目錄: $SCRIPT_DIR"
-echo "   測試頁面: zen-mode-test.html"
+echo "   測試頁面: zen-mode-enhanced-test.html"
 
 cd "$SCRIPT_DIR" || exit 1
 
@@ -73,14 +73,14 @@ echo "$local_pid" > /tmp/zen_mode_server.pid
 # 等待服務器啟動
 sleep 2
 
-echo "   ✅ Zen Mode 版本3 已啟動: http://localhost:8080/zen-mode-test.html"
+echo "   ✅ Zen Mode 增強版已啟動: http://localhost:8080/zen-mode-enhanced-test.html"
 echo ""
 
-echo "🎉 Zen Mode 版本3 已成功啟動！"
+echo "🎉 Zen Mode 增強版已成功啟動！"
 echo "=============================================="
 echo ""
 echo "📖 測試頁面連結："
-echo "   🥇 版本3: http://localhost:8080/zen-mode-test.html"
+echo "   ⚡ 增強版: http://localhost:8080/zen-mode-enhanced-test.html"
 echo ""
 echo "💡 使用說明："
 echo "   • 點擊右側 Smart TOC 面板的 Zen Mode 按鈕（全螢幕圖標）"
@@ -91,12 +91,12 @@ echo "   • 1/2/3: 快速切換速度"
 echo "   • S: 開啟/關閉設置面板"
 echo "   • T: 快速切換主題"
 echo ""
-echo "🎨 版本3特色功能："
-echo "   • 6種沉浸式主題：Classic、Starry、Ocean、Forest、Sunset、Galaxy"
-echo "   • 完整設置面板：字體大小、行距、背景模糊調整"
-echo "   • 智能設置記憶：所有個人化設定自動保存"
-echo "   • 星空粒子效果：Starry 主題的動態視覺特效"
-echo "   • 實時預覽：調整設置時即時看到效果"
+echo "⚡ 增強版特色功能："
+echo "   • 修復滾動方向：由上往下的自然閱讀體驗"
+echo "   • 平滑手動滾動：300ms 緩出動畫效果"
+echo "   • 即時視覺回饋：方向指示器和智能狀態提示"
+echo "   • 智能模式切換：自動/手動滾動無縫轉換"
+echo "   • 保持原有功能：6種主題、設置面板、快捷鍵"
 echo ""
 echo "⚠️  注意："
 echo "   • 按 Ctrl+C 停止服務器"
