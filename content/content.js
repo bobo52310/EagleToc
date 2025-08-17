@@ -2919,9 +2919,9 @@ class SmartTOC {
       }
       
       .smart-toc-item.active {
-        background: ${isDark ? 'rgba(100, 149, 237, 0.25)' : 'rgba(9, 105, 218, 0.15)'} !important;
-        color: ${isDark ? '#87CEEB' : '#0969da'} !important;
-        border-left: 3px solid ${isDark ? '#87CEEB' : '#0969da'} !important;
+        background: ${isDark ? 'rgba(56, 88, 152, 0.4)' : 'rgba(9, 105, 218, 0.15)'} !important;
+        color: ${isDark ? '#ffffff' : '#0969da'} !important;
+        border-left: 3px solid ${isDark ? '#5B9BD5' : '#0969da'} !important;
       }
       
       .smart-toc-depth-controls {
@@ -3019,12 +3019,12 @@ class SmartTOC {
       }
       
       .smart-toc-item.smart-toc-active {
-        background: ${isDark ? 'rgba(100, 149, 237, 0.25)' : 'rgba(9, 105, 218, 0.15)'} !important;
-        color: ${isDark ? '#87CEEB' : '#0969da'} !important;
+        background: ${isDark ? 'rgba(56, 88, 152, 0.4)' : 'rgba(9, 105, 218, 0.15)'} !important;
+        color: ${isDark ? '#ffffff' : '#0969da'} !important;
       }
       
       .smart-toc-item.smart-toc-active .smart-toc-link {
-        color: ${isDark ? '#87CEEB' : '#0969da'} !important;
+        color: ${isDark ? '#ffffff' : '#0969da'} !important;
       }
       
       .smart-toc-no-search-results {
@@ -3102,9 +3102,9 @@ class SmartTOC {
       }
       
       .smart-toc-item.active {
-        background: ${isDark ? 'rgba(100, 149, 237, 0.25)' : 'rgba(9, 105, 218, 0.15)'} !important;
-        color: ${isDark ? '#87CEEB' : '#0969da'} !important;
-        border-left: 3px solid ${isDark ? '#87CEEB' : '#0969da'} !important;
+        background: ${isDark ? 'rgba(56, 88, 152, 0.4)' : 'rgba(9, 105, 218, 0.15)'} !important;
+        color: ${isDark ? '#ffffff' : '#0969da'} !important;
+        border-left: 3px solid ${isDark ? '#5B9BD5' : '#0969da'} !important;
       }
       
       .smart-toc-depth-controls {
@@ -3216,12 +3216,12 @@ class SmartTOC {
       }
       
       .smart-toc-item.smart-toc-active {
-        background: ${isDark ? 'rgba(100, 149, 237, 0.25)' : 'rgba(9, 105, 218, 0.15)'} !important;
-        color: ${isDark ? '#87CEEB' : '#0969da'} !important;
+        background: ${isDark ? 'rgba(56, 88, 152, 0.4)' : 'rgba(9, 105, 218, 0.15)'} !important;
+        color: ${isDark ? '#ffffff' : '#0969da'} !important;
       }
       
       .smart-toc-item.smart-toc-active .smart-toc-link {
-        color: ${isDark ? '#87CEEB' : '#0969da'} !important;
+        color: ${isDark ? '#ffffff' : '#0969da'} !important;
       }
       
       .smart-toc-no-search-results {

@@ -2,7 +2,7 @@
   position: fixed;
   top: 50px;
   right: 20px;
-  width: 380px;
+  width: 420px;
   max-height: 80vh;
   background: rgba(255, 255, 255, 0.95);
   border: 1px solid rgba(208, 215, 222, 0.6);
@@ -372,8 +372,8 @@
   /* Position relative to TOC panel - will be set dynamically by JS */
   top: 50px;
   right: 350px; /* Default position, adjusted by JS based on TOC position */
-  width: 380px;
-  max-width: 400px;
+  width: 420px;
+  max-width: 440px;
   background: #ffffff !important;
   border: 1px solid #d1d9e0;
   border-radius: 12px;
@@ -1503,9 +1503,23 @@ body.smart-toc-glance-mode h6:hover {
     background: #2c2c2e;
   }
 
+  .smart-toc-link:hover {
+    background: #2c2c2e !important;
+    border-left-color: #5B9BD5 !important;
+    color: #ffffff !important;
+  }
+
   .smart-toc-item.smart-toc-active {
-    background: rgba(0, 122, 255, 0.2);
-    color: #007aff;
+    background: rgba(56, 88, 152, 0.4) !important;
+    color: #ffffff !important;
+    border-left: 3px solid #5B9BD5 !important;
+  }
+
+  .smart-toc-link.smart-toc-active {
+    background: rgba(56, 88, 152, 0.4) !important;
+    color: #ffffff !important;
+    border-left-color: #5B9BD5 !important;
+    font-weight: 500;
   }
 
   .smart-toc-item.smart-toc-filtered {
