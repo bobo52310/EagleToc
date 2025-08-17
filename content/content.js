@@ -3937,13 +3937,18 @@ class SmartTOC {
   }
 
   startZenScroll() {
-    // 重置位置到底部
-    this.zenScrollContainer.scrollTop = this.zenScrollContainer.scrollHeight;
+    // 重置位置到頂部 (版本2增強：改為由上往下滾動)
+    this.zenScrollContainer.scrollTop = 0;
     
     // 初始化滾動參數
     this.zenStartTime = Date.now();
     this.zenPaused = false;
+    this.zenManualScrollActive = false; // 版本2增強：手動滾動狀態追蹤
     const startScrollTop = this.zenScrollContainer.scrollTop;
+    const maxScrollTop = this.zenScrollContainer.scrollHeight - this.zenScrollContainer.clientHeight;
+    
+    // 版本2增強：顯示方向指示器
+    this.showDirectionIndicator('向下');
     
     // 設置初始狀態
     const pauseIcon = this.zenContainer.querySelector('.zen-pause-icon');
@@ -3964,10 +3969,13 @@ class SmartTOC {
         const elapsed = Date.now() - this.zenStartTime;
         const progress = Math.min(elapsed / this.zenDuration, 1);
         
-        // 使用緩入緩出動畫
+        // 使用緩入緩出動畫 (版本2增強：改為向下滾動並增強回馔)
         const easeProgress = 0.5 - 0.5 * Math.cos(progress * Math.PI);
         
-        this.zenScrollContainer.scrollTop = startScrollTop - (startScrollTop * easeProgress);
+        // 版本2增強：不在手動滾動時更新位置
+        if (!this.zenManualScrollActive) {
+          this.zenScrollContainer.scrollTop = startScrollTop + (maxScrollTop * easeProgress);
+        }
         
         // 更新進度
         this.updateZenProgress();
@@ -3992,8 +4000,8 @@ class SmartTOC {
     // 可以在這裡添加完成後的動作，比如重播選項
     setTimeout(() => {
       if (this.zenMode) {
-        // 重置到開始位置，準備重播
-        this.zenScrollContainer.scrollTop = this.zenScrollContainer.scrollHeight;
+        // 重置到開始位置，準備重播 (版本2增強：重置到頂部)
+        this.zenScrollContainer.scrollTop = 0;
         this.zenStartTime = Date.now();
         this.startZenScroll();
       }
@@ -4049,13 +4057,25 @@ class SmartTOC {
   manualZenScroll(delta) {
     if (!this.zenMode) return;
     
-    const currentScrollTop = this.zenScrollContainer.scrollTop;
-    const newScrollTop = Math.max(0, Math.min(
-      this.zenScrollContainer.scrollHeight - this.zenScrollContainer.clientHeight,
-      currentScrollTop + delta
-    ));
+    // 版本2增強：標記手動滾動狀態
+    this.zenManualScrollActive = true;
     
-    this.zenScrollContainer.scrollTop = newScrollTop;
+    const currentScrollTop = this.zenScrollContainer.scrollTop;
+    const maxScrollTop = this.zenScrollContainer.scrollHeight - this.zenScrollContainer.clientHeight;
+    const newScrollTop = Math.max(0, Math.min(maxScrollTop, currentScrollTop + delta));
+    
+    // 版本2增強：平滑轉場動畫
+    this.smoothScrollTo(newScrollTop);
+    
+    // 版本2增強：顯示方向指示
+    const direction = delta > 0 ? '向下' : '向上';
+    this.showDirectionIndicator(direction);
+    
+    // 版本2增強：短暂停止手動滾動狀態
+    clearTimeout(this.zenManualScrollTimeout);
+    this.zenManualScrollTimeout = setTimeout(() => {
+      this.zenManualScrollActive = false;
+    }, 1000);
   }
 
   updateSpeedButtonStates() {
@@ -4063,6 +4083,68 @@ class SmartTOC {
     speedBtns.forEach(btn => {
       btn.classList.toggle('active', btn.dataset.speed === this.zenSpeed);
     });
+  }
+  
+  // 版本2增強：平滑滾動方法
+  smoothScrollTo(targetScrollTop) {
+    const startScrollTop = this.zenScrollContainer.scrollTop;
+    const distance = targetScrollTop - startScrollTop;
+    const duration = 300; // 300ms 平滑動畫
+    const startTime = Date.now();
+    
+    const animateSmooth = () => {
+      const elapsed = Date.now() - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      
+      // 使用緩出動畫
+      const easeProgress = 1 - Math.pow(1 - progress, 3);
+      
+      this.zenScrollContainer.scrollTop = startScrollTop + (distance * easeProgress);
+      
+      if (progress < 1) {
+        requestAnimationFrame(animateSmooth);
+      }
+    };
+    
+    requestAnimationFrame(animateSmooth);
+  }
+  
+  // 版本2增強：方向指示器
+  showDirectionIndicator(direction) {
+    // 移除舊的指示器
+    const existingIndicator = this.zenContainer.querySelector('.zen-direction-indicator');
+    if (existingIndicator) {
+      existingIndicator.remove();
+    }
+    
+    // 創建新的指示器
+    const indicator = document.createElement('div');
+    indicator.className = 'zen-direction-indicator';
+    indicator.textContent = direction;
+    indicator.style.cssText = `
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(0, 0, 0, 0.8);
+      color: white;
+      padding: 10px 20px;
+      border-radius: 25px;
+      font-size: 18px;
+      font-weight: bold;
+      z-index: 10001;
+      pointer-events: none;
+      animation: zenDirectionFade 1s ease-out forwards;
+    `;
+    
+    this.zenContainer.appendChild(indicator);
+    
+    // 1秒後移除
+    setTimeout(() => {
+      if (indicator.parentNode) {
+        indicator.remove();
+      }
+    }, 1000);
   }
 
   // 版本3: 個性化設置方法
