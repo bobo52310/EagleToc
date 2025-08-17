@@ -8,9 +8,6 @@ class SmartTOC {
     this.isCollapsed = false;
     this.currentHeading = null;
     this.intersectionObserver = null;
-    this.scrollListener = null; // 版本2: 增強滾動事件監聽器
-    this.scrollTimeout = null; // 防抖用的 timeout
-    this.isScrolling = false; // 滾動狀態標記
     this.isDragging = false;
     this.isResizing = false;
     this.dragOffset = { x: 0, y: 0 };
@@ -166,6 +163,17 @@ class SmartTOC {
       ]
     };
     
+    // 版本2: 增強導出功能屬性
+    this.exportButton = null;
+    this.exportModal = null;
+    this.exportOptions = {
+      template: 'notes', // 'notes', 'outline', 'reference'
+      includeMetadata: true,
+      includeContent: true,
+      includeTOC: true,
+      format: 'markdown' // 'markdown', 'txt', 'json'
+    };
+    
     // 啟動初始化（不需要等待完成）
     this.init().catch(error => {
       console.error('Smart TOC initialization failed:', error);
@@ -233,6 +241,13 @@ class SmartTOC {
           <button class="smart-toc-toolbar-search" title="搜尋">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="12" height="12">
               <path d="M6.5 0C2.91 0 0 2.91 0 6.5S2.91 13 6.5 13c1.61 0 3.09-.59 4.23-1.57l4.92 4.92a.75.75 0 1 0 1.06-1.06l-4.92-4.92A6.5 6.5 0 0 0 6.5 0zM1.5 6.5a5 5 0 1 1 10 0 5 5 0 0 1-10 0z" fill="currentColor"/>
+            </svg>
+          </button>
+          <button class="smart-toc-toolbar-export" title="智能導出 - 多格式導出選項">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="12" height="12">
+              <path d="M8.5 1.5a.5.5 0 0 0-1 0v5.793L5.354 5.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 7.293V1.5z" fill="currentColor"/>
+              <path d="M3 9.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5z" fill="currentColor"/>
+              <path d="M2.5 11.5A1.5 1.5 0 0 0 4 13h8a1.5 1.5 0 0 0 1.5-1.5v-1a.5.5 0 0 0-1 0v1a.5.5 0 0 1-.5.5H4a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 0-1 0v1z" fill="currentColor"/>
             </svg>
           </button>
           <button class="smart-toc-toolbar-zen" title="Zen Mode - 全螢幕閱讀模式">
@@ -852,156 +867,31 @@ class SmartTOC {
   }
 
   setupScrollTracking() {
-    // 版本2: 增強滾動同步 - 添加防抖、smooth scrolling和視覺反饋
-    // 移除現有的 Intersection Observer
     if (this.intersectionObserver) {
       this.intersectionObserver.disconnect();
-      this.intersectionObserver = null;
     }
 
-    // 移除現有的滾動監聽器（如果存在）
-    if (this.scrollListener) {
-      window.removeEventListener('scroll', this.scrollListener);
-    }
-
-    // 創建增強的滾動事件監聽器（帶防抖）
-    this.scrollListener = () => {
-      // 標記正在滾動
-      this.isScrolling = true;
-      this.addScrollingVisualFeedback();
-
-      // 防抖處理：清除之前的 timeout
-      if (this.scrollTimeout) {
-        clearTimeout(this.scrollTimeout);
-      }
-
-      // 立即更新活動標題（提供即時反饋）
-      this.updateActiveHeadingOnScrollEnhanced();
-
-      // 設置防抖 timeout
-      this.scrollTimeout = setTimeout(() => {
-        this.isScrolling = false;
-        this.removeScrollingVisualFeedback();
-        // 最終確認活動標題
-        this.updateActiveHeadingOnScrollEnhanced();
-      }, 150); // 150ms 防抖延遲
+    const options = {
+      root: null,
+      rootMargin: '-20% 0px -70% 0px',
+      threshold: 0
     };
 
-    // 添加滾動事件監聽器
-    window.addEventListener('scroll', this.scrollListener, { passive: true });
-  }
-
-  updateActiveHeadingOnScrollEnhanced() {
-    // 增強版本：帶防抖和視覺反饋的滾動同步
-    if (!this.headings || this.headings.length === 0) return;
-
-    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-    const windowHeight = window.innerHeight;
-    const offset = windowHeight * 0.25; // 25% 的視窗高度作為偏移
-
-    let activeHeading = null;
-    let minDistance = Infinity;
+    this.intersectionObserver = new IntersectionObserver((entries) => {
+      let visibleHeadings = entries.filter(entry => entry.isIntersecting);
+      
+      if (visibleHeadings.length > 0) {
+        const topHeading = visibleHeadings.reduce((prev, current) => {
+          return (prev.boundingClientRect.top < current.boundingClientRect.top) ? prev : current;
+        });
+        
+        this.setActiveHeading(topHeading.target.id);
+      }
+    }, options);
 
     this.headings.forEach(heading => {
-      const element = heading.element;
-      if (!element) return;
-
-      const rect = element.getBoundingClientRect();
-      const absoluteTop = scrollTop + rect.top;
-      
-      // 計算標題到理想位置的距離
-      const idealPosition = scrollTop + offset;
-      const distance = Math.abs(absoluteTop - idealPosition);
-      
-      // 優先選擇在視窗中且距離理想位置最近的標題
-      if (rect.top <= offset * 1.5 && rect.bottom >= -50 && distance < minDistance) {
-        minDistance = distance;
-        activeHeading = heading;
-      }
+      this.intersectionObserver.observe(heading.element);
     });
-
-    // 如果沒有找到合適的標題，使用第一個可見標題
-    if (!activeHeading) {
-      for (const heading of this.headings) {
-        const rect = heading.element.getBoundingClientRect();
-        if (rect.bottom > 0 && rect.top <= windowHeight) {
-          activeHeading = heading;
-          break;
-        }
-      }
-    }
-
-    // 設置活動標題並添加視覺反饋
-    if (activeHeading && activeHeading.id !== this.currentHeading) {
-      this.setActiveHeadingWithFeedback(activeHeading.id);
-    }
-  }
-
-  setActiveHeadingWithFeedback(headingId) {
-    if (this.currentHeading === headingId) return;
-
-    // 移除之前的活動狀態
-    const previousActive = this.tocPanel?.querySelector('.smart-toc-active');
-    if (previousActive) {
-      previousActive.classList.remove('smart-toc-active');
-      previousActive.classList.add('smart-toc-fading');
-      setTimeout(() => {
-        previousActive.classList.remove('smart-toc-fading');
-      }, 300);
-    }
-
-    this.currentHeading = headingId;
-    this.updateCurrentHeadingWithAnimation();
-  }
-
-  updateCurrentHeadingWithAnimation() {
-    const tocLinks = this.tocPanel.querySelectorAll('.smart-toc-link');
-    tocLinks.forEach(link => {
-      if (link.dataset.headingId === this.currentHeading) {
-        link.classList.add('smart-toc-active', 'smart-toc-highlighting');
-        this.scrollTOCToActiveItemSmooth(link);
-        
-        // 移除高亮動畫類
-        setTimeout(() => {
-          link.classList.remove('smart-toc-highlighting');
-        }, 300);
-      } else {
-        link.classList.remove('smart-toc-active');
-      }
-    });
-  }
-
-  scrollTOCToActiveItemSmooth(activeLink) {
-    const tocContent = this.tocPanel.querySelector('.smart-toc-content');
-    if (!tocContent || !activeLink) return;
-
-    const containerHeight = tocContent.clientHeight;
-    const linkTop = activeLink.offsetTop;
-    const linkHeight = activeLink.offsetHeight;
-    const currentScroll = tocContent.scrollTop;
-
-    // 計算理想的滾動位置（將活動項目置中）
-    const idealScroll = linkTop - (containerHeight / 2) + (linkHeight / 2);
-
-    // 使用平滑滾動
-    tocContent.scrollTo({
-      top: idealScroll,
-      behavior: 'smooth'
-    });
-  }
-
-  addScrollingVisualFeedback() {
-    // 添加滾動中的視覺反饋
-    if (this.tocPanel) {
-      this.tocPanel.classList.add('smart-toc-scrolling');
-    }
-  }
-
-  removeScrollingVisualFeedback() {
-    // 移除滾動中的視覺反饋
-    if (this.tocPanel) {
-      this.tocPanel.classList.remove('smart-toc-scrolling');
-    }
   }
 
   setActiveHeading(headingId) {
@@ -1084,6 +974,12 @@ class SmartTOC {
     const toolbarSearchBtn = this.tocPanel.querySelector('.smart-toc-toolbar-search');
     toolbarSearchBtn.addEventListener('click', () => {
       this.showSearchModal();
+    });
+
+    // 版本2: 增強導出按鈕事件
+    const toolbarExportBtn = this.tocPanel.querySelector('.smart-toc-toolbar-export');
+    toolbarExportBtn.addEventListener('click', () => {
+      this.showEnhancedExportModal();
     });
 
     // Zen Mode 按鈕事件
@@ -4470,15 +4366,6 @@ class SmartTOC {
     if (this.intersectionObserver) {
       this.intersectionObserver.disconnect();
     }
-    // 版本2: 清理增強滾動監聽器和 timeout
-    if (this.scrollListener) {
-      window.removeEventListener('scroll', this.scrollListener);
-      this.scrollListener = null;
-    }
-    if (this.scrollTimeout) {
-      clearTimeout(this.scrollTimeout);
-      this.scrollTimeout = null;
-    }
     if (this.mutationObserver) {
       this.mutationObserver.disconnect();
     }
@@ -4497,6 +4384,624 @@ class SmartTOC {
       adaptiveStyle.remove();
     }
     document.body.classList.remove('smart-toc-glance-mode');
+  }
+
+  // ==================== 版本2: 增強導出功能 ====================
+
+  showEnhancedExportModal() {
+    // 移除已存在的模態框
+    if (this.exportModal) {
+      this.exportModal.remove();
+    }
+
+    this.exportModal = document.createElement('div');
+    this.exportModal.className = 'smart-toc-enhanced-export-modal smart-toc-v3';
+    this.exportModal.innerHTML = `
+      <div class="smart-toc-enhanced-export-content">
+        <div class="smart-toc-enhanced-export-header">
+          <h3>✨ 智能導出</h3>
+          <button class="smart-toc-enhanced-export-close">×</button>
+        </div>
+        
+        <div class="smart-toc-enhanced-export-toolbar">
+          <div class="toolbar-section format-section">
+            <label class="section-label">格式</label>
+            <select class="inline-dropdown" name="format">
+              <option value="markdown">Markdown</option>
+              <option value="txt">文字</option>
+              <option value="json">JSON</option>
+            </select>
+          </div>
+          
+          <div class="toolbar-divider"></div>
+          
+          <div class="toolbar-section actions-section">
+            <button class="toolbar-action primary" data-action="copy">
+              <span class="action-icon">📋</span>
+              <span class="action-label">複製</span>
+            </button>
+            <button class="toolbar-action secondary" data-action="download">
+              <span class="action-icon">💾</span>
+              <span class="action-label">下載</span>
+            </button>
+          </div>
+        </div>
+        
+        <div class="smart-toc-enhanced-export-preview compact-horizontal" style="display: block;">
+          <textarea class="smart-toc-enhanced-export-textarea" readonly>${this.generateEnhancedContent('outline', {
+            includeMetadata: false,
+            includeTOC: true,
+            format: 'markdown'
+          })}</textarea>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(this.exportModal);
+    this.setupEnhancedExportEvents();
+  }
+
+  setupEnhancedExportEvents() {
+    const modal = this.exportModal;
+    const closeBtn = modal.querySelector('.smart-toc-enhanced-export-close');
+    const copyBtn = modal.querySelector('.smart-toc-enhanced-export-copy');
+    const downloadBtn = modal.querySelector('.smart-toc-enhanced-export-download');
+    const templateRadios = modal.querySelectorAll('input[name="template"]');
+    const formatRadios = modal.querySelectorAll('input[name="format"]');
+    const checkboxes = modal.querySelectorAll('input[type="checkbox"]');
+    const textarea = modal.querySelector('.smart-toc-enhanced-export-textarea');
+    
+    // V3 specific elements
+    const isV3 = modal.classList.contains('smart-toc-v3');
+    const toolbarActions = modal.querySelectorAll('.toolbar-action');
+    const inlineOptions = modal.querySelectorAll('.inline-option');
+    const inlineCheckboxes = modal.querySelectorAll('.inline-checkbox');
+    const inlineDropdown = modal.querySelector('.inline-dropdown');
+
+    // 關閉按鈕
+    closeBtn.addEventListener('click', () => this.closeEnhancedExportModal());
+
+    // V3 toolbar actions
+    if (isV3) {
+      const previewSection = modal.querySelector('.smart-toc-enhanced-export-preview.compact-horizontal');
+      
+      toolbarActions.forEach(action => {
+        action.addEventListener('click', () => {
+          const actionType = action.getAttribute('data-action');
+          if (actionType === 'copy') {
+            this.copyEnhancedToClipboard();
+          } else if (actionType === 'download') {
+            this.downloadEnhancedFile();
+          }
+        });
+      });
+      
+      // Format dropdown
+      if (inlineDropdown) {
+        inlineDropdown.addEventListener('change', () => {
+          this.updateV3Preview();
+        });
+      }
+    } else {
+      // Original copy/download buttons for non-V3
+      copyBtn.addEventListener('click', () => this.copyEnhancedToClipboard());
+      downloadBtn.addEventListener('click', () => this.downloadEnhancedFile());
+    }
+
+    // 模板變更時更新預覽 (only for non-V3)
+    if (!isV3) {
+      templateRadios.forEach(radio => {
+        radio.addEventListener('change', () => this.updateEnhancedPreview());
+      });
+
+      // 格式變更時更新預覽
+      formatRadios.forEach(radio => {
+        radio.addEventListener('change', () => this.updateEnhancedPreview());
+      });
+
+      // 選項變更時更新預覽
+      checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', () => this.updateEnhancedPreview());
+      });
+    }
+
+    // 背景點擊關閉
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        this.closeEnhancedExportModal();
+      }
+    });
+
+    // ESC 鍵關閉
+    const escHandler = (e) => {
+      if (e.key === 'Escape' && this.exportModal) {
+        this.closeEnhancedExportModal();
+        document.removeEventListener('keydown', escHandler);
+      }
+    };
+    document.addEventListener('keydown', escHandler);
+  }
+
+  updateEnhancedPreview() {
+    const modal = this.exportModal;
+    const isV3 = modal.classList.contains('smart-toc-v3');
+    
+    // V3 has its own preview update method
+    if (isV3) return;
+    
+    const selectedTemplate = modal.querySelector('input[name="template"]:checked').value;
+    const selectedFormat = modal.querySelector('input[name="format"]:checked').value;
+    const options = {
+      includeMetadata: modal.querySelector('#includeMetadata').checked,
+      includeTOC: modal.querySelector('#includeTOC').checked,
+      includeContent: modal.querySelector('#includeContent').checked,
+      includeTimestamp: modal.querySelector('#includeTimestamp').checked,
+      format: selectedFormat
+    };
+
+    const content = this.generateEnhancedContent(selectedTemplate, options);
+    const textarea = modal.querySelector('.smart-toc-enhanced-export-textarea');
+    if (textarea) {
+      textarea.value = content;
+    }
+  }
+
+  toggleV3Preview() {
+    const modal = this.exportModal;
+    const previewSection = modal.querySelector('.smart-toc-enhanced-export-preview.compact-horizontal');
+    
+    if (previewSection.style.display === 'none') {
+      previewSection.style.display = 'block';
+      this.updateV3Preview();
+    } else {
+      previewSection.style.display = 'none';
+    }
+  }
+
+  updateV3Preview() {
+    const modal = this.exportModal;
+    const selectedTemplate = 'outline'; // 固定為大綱模板
+    const selectedFormat = modal.querySelector('.inline-dropdown')?.value || 'markdown';
+    
+    const options = {
+      includeMetadata: false, // 固定不包含頁面資訊
+      includeTOC: true,       // 固定包含目錄
+      format: selectedFormat
+    };
+
+    const content = this.generateEnhancedContent(selectedTemplate, options);
+    const textarea = modal.querySelector('.smart-toc-enhanced-export-textarea');
+    if (textarea) {
+      textarea.value = content;
+    }
+  }
+
+  generateEnhancedContent(template, options) {
+    // 版本2: 智能元數據提取
+    const metadata = this.extractEnhancedMetadata();
+    let content = '';
+
+    switch (template) {
+      case 'notes':
+        content = this.generateNotesTemplate(metadata, options);
+        break;
+      case 'outline':
+        content = this.generateOutlineTemplate(metadata, options);
+        break;
+      case 'reference':
+        content = this.generateReferenceTemplate(metadata, options);
+        break;
+    }
+
+    if (options.format === 'json') {
+      return this.convertToJSON(metadata, options);
+    } else if (options.format === 'txt') {
+      return this.convertToPlainText(content);
+    }
+
+    return content;
+  }
+
+  extractEnhancedMetadata() {
+    // 版本2: 增強的元數據提取
+    const pageTitle = document.title || '未命名頁面';
+    const pageUrl = window.location.href;
+    const currentDate = new Date().toLocaleString('zh-TW');
+    
+    // 嘗試提取更多元數據
+    const author = this.extractAuthor();
+    const publishDate = this.extractPublishDate();
+    const description = this.extractDescription();
+    const keywords = this.extractKeywords();
+    const domain = window.location.hostname;
+    const language = document.documentElement.lang || 'zh-TW';
+    
+    return {
+      title: pageTitle,
+      url: pageUrl,
+      domain,
+      author,
+      publishDate,
+      description,
+      keywords,
+      language,
+      exportDate: currentDate,
+      headingsCount: this.headings.length,
+      characterCount: document.body.innerText.length
+    };
+  }
+
+  extractAuthor() {
+    // 嘗試從多個來源提取作者信息
+    const authorSelectors = [
+      'meta[name="author"]',
+      'meta[property="article:author"]',
+      '.author',
+      '.byline',
+      '[rel="author"]'
+    ];
+    
+    for (const selector of authorSelectors) {
+      const element = document.querySelector(selector);
+      if (element) {
+        return element.content || element.textContent?.trim() || null;
+      }
+    }
+    return null;
+  }
+
+  extractPublishDate() {
+    // 嘗試提取發布日期
+    const dateSelectors = [
+      'meta[property="article:published_time"]',
+      'meta[name="publish_date"]',
+      'time[datetime]',
+      '.publish-date',
+      '.date'
+    ];
+    
+    for (const selector of dateSelectors) {
+      const element = document.querySelector(selector);
+      if (element) {
+        const date = element.getAttribute('datetime') || element.getAttribute('content') || element.textContent?.trim();
+        if (date) {
+          try {
+            return new Date(date).toLocaleDateString('zh-TW');
+          } catch (e) {
+            return date;
+          }
+        }
+      }
+    }
+    return null;
+  }
+
+  extractDescription() {
+    // 提取頁面描述
+    const description = document.querySelector('meta[name="description"]')?.content ||
+                      document.querySelector('meta[property="og:description"]')?.content;
+    return description || null;
+  }
+
+  extractKeywords() {
+    // 提取關鍵字
+    const keywords = document.querySelector('meta[name="keywords"]')?.content;
+    return keywords ? keywords.split(',').map(k => k.trim()) : [];
+  }
+
+  generateNotesTemplate(metadata, options) {
+    let content = '';
+    
+    if (options.format === 'markdown') {
+      content += `# 📝 ${metadata.title}\n\n`;
+      
+      if (options.includeMetadata) {
+        content += `## 📊 頁面資訊\n\n`;
+        content += `- **來源**: [${metadata.title}](${metadata.url})\n`;
+        content += `- **網域**: ${metadata.domain}\n`;
+        if (metadata.author) content += `- **作者**: ${metadata.author}\n`;
+        if (metadata.publishDate) content += `- **發布時間**: ${metadata.publishDate}\n`;
+        if (options.includeTimestamp) content += `- **導出時間**: ${metadata.exportDate}\n`;
+        if (metadata.description) content += `- **描述**: ${metadata.description}\n`;
+        content += `- **標題數量**: ${metadata.headingsCount}\n`;
+        content += `- **字數統計**: ${metadata.characterCount.toLocaleString()} 字符\n\n`;
+        
+        if (metadata.keywords.length > 0) {
+          content += `### 🏷️ 關鍵字\n\n`;
+          content += metadata.keywords.map(k => `\`${k}\``).join(', ') + '\n\n';
+        }
+        
+        content += `---\n\n`;
+      }
+      
+      if (options.includeTOC && this.headings.length > 0) {
+        content += `## 📋 目錄結構\n\n`;
+        this.headings.forEach(heading => {
+          const level = heading.level;
+          const indent = '  '.repeat(level - 1);
+          const text = heading.text.trim();
+          const anchor = text.toLowerCase()
+            .replace(/\s+/g, '-')
+            .replace(/[^\w\-\u4e00-\u9fff]/g, '');
+          content += `${indent}- [${text}](#${anchor})\n`;
+        });
+        content += `\n---\n\n`;
+      }
+      
+      if (options.includeContent && this.headings.length > 0) {
+        content += `## 📖 筆記內容\n\n`;
+        this.headings.forEach(heading => {
+          const level = heading.level;
+          const markdownLevel = '#'.repeat(level + 2);
+          const text = heading.text.trim();
+          content += `${markdownLevel} ${text}\n\n`;
+          content += `> **筆記**: [在此添加你的筆記內容]\n\n`;
+          content += `**要點**:\n- \n- \n- \n\n`;
+        });
+      }
+    }
+    
+    return content;
+  }
+
+  generateOutlineTemplate(metadata, options) {
+    let content = '';
+    
+    if (options.format === 'markdown') {
+      if (options.includeTOC && this.headings.length > 0) {
+        this.headings.forEach((heading) => {
+          const level = heading.level;
+          const text = heading.text.trim();
+          const markdownPrefix = '#'.repeat(level);
+          
+          content += `${markdownPrefix} ${text}\n\n`;
+        });
+      }
+    }
+    
+    return content;
+  }
+
+  generateReferenceTemplate(metadata, options) {
+    let content = '';
+    
+    if (options.format === 'markdown') {
+      content += `# 📚 ${metadata.title} - 參考文獻\n\n`;
+      
+      content += `## 🔗 引用信息\n\n`;
+      content += `**APA 格式**:\n`;
+      const author = metadata.author || '作者不詳';
+      const year = metadata.publishDate ? new Date(metadata.publishDate).getFullYear() : new Date().getFullYear();
+      content += `> ${author} (${year}). *${metadata.title}*. 取自 ${metadata.url}\n\n`;
+      
+      content += `**MLA 格式**:\n`;
+      content += `> ${author}. "${metadata.title}." *${metadata.domain}*, ${metadata.publishDate || metadata.exportDate}. Web. ${new Date().toLocaleDateString('en-US')}.\n\n`;
+      
+      content += `**IEEE 格式**:\n`;
+      content += `> [1] ${author}, "${metadata.title}," ${metadata.domain}. [Online]. Available: ${metadata.url}. [Accessed: ${new Date().toLocaleDateString('en-US')}].\n\n`;
+      
+      if (options.includeMetadata) {
+        content += `## 📊 詳細資訊\n\n`;
+        content += `| 項目 | 內容 |\n`;
+        content += `|------|------|\n`;
+        content += `| 標題 | ${metadata.title} |\n`;
+        content += `| URL | ${metadata.url} |\n`;
+        content += `| 作者 | ${metadata.author || 'N/A'} |\n`;
+        content += `| 發布日期 | ${metadata.publishDate || 'N/A'} |\n`;
+        content += `| 存取日期 | ${metadata.exportDate} |\n`;
+        content += `| 語言 | ${metadata.language} |\n\n`;
+      }
+      
+      if (options.includeTOC && this.headings.length > 0) {
+        content += `## 📝 內容摘要\n\n`;
+        content += `本文檔包含 ${this.headings.length} 個主要段落：\n\n`;
+        this.headings.forEach((heading, index) => {
+          content += `${index + 1}. ${heading.text.trim()}\n`;
+        });
+        content += '\n';
+      }
+    }
+    
+    return content;
+  }
+
+  convertToJSON(metadata, options) {
+    const data = {
+      metadata,
+      headings: this.headings.map(h => ({
+        level: h.level,
+        text: h.text.trim(),
+        id: h.id
+      })),
+      exportOptions: options,
+      exportedAt: new Date().toISOString()
+    };
+    
+    return JSON.stringify(data, null, 2);
+  }
+
+  convertToPlainText(markdownContent) {
+    return markdownContent
+      .replace(/^#+\s/gm, '') // 移除 markdown 標題符號
+      .replace(/\*\*(.*?)\*\*/g, '$1') // 移除粗體標記
+      .replace(/\*(.*?)\*/g, '$1') // 移除斜體標記
+      .replace(/\[(.*?)\]\(.*?\)/g, '$1') // 移除鏈接標記，保留文字
+      .replace(/`(.*?)`/g, '$1') // 移除代碼標記
+      .replace(/^[\s]*[-\*\+]\s/gm, '• ') // 轉換列表
+      .replace(/^\s*>/gm, '') // 移除引用標記
+      .replace(/---+/g, '───────────') // 轉換分隔線
+      .replace(/\n{3,}/g, '\n\n'); // 移除多餘空行
+  }
+
+  async copyEnhancedToClipboard() {
+    const modal = this.exportModal;
+    const isV3 = modal.classList.contains('smart-toc-v3');
+    
+    let content;
+    let copyBtn;
+    
+    if (isV3) {
+      // V3: Generate content on-demand
+      const selectedTemplate = modal.querySelector('input[name="template"]:checked')?.value || 'outline';
+      const formatDropdown = modal.querySelector('.inline-dropdown');
+      const selectedFormat = formatDropdown ? formatDropdown.value : 'markdown';
+      
+      const options = {
+        includeMetadata: false, // 固定不包含頁面資訊
+        includeTOC: true,       // 固定包含目錄
+        format: selectedFormat
+      };
+      
+      content = this.generateEnhancedContent(selectedTemplate, options);
+      copyBtn = modal.querySelector('[data-action="copy"]');
+    } else {
+      // V1/V2: Use textarea content
+      const textarea = modal.querySelector('.smart-toc-enhanced-export-textarea');
+      content = textarea.value;
+      copyBtn = modal.querySelector('.smart-toc-enhanced-export-copy');
+    }
+    
+    try {
+      await navigator.clipboard.writeText(content);
+      
+      // 視覺反饋
+      const originalContent = copyBtn.innerHTML;
+      if (isV3) {
+        copyBtn.innerHTML = '<span class="action-icon">✅</span><span class="action-text">已複製</span>';
+      } else {
+        copyBtn.textContent = '✅ 已複製!';
+      }
+      copyBtn.style.background = '#27ae60';
+      
+      setTimeout(() => {
+        copyBtn.innerHTML = originalContent;
+        copyBtn.style.background = '';
+      }, 2000);
+      
+    } catch (err) {
+      console.error('複製失敗:', err);
+      
+      // V3 fallback
+      if (isV3) {
+        copyBtn.innerHTML = '<span class="action-icon">❌</span><span class="action-text">失敗</span>';
+        setTimeout(() => {
+          copyBtn.innerHTML = '<span class="action-icon">📋</span><span class="action-text">複製</span>';
+        }, 2000);
+      } else {
+        // V1/V2 fallback
+        const textarea = modal.querySelector('.smart-toc-enhanced-export-textarea');
+        textarea.select();
+        textarea.setSelectionRange(0, 99999);
+        
+        try {
+          document.execCommand('copy');
+          copyBtn.textContent = '✅ 已複製!';
+          setTimeout(() => {
+            copyBtn.textContent = '📋 複製到剪貼板';
+          }, 2000);
+        } catch (err2) {
+          copyBtn.textContent = '❌ 複製失敗';
+          setTimeout(() => {
+            copyBtn.textContent = '📋 複製到剪貼板';
+          }, 2000);
+        }
+      }
+    }
+  }
+
+  downloadEnhancedFile() {
+    const modal = this.exportModal;
+    const isV3 = modal.classList.contains('smart-toc-v3');
+    
+    let content, selectedFormat, selectedTemplate, downloadBtn;
+    
+    if (isV3) {
+      // V3: Generate content on-demand
+      selectedTemplate = modal.querySelector('input[name="template"]:checked')?.value || 'outline';
+      const formatDropdown = modal.querySelector('.inline-dropdown');
+      selectedFormat = formatDropdown ? formatDropdown.value : 'markdown';
+      
+      const options = {
+        includeMetadata: false, // 固定不包含頁面資訊
+        includeTOC: true,       // 固定包含目錄
+        format: selectedFormat
+      };
+      
+      content = this.generateEnhancedContent(selectedTemplate, options);
+      downloadBtn = modal.querySelector('[data-action="download"]');
+    } else {
+      // V1/V2: Use existing content and selectors
+      content = modal.querySelector('.smart-toc-enhanced-export-textarea').value;
+      selectedFormat = modal.querySelector('input[name="format"]:checked').value;
+      selectedTemplate = modal.querySelector('input[name="template"]:checked').value;
+      downloadBtn = modal.querySelector('.smart-toc-enhanced-export-download');
+    }
+    
+    // 生成文件名
+    const timestamp = new Date().toISOString().split('T')[0];
+    const pageTitle = document.title.replace(/[<>:"/\\|?*]/g, '-').substring(0, 50);
+    const templateName = { 'notes': '筆記', 'outline': '大綱', 'reference': '參考' }[selectedTemplate];
+    const fileName = `${pageTitle}-${templateName}-${timestamp}.${selectedFormat}`;
+    
+    // 設置 MIME 類型
+    const mimeTypes = {
+      'markdown': 'text/markdown',
+      'txt': 'text/plain',
+      'json': 'application/json'
+    };
+    
+    try {
+      const blob = new Blob([content], { type: mimeTypes[selectedFormat] });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      
+      a.href = url;
+      a.download = fileName;
+      a.style.display = 'none';
+      
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      
+      // 清理
+      setTimeout(() => URL.revokeObjectURL(url), 100);
+      
+      // 視覺反饋
+      const originalContent = downloadBtn.innerHTML;
+      if (isV3) {
+        downloadBtn.innerHTML = '<span class="action-icon">✅</span><span class="action-text">完成</span>';
+      } else {
+        downloadBtn.textContent = '✅ 下載完成!';
+      }
+      downloadBtn.style.background = '#27ae60';
+      
+      setTimeout(() => {
+        downloadBtn.innerHTML = originalContent;
+        downloadBtn.style.background = '';
+      }, 2000);
+      
+    } catch (err) {
+      console.error('下載失敗:', err);
+      
+      if (isV3) {
+        downloadBtn.innerHTML = '<span class="action-icon">❌</span><span class="action-text">失敗</span>';
+        setTimeout(() => {
+          downloadBtn.innerHTML = '<span class="action-icon">💾</span><span class="action-text">下載</span>';
+        }, 2000);
+      } else {
+        downloadBtn.textContent = '❌ 下載失敗';
+        setTimeout(() => {
+          downloadBtn.textContent = '💾 下載文件';
+        }, 2000);
+      }
+    }
+  }
+
+  closeEnhancedExportModal() {
+    if (this.exportModal) {
+      this.exportModal.remove();
+      this.exportModal = null;
+    }
   }
 }
 

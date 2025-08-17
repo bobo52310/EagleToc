@@ -2848,92 +2848,821 @@ body.smart-toc-glance-mode h6:hover {
   border-color: rgba(138, 43, 226, 0.6);
 }
 
-/* ====================================
-   版本2：增強滾動同步視覺反饋樣式
-   ==================================== */
+/* ==================== 版本2: 增強導出功能樣式 ==================== */
 
-/* 滾動中的面板效果 */
-.smart-toc-panel.smart-toc-scrolling {
-  border-color: rgba(59, 130, 246, 0.6);
-  box-shadow: 0 16px 48px rgba(59, 130, 246, 0.1), 
-              0 4px 16px rgba(59, 130, 246, 0.08),
-              0 1px 2px rgba(59, 130, 246, 0.05);
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+/* 導出按鈕樣式 */
+.smart-toc-toolbar-export {
+  background: none;
+  border: none;
+  color: #666;
+  cursor: pointer;
+  padding: 6px 8px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 2px;
 }
 
-/* 活動項目的高亮動畫 */
-.smart-toc-link.smart-toc-highlighting {
-  animation: tocHighlight 0.3s ease-out;
-  transform: scale(1.02);
+.smart-toc-toolbar-export:hover {
+  background: rgba(74, 144, 226, 0.1);
+  color: #4a90e2;
+  transform: translateY(-1px);
 }
 
-@keyframes tocHighlight {
-  0% {
-    background: rgba(59, 130, 246, 0.1);
-    transform: scale(1);
-  }
-  50% {
-    background: rgba(59, 130, 246, 0.2);
-    transform: scale(1.02);
-  }
-  100% {
-    background: rgba(59, 130, 246, 0.1);
-    transform: scale(1.02);
-  }
+.smart-toc-toolbar-export svg {
+  width: 12px;
+  height: 12px;
 }
 
-/* 淡出動畫 */
-.smart-toc-link.smart-toc-fading {
-  opacity: 0.6;
-  transform: scale(0.98);
-  transition: opacity 0.3s ease, transform 0.3s ease;
+/* 增強導出模態框 */
+.smart-toc-enhanced-export-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(5px);
+  z-index: 999999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: fadeIn 0.3s ease;
 }
 
-/* 增強的活動項目樣式 */
-.smart-toc-link.smart-toc-active {
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.12), rgba(59, 130, 246, 0.08));
-  border-left: 3px solid #3b82f6;
-  margin-left: -3px;
-  transform: translateX(2px);
-  transition: all 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+.smart-toc-enhanced-export-content {
+  background: #ffffff;
+  border-radius: 16px;
+  max-width: 900px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.3s ease;
 }
 
-/* 增強的 hover 效果 */
-.smart-toc-link:hover {
-  background: rgba(59, 130, 246, 0.06);
-  transform: translateX(1px);
+/* 模態框標題 */
+.smart-toc-enhanced-export-header {
+  padding: 24px 32px 16px;
+  border-bottom: 2px solid #f5f5f5;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 16px 16px 0 0;
+}
+
+.smart-toc-enhanced-export-header h3 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.smart-toc-enhanced-export-close {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 28px;
+  cursor: pointer;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   transition: all 0.2s ease;
 }
 
-/* 平滑滾動的 TOC 內容 */
-.smart-toc-content {
-  scroll-behavior: smooth;
+.smart-toc-enhanced-export-close:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: rotate(90deg);
 }
 
-/* 滾動進度指示器 */
-.smart-toc-panel.smart-toc-scrolling::before {
+/* 導出選項容器 */
+.smart-toc-enhanced-export-options {
+  padding: 24px 32px;
+  display: grid;
+  gap: 24px;
+}
+
+/* 選項區塊 */
+.smart-toc-enhanced-export-section {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 12px;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.smart-toc-enhanced-export-section:hover {
+  border-color: #e3f2fd;
+  box-shadow: 0 4px 16px rgba(74, 144, 226, 0.1);
+}
+
+.smart-toc-enhanced-export-section h4 {
+  margin: 0 0 16px 0;
+  color: #2c3e50;
+  font-size: 1.1rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* 模板選擇卡片 */
+.smart-toc-enhanced-export-templates {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.smart-toc-enhanced-export-template {
+  cursor: pointer;
+  display: block;
+}
+
+.smart-toc-enhanced-export-template input[type="radio"] {
+  display: none;
+}
+
+.template-card {
+  padding: 20px;
+  border: 2px solid #e1e8ed;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  background: white;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-height: 80px;
+}
+
+.template-card:hover {
+  border-color: #4a90e2;
+  box-shadow: 0 6px 20px rgba(74, 144, 226, 0.15);
+  transform: translateY(-2px);
+}
+
+.smart-toc-enhanced-export-template input:checked + .template-card {
+  border-color: #4a90e2;
+  background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+  box-shadow: 0 8px 25px rgba(74, 144, 226, 0.2);
+}
+
+.template-icon {
+  font-size: 2rem;
+  opacity: 0.8;
+  min-width: 40px;
+  text-align: center;
+}
+
+.template-info {
+  flex: 1;
+}
+
+.template-info strong {
+  display: block;
+  color: #2c3e50;
+  font-size: 1.1rem;
+  margin-bottom: 4px;
+}
+
+.template-info span {
+  color: #7f8c8d;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+/* 複選框和單選框樣式 */
+.smart-toc-enhanced-export-checkboxes,
+.smart-toc-enhanced-export-formats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.smart-toc-enhanced-export-checkboxes label,
+.smart-toc-enhanced-export-formats label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: white;
+  border: 2px solid #e1e8ed;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.smart-toc-enhanced-export-checkboxes label:hover,
+.smart-toc-enhanced-export-formats label:hover {
+  border-color: #4a90e2;
+  background: #f8fbff;
+}
+
+.smart-toc-enhanced-export-checkboxes input:checked + span,
+.smart-toc-enhanced-export-formats input:checked + span {
+  color: #4a90e2;
+  font-weight: 600;
+}
+
+.smart-toc-enhanced-export-checkboxes input,
+.smart-toc-enhanced-export-formats input {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  accent-color: #4a90e2;
+}
+
+/* 預覽區域 */
+.smart-toc-enhanced-export-preview {
+  padding: 0 32px 24px;
+}
+
+.smart-toc-enhanced-export-preview h4 {
+  margin: 0 0 16px 0;
+  color: #2c3e50;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.smart-toc-enhanced-export-textarea {
+  width: 100%;
+  min-height: 300px;
+  max-height: 400px;
+  border: 2px solid #e1e8ed;
+  border-radius: 8px;
+  padding: 16px;
+  font-family: 'Fira Code', 'Monaco', 'Consolas', monospace;
+  font-size: 13px;
+  line-height: 1.6;
+  background: #f8f9fa;
+  color: #2c3e50;
+  resize: vertical;
+  transition: border-color 0.2s ease;
+}
+
+.smart-toc-enhanced-export-textarea:focus {
+  outline: none;
+  border-color: #4a90e2;
+  box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+}
+
+/* 操作按鈕 */
+.smart-toc-enhanced-export-actions {
+  padding: 0 32px 32px;
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+}
+
+.smart-toc-enhanced-export-copy,
+.smart-toc-enhanced-export-download {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 160px;
+  justify-content: center;
+}
+
+.smart-toc-enhanced-export-copy {
+  background: #4a90e2;
+  color: white;
+}
+
+.smart-toc-enhanced-export-copy:hover {
+  background: #357abd;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(74, 144, 226, 0.3);
+}
+
+.smart-toc-enhanced-export-download {
+  background: #27ae60;
+  color: white;
+}
+
+.smart-toc-enhanced-export-download:hover {
+  background: #219a52;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(39, 174, 96, 0.3);
+}
+
+/* 響應式設計 */
+@media (max-width: 768px) {
+  .smart-toc-enhanced-export-content {
+    margin: 10px;
+    max-height: 95vh;
+  }
+  
+  .smart-toc-enhanced-export-header,
+  .smart-toc-enhanced-export-options,
+  .smart-toc-enhanced-export-preview,
+  .smart-toc-enhanced-export-actions {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+  
+  .smart-toc-enhanced-export-templates {
+    grid-template-columns: 1fr;
+  }
+  
+  .smart-toc-enhanced-export-checkboxes,
+  .smart-toc-enhanced-export-formats {
+    grid-template-columns: 1fr;
+  }
+  
+  .smart-toc-enhanced-export-actions {
+    flex-direction: column;
+  }
+  
+  .template-card {
+    min-height: auto;
+    padding: 16px;
+  }
+  
+  .template-icon {
+    font-size: 1.5rem;
+  }
+}
+
+/* 動畫效果 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 深色主題支持 */
+@media (prefers-color-scheme: dark) {
+  .smart-toc-enhanced-export-content {
+    background: #2c3e50;
+    color: #ecf0f1;
+  }
+  
+  .smart-toc-enhanced-export-section {
+    background: #34495e;
+  }
+  
+  .smart-toc-enhanced-export-section h4 {
+    color: #ecf0f1;
+  }
+  
+  .template-card {
+    background: #34495e;
+    border-color: #4a5f7a;
+    color: #ecf0f1;
+  }
+  
+  .template-card:hover {
+    border-color: #5dade2;
+  }
+  
+  .smart-toc-enhanced-export-template input:checked + .template-card {
+    background: linear-gradient(135deg, #2980b9 0%, #8e44ad 100%);
+    border-color: #5dade2;
+  }
+  
+  .template-info strong {
+    color: #ecf0f1;
+  }
+  
+  .template-info span {
+    color: #bdc3c7;
+  }
+  
+  .smart-toc-enhanced-export-checkboxes label,
+  .smart-toc-enhanced-export-formats label {
+    background: #34495e;
+    border-color: #4a5f7a;
+    color: #ecf0f1;
+  }
+  
+  .smart-toc-enhanced-export-checkboxes label:hover,
+  .smart-toc-enhanced-export-formats label:hover {
+    background: #3f5670;
+    border-color: #5dade2;
+  }
+  
+  .smart-toc-enhanced-export-textarea {
+    background: #34495e;
+    border-color: #4a5f7a;
+    color: #ecf0f1;
+  }
+  
+  .smart-toc-enhanced-export-textarea:focus {
+    border-color: #5dade2;
+  }
+}
+
+/* ==================== V3 HORIZONTAL TOOLBAR DESIGN ==================== */
+
+.smart-toc-enhanced-export-modal.smart-toc-v3 .smart-toc-enhanced-export-content {
+  max-width: 880px;
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(32px);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 
+    0 32px 80px rgba(0, 0, 0, 0.12),
+    0 8px 32px rgba(99, 102, 241, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+.smart-toc-enhanced-export-modal.smart-toc-v3 .smart-toc-enhanced-export-header {
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  padding: 24px 32px;
+  border-radius: 20px 20px 0 0;
+  position: relative;
+  overflow: hidden;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.smart-toc-enhanced-export-modal.smart-toc-v3 .smart-toc-enhanced-export-header::before {
   content: '';
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, #3b82f6, #06b6d4);
-  animation: scrollProgress 0.3s ease-out;
-  z-index: 1000;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 100%);
+  pointer-events: none;
 }
 
-@keyframes scrollProgress {
-  0% {
-    width: 0%;
-    opacity: 0;
+.smart-toc-enhanced-export-modal.smart-toc-v3 .smart-toc-enhanced-export-header h3 {
+  font-size: 1.4rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  position: relative;
+  color: rgba(255, 255, 255, 0.95);
+  margin: 0;
+}
+
+.smart-toc-enhanced-export-modal.smart-toc-v3 .smart-toc-enhanced-export-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 32px;
+  background: rgba(248, 250, 252, 0.8);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(203, 213, 225, 0.3);
+  min-height: 64px;
+}
+
+.smart-toc-enhanced-export-modal.smart-toc-v3 .toolbar-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.smart-toc-enhanced-export-modal.smart-toc-v3 .section-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #475569;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+}
+
+.smart-toc-enhanced-export-modal.smart-toc-v3 .inline-options {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.smart-toc-enhanced-export-modal.smart-toc-v3 .inline-option {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-size: 0.85rem;
+  white-space: nowrap;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.smart-toc-enhanced-export-modal.smart-toc-v3 .inline-option:hover {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(99, 102, 241, 0.3);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.smart-toc-enhanced-export-modal.smart-toc-v3 .inline-option.selected {
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  color: white;
+  border-color: transparent;
+  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.3);
+}
+
+.smart-toc-enhanced-export-modal.smart-toc-v3 .inline-option input {
+  display: none;
+}
+
+.smart-toc-enhanced-export-modal.smart-toc-v3 .option-icon {
+  font-size: 14px;
+}
+
+.smart-toc-enhanced-export-modal.smart-toc-v3 .option-text {
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.smart-toc-enhanced-export-modal.smart-toc-v3 .inline-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-size: 0.85rem;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.smart-toc-enhanced-export-modal.smart-toc-v3 .inline-checkbox:hover {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(99, 102, 241, 0.3);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.smart-toc-enhanced-export-modal.smart-toc-v3 .inline-checkbox.active {
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  color: white;
+  border-color: transparent;
+  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.25);
+}
+
+.smart-toc-enhanced-export-modal.smart-toc-v3 .inline-checkbox input {
+  display: none;
+}
+
+.smart-toc-enhanced-export-modal.smart-toc-v3 .checkbox-indicator {
+  width: 12px;
+  height: 12px;
+  border: 1px solid #dee2e6;
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.smart-toc-enhanced-export-modal.smart-toc-v3 .inline-checkbox.active .checkbox-indicator {
+  background: white;
+  border-color: white;
+}
+
+.smart-toc-enhanced-export-modal.smart-toc-v3 .inline-checkbox.active .checkbox-indicator::after {
+  content: '✓';
+  color: #7b68ee;
+  font-size: 9px;
+  font-weight: bold;
+}
+
+.smart-toc-enhanced-export-modal.smart-toc-v3 .inline-dropdown {
+  padding: 10px 16px;
+  border: 2px solid rgba(203, 213, 225, 0.4);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(8px);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  min-width: 120px;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23475569' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 12px center;
+  background-repeat: no-repeat;
+  background-size: 16px;
+  padding-right: 40px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  color: #1e293b;
+}
+
+.smart-toc-enhanced-export-modal.smart-toc-v3 .inline-dropdown:hover {
+  background: rgba(255, 255, 255, 1);
+  border-color: rgba(99, 102, 241, 0.6);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.1);
+}
+
+.smart-toc-enhanced-export-modal.smart-toc-v3 .inline-dropdown:focus {
+  outline: none;
+  border-color: #6366f1;
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.12);
+  background: rgba(255, 255, 255, 1);
+}
+
+.smart-toc-enhanced-export-modal.smart-toc-v3 .toolbar-divider {
+  width: 1px;
+  height: 32px;
+  background: linear-gradient(135deg, rgba(203, 213, 225, 0.6) 0%, rgba(226, 232, 240, 0.4) 100%);
+  margin: 0 12px;
+  border-radius: 1px;
+}
+
+.smart-toc-enhanced-export-modal.smart-toc-v3 .actions-section {
+  margin-left: auto;
+  gap: 8px;
+}
+
+.smart-toc-enhanced-export-modal.smart-toc-v3 .toolbar-action {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.smart-toc-enhanced-export-modal.smart-toc-v3 .toolbar-action.primary {
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  color: white;
+  box-shadow: 
+    0 8px 24px rgba(99, 102, 241, 0.2),
+    0 4px 8px rgba(99, 102, 241, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.smart-toc-enhanced-export-modal.smart-toc-v3 .toolbar-action.secondary {
+  background: rgba(255, 255, 255, 0.9);
+  color: #475569;
+  border: 2px solid rgba(203, 213, 225, 0.4);
+  backdrop-filter: blur(8px);
+  box-shadow: 
+    0 4px 12px rgba(100, 116, 139, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+.smart-toc-enhanced-export-modal.smart-toc-v3 .toolbar-action.tertiary {
+  background: rgba(248, 250, 252, 0.9);
+  color: #475569;
+  border: 1px solid rgba(203, 213, 225, 0.6);
+  backdrop-filter: blur(10px);
+}
+
+.smart-toc-enhanced-export-modal.smart-toc-v3 .toolbar-action:hover {
+  transform: translateY(-2px);
+  scale: 1.02;
+}
+
+.smart-toc-enhanced-export-modal.smart-toc-v3 .toolbar-action.primary:hover {
+  box-shadow: 
+    0 12px 32px rgba(99, 102, 241, 0.3),
+    0 8px 16px rgba(99, 102, 241, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.smart-toc-enhanced-export-modal.smart-toc-v3 .toolbar-action.secondary:hover {
+  background: rgba(255, 255, 255, 1);
+  border-color: rgba(99, 102, 241, 0.3);
+  box-shadow: 
+    0 8px 24px rgba(100, 116, 139, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+.smart-toc-enhanced-export-modal.smart-toc-v3 .action-icon {
+  font-size: 16px;
+}
+
+.smart-toc-enhanced-export-modal.smart-toc-v3 .action-label {
+  font-size: 0.875rem;
+  letter-spacing: -0.01em;
+}
+
+/* Responsive adjustments for V3 */
+@media (max-width: 768px) {
+  .smart-toc-enhanced-export-modal.smart-toc-v3 .smart-toc-enhanced-export-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
   }
-  50% {
-    width: 100%;
-    opacity: 1;
+  
+  .smart-toc-enhanced-export-modal.smart-toc-v3 .toolbar-section {
+    justify-content: space-between;
   }
-  100% {
-    width: 100%;
-    opacity: 0;
+  
+  .smart-toc-enhanced-export-modal.smart-toc-v3 .actions-section {
+    margin-left: 0;
+    justify-content: center;
   }
+  
+  .smart-toc-enhanced-export-modal.smart-toc-v3 .toolbar-divider {
+    display: none;
+  }
+}
+
+/* V3 預覽區域樣式 */
+.smart-toc-enhanced-export-modal.smart-toc-v3 .smart-toc-enhanced-export-preview.compact-horizontal {
+  margin: 0 24px 24px;
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(24px);
+  border-radius: 16px;
+  border: 1px solid rgba(203, 213, 225, 0.3);
+  overflow: hidden;
+  box-shadow: 
+    0 12px 40px rgba(99, 102, 241, 0.08),
+    0 4px 16px rgba(0, 0, 0, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.smart-toc-enhanced-export-modal.smart-toc-v3 .smart-toc-enhanced-export-preview.compact-horizontal .preview-header {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  padding: 12px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #475569;
+  border-bottom: 1px solid rgba(203, 213, 225, 0.3);
+}
+
+.smart-toc-enhanced-export-modal.smart-toc-v3 .smart-toc-enhanced-export-preview.compact-horizontal .preview-close {
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  color: #64748b;
+  padding: 4px;
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.smart-toc-enhanced-export-modal.smart-toc-v3 .smart-toc-enhanced-export-preview.compact-horizontal .preview-close:hover {
+  background: rgba(100, 116, 139, 0.1);
+  color: #475569;
+  transform: scale(1.1);
+}
+
+.smart-toc-enhanced-export-modal.smart-toc-v3 .smart-toc-enhanced-export-preview.compact-horizontal .smart-toc-enhanced-export-textarea {
+  border: none;
+  background: transparent;
+  margin: 0;
+  padding: 20px 24px;
+  min-height: 180px;
+  font-size: 0.875rem;
+  width: 100%;
+  box-sizing: border-box;
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+  line-height: 1.6;
+  color: #1e293b;
+  resize: vertical;
+  font-family: 'SF Mono', 'Monaco', 'Consolas', monospace;
+  line-height: 1.5;
+  color: #334155;
+  transition: all 0.2s ease;
+}
+
+.smart-toc-enhanced-export-modal.smart-toc-v3 .smart-toc-enhanced-export-preview.compact-horizontal .smart-toc-enhanced-export-textarea:focus {
+  outline: none;
+  background: rgba(255, 255, 255, 0.6);
+  box-shadow: inset 0 0 0 2px rgba(99, 102, 241, 0.15);
 }
