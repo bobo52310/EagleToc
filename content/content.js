@@ -762,6 +762,7 @@ class SmartTOC {
       
       a.addEventListener('click', (e) => {
         e.preventDefault();
+        this.hideMoreMenu();
         this.scrollToHeading(heading);
       });
 
@@ -973,18 +974,21 @@ class SmartTOC {
     // 工具列搜尋按鈕事件
     const toolbarSearchBtn = this.tocPanel.querySelector('.smart-toc-toolbar-search');
     toolbarSearchBtn.addEventListener('click', () => {
+      this.hideMoreMenu();
       this.showSearchModal();
     });
 
     // 版本2: 增強導出按鈕事件
     const toolbarExportBtn = this.tocPanel.querySelector('.smart-toc-toolbar-export');
     toolbarExportBtn.addEventListener('click', () => {
+      this.hideMoreMenu();
       this.showEnhancedExportModal();
     });
 
     // Zen Mode 按鈕事件
     const toolbarZenBtn = this.tocPanel.querySelector('.smart-toc-toolbar-zen');
     toolbarZenBtn.addEventListener('click', () => {
+      this.hideMoreMenu();
       this.toggleZenMode();
     });
 
@@ -1024,43 +1028,63 @@ class SmartTOC {
     
     depthIncreaseBtn.addEventListener('click', async () => {
       this.hideSettingsPanel();
+      this.hideMoreMenu();
       await this.increaseHeadingDepth();
     });
     depthDecreaseBtn.addEventListener('click', async () => {
       this.hideSettingsPanel();
+      this.hideMoreMenu();
       await this.decreaseHeadingDepth();
     });
 
 
     const fontIncreaseBtn = this.tocPanel.querySelector('.smart-toc-font-increase');
     if (fontIncreaseBtn) {
-      fontIncreaseBtn.addEventListener('click', async () => await this.changeFontSize(1));
+      fontIncreaseBtn.addEventListener('click', async () => {
+        this.hideMoreMenu();
+        await this.changeFontSize(1);
+      });
     }
 
     const fontDecreaseBtn = this.tocPanel.querySelector('.smart-toc-font-decrease');
     if (fontDecreaseBtn) {
-      fontDecreaseBtn.addEventListener('click', async () => await this.changeFontSize(-1));
+      fontDecreaseBtn.addEventListener('click', async () => {
+        this.hideMoreMenu();
+        await this.changeFontSize(-1);
+      });
     }
 
     // Toolbar font controls
     const fontToolbarIncreaseBtn = this.tocPanel.querySelector('.smart-toc-font-toolbar-increase');
     if (fontToolbarIncreaseBtn) {
-      fontToolbarIncreaseBtn.addEventListener('click', async () => await this.changeFontSize(1));
+      fontToolbarIncreaseBtn.addEventListener('click', async () => {
+        this.hideMoreMenu();
+        await this.changeFontSize(1);
+      });
     }
 
     const fontToolbarDecreaseBtn = this.tocPanel.querySelector('.smart-toc-font-toolbar-decrease');
     if (fontToolbarDecreaseBtn) {
-      fontToolbarDecreaseBtn.addEventListener('click', async () => await this.changeFontSize(-1));
+      fontToolbarDecreaseBtn.addEventListener('click', async () => {
+        this.hideMoreMenu();
+        await this.changeFontSize(-1);
+      });
     }
 
     const highlightIncreaseBtn = this.tocPanel.querySelector('.smart-toc-highlight-increase');
     if (highlightIncreaseBtn) {
-      highlightIncreaseBtn.addEventListener('click', async () => await this.changeHighlightDuration(1));
+      highlightIncreaseBtn.addEventListener('click', async () => {
+        this.hideMoreMenu();
+        await this.changeHighlightDuration(1);
+      });
     }
 
     const highlightDecreaseBtn = this.tocPanel.querySelector('.smart-toc-highlight-decrease');
     if (highlightDecreaseBtn) {
-      highlightDecreaseBtn.addEventListener('click', async () => await this.changeHighlightDuration(-1));
+      highlightDecreaseBtn.addEventListener('click', async () => {
+        this.hideMoreMenu();
+        await this.changeHighlightDuration(-1);
+      });
     }
 
     // 白名單相關事件監聽器
