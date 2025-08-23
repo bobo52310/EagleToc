@@ -1,126 +1,235 @@
-# Smart TOC - Chrome Extension
+# 📖 Smart TOC - 智慧網頁目錄
+*讓網頁閱讀更聰明、更優雅*
 
-A Chrome extension that displays a table of contents for any website, making it easier to read and navigate long articles, documentations, and online books.
+一款專為提升網頁閱讀體驗而設計的 Chrome 擴充功能，自動為任何網站生成智慧目錄，讓您輕鬆導航長篇文章、技術文件和線上書籍。
 
-## Features
+## ✨ 核心特色
 
-- 🔍 Auto detects article and headings with smart algorithm
-- 🎯 Highlights current heading
-- 🖱️ Click to jump to heading
-- 📖 Expand/fold headings, or to specified level
-- 🎪 Floating panel - drag, resize, or dock to side
-- 👀 Mouse hover while holding Alt/Option key to glance
-- 📋 Copy to clipboard (txt, markdown)
-- 🎨 Clean user interface
-- ⚡ Only runs when you use it
-- 🌐 Works on any website with proper HTML headings
+### 🔍 **AI 智慧偵測**
+自動識別頁面結構和標題層級，無需手動設定
 
-## Installation
+### 🎯 **即時定位導航**
+高亮顯示當前閱讀位置，一鍵跳轉至任意段落
 
-### From Chrome Web Store
-*Coming soon*
+### 🎪 **靈活浮動面板**
+可拖拉、縮放、停靠的智慧面板，不干擾閱讀體驗
 
-### Manual Installation (Developer Mode)
+### 🌙 **多主題切換**
+支援亮色、暗色主題，以及海洋、森林等個性化主題
 
-1. Download or clone this repository
-2. Open Chrome and go to `chrome://extensions/`
-3. Enable "Developer mode" in the top right
-4. Click "Load unpacked" and select the extension folder
-5. The Smart TOC extension should now appear in your extensions list
+### 🧘 **禪讀模式**
+沈浸式閱讀體驗，專注文字內容，消除干擾
 
-## Usage
+### ⚡ **萬用字元白名單**
+支援 `*.github.*` 等彈性網域設定，智慧自動啟動
 
-1. **Toggle TOC**: Click the extension icon in the toolbar
-2. **Navigate**: Click on any heading in the TOC to jump to that section
-3. **Close**: Click the × button or press Escape
-4. **Resize**: Drag the bottom-right corner of the TOC panel
-5. **Move**: Drag the header to reposition the panel
+### 🔍 **快速搜尋定位**
+即時搜尋標題內容，快速跳轉至目標段落
 
-## Keyboard Shortcuts
+### 📋 **多格式匯出**
+支援純文字、Markdown 格式複製，便於筆記整理
 
-- **Alt/Option + T**: Toggle TOC (coming soon)
-- **Escape**: Close TOC
+## 🎯 適用場景
 
-## Settings
+| 使用情境 | 效益 |
+|---------|------|
+| 📚 **技術文檔閱讀** | 快速定位 API 參考，提升開發效率 |
+| 📖 **長篇文章** | 掌握文章結構，輕鬆跳轉段落 |
+| 🎓 **學習研究** | 組織知識架構，提升理解效果 |
+| 📝 **內容創作** | 分析競品結構，優化內容組織 |
 
-Access settings by clicking the extension icon → Settings button.
+## 📱 快速開始
 
-- Enable for local HTML files
-- Auto-show TOC on compatible pages
-- Maximum heading levels (3-6)
-- TOC position and width
+### 1. 📥 **安裝擴充功能**
+- 從 Chrome 擴充商店安裝（即將推出）
+- 或下載原始碼手動安裝
 
-## Supported Websites
+### 2. 🚀 **一鍵啟動**
+點擊工具列圖示即可開啟智慧目錄
 
-Any website that uses proper HTML heading tags (h1-h6):
-- Wikipedia
-- Documentation sites
-- Blog articles  
-- Online books
-- GitHub repositories
-- And many more!
+### 3. 🎨 **個人化設定**
+調整顯示層級、位置、主題等個人偏好
 
-## Development
+## 🛠️ 進階功能
 
-### File Structure
+### 🎛️ **精細控制**
+- 📊 自定義顯示層級（1-6級標題）
+- 📐 調整面板大小和位置
+- ⚙️ 個人化設定儲存
+
+### 🎪 **互動體驗**
+- 👀 Alt/Option + 懸停快速預覽
+- ⌨️ 快捷鍵操作（Escape 關閉）
+- 🎭 多種視覺主題選擇
+
+### 🔧 **智慧自動化**
+- 🤖 相容頁面自動啟動
+- 💾 偏好設定記憶
+- 🔄 即時內容更新
+
+## 🌐 支援網站類型
+
+✅ **完美支援使用標準 HTML 標題標籤 (h1-h6) 的網站：**
+
+| 網站類型 | 範例 |
+|---------|------|
+| 📖 **百科網站** | Wikipedia、百度百科 |
+| 💻 **技術文檔** | GitHub、MDN、API 文檔 |
+| 📝 **部落格文章** | Medium、各大技術部落格 |
+| 📚 **線上書籍** | GitBook、電子書平台 |
+| 🏢 **企業文檔** | 內部 Wiki、說明文件 |
+| 📰 **新聞媒體** | 長篇報導、深度分析 |
+
+## 🚀 最新功能亮點（v1.1.0）
+
+### 🌟 **萬用字元白名單**
+支援 `*.github.*` 等彈性網域模式匹配，智慧自動啟動
+
+### 🔍 **重新設計的搜尋界面**
+搜尋面板緊鄰目錄顯示，不再佔用全螢幕空間
+
+### ⚡ **即時工具提示**
+客製化工具提示系統，支援暗色主題，回應速度更快
+
+### 🎛️ **智慧設定面板**
+使用其他功能時自動收起，優化操作流程
+
+### 🌙 **完整暗色主題**
+自動偵測系統主題偏好，提供一致的暗色體驗
+
+## 📥 安裝方式
+
+### 🏪 從 Chrome 擴充商店安裝
+*即將上線，敬請期待*
+
+### 🔧 手動安裝（開發者模式）
+
+1. **下載擴充功能**
+   ```bash
+   git clone https://github.com/your-username/smart-toc.git
+   ```
+
+2. **開啟 Chrome 擴充功能頁面**
+   - 前往 `chrome://extensions/`
+   - 開啟右上角的「開發人員模式」
+
+3. **載入擴充功能**
+   - 點選「載入未封裝項目」
+   - 選擇下載的 smart-toc 資料夾
+   - 擴充功能將出現在清單中
+
+## 📱 使用說明
+
+### 基本操作
+1. **📖 開啟目錄**：點選工具列的擴充功能圖示
+2. **🎯 快速導航**：點選任意標題即可跳轉至對應段落
+3. **❌ 關閉面板**：點選 × 按鈕或按 Escape 鍵
+4. **📐 調整大小**：拖拉右下角調整面板尺寸
+5. **🚀 移動位置**：拖拉標題列重新定位面板
+
+### 快捷鍵
+- **Escape**：關閉目錄面板
+- **Alt/Option + 懸停**：快速預覽模式
+
+### 個人化設定
+透過擴充功能圖示 → 設定按鈕存取：
+- ✅ 啟用本機 HTML 檔案支援
+- 🤖 相容頁面自動顯示目錄
+- 📊 最大標題層級設定（3-6層）
+- 📍 目錄位置和寬度調整
+
+## 🎨 主題和個性化
+
+### 🌈 **多樣主題選擇**
+- **🌞 亮色主題**：清新簡潔，適合日間閱讀
+- **🌙 暗色主題**：護眼舒適，適合夜間使用
+- **🌊 海洋主題**：藍色系，營造寧靜氛圍
+- **🌲 森林主題**：綠色系，自然清新
+- **🌅 夕陽主題**：暖色系，溫馨愜意
+- **🌌 銀河主題**：夢幻色彩，科技感十足
+
+### 🧘 **禪讀模式特色**
+- **沈浸式體驗**：全螢幕閱讀，專注內容
+- **背景模糊**：淡化干擾元素
+- **多種速度控制**：慢、中、快三檔滾動
+- **進度追蹤**：顯示閱讀進度
+- **個性化設定**：字體大小、行距、模糊程度
+
+## 🏆 技術優勢
+
+### 🎯 **核心技術**
+- **智慧演算法**：自動偵測文章結構和標題層級
+- **效能優化**：僅在需要時執行，不影響頁面載入速度
+- **跨網站相容**：適用於任何使用標準 HTML 標題標籤的網站
+- **響應式設計**：自動適應不同螢幕尺寸
+
+### 🔒 **隱私保護**
+- **本機處理**：所有功能在本機執行，不傳送資料
+- **最小權限**：僅要求必要的瀏覽權限
+- **無追蹤**：不收集使用者行為資料
+
+## 🛠️ 開發資訊
+
+### 📁 專案結構
 ```
 smart-toc/
-├── manifest.json          # Extension manifest
-├── popup/                 # Extension popup
+├── manifest.json          # 擴充功能設定檔
+├── popup/                 # 彈出視窗
 │   ├── popup.html
 │   ├── popup.css
 │   └── popup.js
-├── content/              # Content scripts
-│   ├── content.js
-│   └── content.css
-├── background/           # Background script
+├── content/              # 內容腳本
+│   ├── content.js        # 主要功能邏輯
+│   └── content.css       # 樣式表
+├── background/           # 背景腳本
 │   └── background.js
-├── options/             # Settings page
+├── options/             # 設定頁面
 │   ├── options.html
 │   ├── options.css
 │   └── options.js
-└── icons/               # Extension icons
-    ├── icon16.png
-    ├── icon32.png
-    ├── icon48.png
-    └── icon128.png
+└── icons/               # 圖示檔案
+    └── ...
 ```
 
-### Testing
-1. Load the extension in developer mode
-2. Visit any page with headings (e.g., Wikipedia article)
-3. Click the extension icon to toggle TOC
-4. Test on various websites to ensure compatibility
+### 🧪 測試方式
+1. 在開發者模式載入擴充功能
+2. 造訪包含標題的網頁（如 Wikipedia 文章）
+3. 點選擴充功能圖示開啟目錄
+4. 在不同網站測試相容性
 
-## Contributing
+## 🤝 貢獻指南
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
+歡迎您為 Smart TOC 做出貢獻！
 
-## License
+### 參與方式
+1. **Fork** 此專案
+2. **建立**功能分支 (`git checkout -b feature/amazing-feature`)
+3. **提交**更改 (`git commit -m '新增驚人功能'`)
+4. **推送**至分支 (`git push origin feature/amazing-feature`)
+5. **建立** Pull Request
 
-MIT License - see LICENSE file for details
+### 開發原則
+- 📝 詳細的註解和文件
+- 🧪 充分的測試覆蓋
+- 🎨 一致的程式碼風格
+- 🔄 向後相容性考量
 
-## Changelog
+## 📄 授權條款
 
-### v1.1.0 (Latest)
-- 🌟 **Wildcard whitelist support**: Use `*` patterns like `*.github.*` for flexible domain matching
-- 🔍 **Redesigned search UI**: Search panel appears next to TOC instead of center-screen
-- ⚡ **Instant tooltips**: Custom tooltips with immediate response and dark theme support
-- 🎛️ **Smart settings panel**: Auto-closes when using other features for better workflow
-- 🌙 **Dark theme support**: Full dark mode with automatic system preference detection
-- 📄 **Enhanced documentation**: Comprehensive feature guide and testing framework
+本專案採用 MIT 授權條款 - 詳情請見 LICENSE 檔案
 
-### v1.0.0
-- Initial release
-- Basic TOC generation and navigation
-- Floating panel with drag/resize
-- Settings page
-- Support for h1-h6 headings
+## 📞 聯絡與支援
 
-## 📖 Enhanced Features Documentation
+- 🐛 **回報問題**：[GitHub Issues](https://github.com/your-username/smart-toc/issues)
+- 💡 **功能建議**：[GitHub Discussions](https://github.com/your-username/smart-toc/discussions)
+- 📧 **聯絡開發者**：your-email@example.com
 
-For detailed information about the new features, see [FEATURE_DOCUMENTATION.md](./FEATURE_DOCUMENTATION.md)
+## 📚 深入了解
+
+如需更詳細的功能說明和 API 文件，請參考：
+- [📖 功能詳細文件](./FEATURE_DOCUMENTATION.md)
+- [🔧 API 參考文件](./API_REFERENCE.md)
+
+---
+
+**⭐ 如果這個專案對您有幫助，請給我們一個 Star！**
