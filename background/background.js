@@ -1,5 +1,5 @@
 chrome.runtime.onInstalled.addListener(() => {
-  console.log('Smart TOC extension installed');
+  console.log('EagleToc extension installed with eagle precision!');
 });
 
 chrome.action.onClicked.addListener(async (tab) => {

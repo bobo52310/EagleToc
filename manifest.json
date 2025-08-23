@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
-  "name": "Smart TOC - Table of Contents",
-  "description": "Displays a table of contents for any website, making it easier to read and navigate long articles, documentations, and online books.",
+  "name": "EagleToc - Eagle Eye Table of Contents",
+  "description": "Navigate with eagle precision! Smart table of contents for any website, making it easier to read and navigate long articles, documentations, and online books with eagle-eye overview.",
   "version": "1.0.0",
   "permissions": [
     "activeTab",
@@ -12,7 +12,7 @@
     "<all_urls>"
   ],
   "action": {
-    "default_title": "Smart TOC",
+    "default_title": "EagleToc",
     "default_icon": {
       "16": "icons/icon16.png",
       "32": "icons/icon32.png",

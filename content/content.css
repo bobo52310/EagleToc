@@ -1,4 +1,4 @@
-.smart-toc-panel {
+.eagle-toc-panel {
   position: fixed;
   top: 50px;
   right: 20px;
@@ -26,14 +26,14 @@
 }
 
 /* 調整大小的邊緣區域 */
-.smart-toc-panel .resize-handle {
+.eagle-toc-panel .resize-handle {
   position: absolute;
   background: transparent;
   pointer-events: auto;
 }
 
 /* 右邊緣 - 水平調整 */
-.smart-toc-panel .resize-handle-right {
+.eagle-toc-panel .resize-handle-right {
   top: 0;
   right: -3px;
   width: 6px;
@@ -43,7 +43,7 @@
 }
 
 /* 左邊緣 - 水平調整 */
-.smart-toc-panel .resize-handle-left {
+.eagle-toc-panel .resize-handle-left {
   top: 0;
   left: -3px;
   width: 6px;
@@ -53,7 +53,7 @@
 }
 
 /* 底邊緣 - 垂直調整 */
-.smart-toc-panel .resize-handle-bottom {
+.eagle-toc-panel .resize-handle-bottom {
   bottom: -3px;
   left: 0;
   width: 100%;
@@ -63,7 +63,7 @@
 }
 
 /* 上邊緣 - 垂直調整 */
-.smart-toc-panel .resize-handle-top {
+.eagle-toc-panel .resize-handle-top {
   top: -3px;
   left: 0;
   width: 100%;
@@ -73,7 +73,7 @@
 }
 
 /* 四個角落 - 對角調整 */
-.smart-toc-panel .resize-handle-corner-nw {
+.eagle-toc-panel .resize-handle-corner-nw {
   top: -3px;
   left: -3px;
   width: 12px;
@@ -82,7 +82,7 @@
   z-index: 11;
 }
 
-.smart-toc-panel .resize-handle-corner-ne {
+.eagle-toc-panel .resize-handle-corner-ne {
   top: -3px;
   right: -3px;
   width: 12px;
@@ -91,7 +91,7 @@
   z-index: 11;
 }
 
-.smart-toc-panel .resize-handle-corner-sw {
+.eagle-toc-panel .resize-handle-corner-sw {
   bottom: -3px;
   left: -3px;
   width: 12px;
@@ -100,7 +100,7 @@
   z-index: 11;
 }
 
-.smart-toc-panel .resize-handle-corner-se {
+.eagle-toc-panel .resize-handle-corner-se {
   bottom: -3px;
   right: -3px;
   width: 12px;
@@ -110,35 +110,35 @@
 }
 
 /* 調整大小時的樣式 */
-.smart-toc-panel.smart-toc-resizing {
+.eagle-toc-panel.eagle-toc-resizing {
   transition: none !important;
   user-select: none;
   pointer-events: auto;
 }
 
-.smart-toc-panel.smart-toc-resizing .smart-toc-content {
+.eagle-toc-panel.eagle-toc-resizing .eagle-toc-content {
   pointer-events: none;
 }
 
 /* 讓調整大小的邊緣在 hover 時更明顯 */
-.smart-toc-panel .resize-handle:hover {
+.eagle-toc-panel .resize-handle:hover {
   background: rgba(59, 130, 246, 0.1);
 }
 
-.smart-toc-panel .resize-handle-corner-nw:hover,
-.smart-toc-panel .resize-handle-corner-ne:hover,
-.smart-toc-panel .resize-handle-corner-sw:hover,
-.smart-toc-panel .resize-handle-corner-se:hover {
+.eagle-toc-panel .resize-handle-corner-nw:hover,
+.eagle-toc-panel .resize-handle-corner-ne:hover,
+.eagle-toc-panel .resize-handle-corner-sw:hover,
+.eagle-toc-panel .resize-handle-corner-se:hover {
   background: rgba(59, 130, 246, 0.2);
   border-radius: 2px;
 }
 
-.smart-toc-panel.smart-toc-visible {
+.eagle-toc-panel.eagle-toc-visible {
   opacity: 1;
   transform: translateX(0);
 }
 
-.smart-toc-header {
+.eagle-toc-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -156,7 +156,7 @@
 }
 
 
-.smart-toc-controls {
+.eagle-toc-controls {
   display: flex;
   gap: 4px;
   align-items: center;
@@ -164,7 +164,7 @@
   justify-content: space-between;
 }
 
-.smart-toc-controls button {
+.eagle-toc-controls button {
   background: none;
   border: none;
   font-size: 12px;
@@ -181,18 +181,18 @@
   opacity: 0.7;
 }
 
-.smart-toc-controls button:hover {
+.eagle-toc-controls button:hover {
   background: #f3f4f6;
   color: #656d76;
   opacity: 1;
 }
 
-.smart-toc-close {
+.eagle-toc-close {
   font-size: 16px;
 }
 
 /* Custom Instant Tooltip */
-.smart-toc-tooltip {
+.eagle-toc-tooltip {
   position: absolute;
   background: rgba(0, 0, 0, 0.9);
   color: white;
@@ -210,12 +210,12 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
-.smart-toc-tooltip.show {
+.eagle-toc-tooltip.show {
   opacity: 1;
   transform: translateY(0);
 }
 
-.smart-toc-tooltip::after {
+.eagle-toc-tooltip::after {
   content: '';
   position: absolute;
   top: 100%;
@@ -227,17 +227,17 @@
 
 /* Dark theme tooltip */
 @media (prefers-color-scheme: dark) {
-  .smart-toc-tooltip {
+  .eagle-toc-tooltip {
     background: rgba(255, 255, 255, 0.9);
     color: #000;
   }
   
-  .smart-toc-tooltip::after {
+  .eagle-toc-tooltip::after {
     border-top-color: rgba(255, 255, 255, 0.9);
   }
 }
 
-.smart-toc-depth-controls {
+.eagle-toc-depth-controls {
   display: flex;
   align-items: center;
   background: rgba(9, 105, 218, 0.08);
@@ -246,7 +246,7 @@
   overflow: hidden;
 }
 
-.smart-toc-action-buttons {
+.eagle-toc-action-buttons {
   display: flex;
   gap: 4px;
   align-items: center;
@@ -254,7 +254,7 @@
   z-index: 20;
 }
 
-.smart-toc-depth-display {
+.eagle-toc-depth-display {
   font-size: 11px;
   font-weight: 600;
   color: #0969da;
@@ -264,7 +264,7 @@
 }
 
 /* Font toolbar controls */
-.smart-toc-font-toolbar-controls {
+.eagle-toc-font-toolbar-controls {
   display: flex;
   align-items: center;
   background: rgba(76, 175, 80, 0.08);
@@ -273,7 +273,7 @@
   overflow: hidden;
 }
 
-.smart-toc-font-toolbar-controls button {
+.eagle-toc-font-toolbar-controls button {
   background: transparent !important;
   border: none;
   padding: 3px 4px;
@@ -289,15 +289,15 @@
   font-weight: bold;
 }
 
-.smart-toc-font-toolbar-controls button:hover {
+.eagle-toc-font-toolbar-controls button:hover {
   background: rgba(76, 175, 80, 0.15) !important;
 }
 
-.smart-toc-font-toolbar-controls svg {
+.eagle-toc-font-toolbar-controls svg {
   pointer-events: none;
 }
 
-.smart-toc-font-toolbar-display {
+.eagle-toc-font-toolbar-display {
   font-size: 10px;
   font-weight: 600;
   color: #4caf50;
@@ -308,7 +308,7 @@
 }
 
 /* Toolbar search button */
-.smart-toc-toolbar-search {
+.eagle-toc-toolbar-search {
   background: transparent !important;
   border: none;
   padding: 4px 6px;
@@ -323,17 +323,17 @@
   transition: all 0.2s ease;
 }
 
-.smart-toc-toolbar-search:hover {
+.eagle-toc-toolbar-search:hover {
   background: rgba(76, 175, 80, 0.15) !important;
   transform: scale(1.05);
 }
 
-.smart-toc-toolbar-search svg {
+.eagle-toc-toolbar-search svg {
   pointer-events: none;
 }
 
 /* Search Panel next to TOC */
-.smart-toc-search-modal {
+.eagle-toc-search-modal {
   position: fixed;
   top: 0;
   left: 0;
@@ -348,7 +348,7 @@
   background: transparent; /* Ensure no background blur */
 }
 
-.smart-toc-search-modal.show {
+.eagle-toc-search-modal.show {
   opacity: 1;
   visibility: visible;
   pointer-events: auto;
@@ -356,7 +356,7 @@
   backdrop-filter: none !important;
 }
 
-.smart-toc-search-overlay {
+.eagle-toc-search-overlay {
   /* Invisible overlay for click handling */
   position: absolute;
   top: 0;
@@ -367,7 +367,7 @@
   cursor: pointer;
 }
 
-.smart-toc-search-dialog {
+.eagle-toc-search-dialog {
   position: absolute;
   /* Position relative to TOC panel - will be set dynamically by JS */
   top: 50px;
@@ -383,11 +383,11 @@
   transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.smart-toc-search-modal.show .smart-toc-search-dialog {
+.eagle-toc-search-modal.show .eagle-toc-search-dialog {
   transform: translateX(0) scale(1);
 }
 
-.smart-toc-search-input-container {
+.eagle-toc-search-input-container {
   position: relative;
   display: flex;
   align-items: center;
@@ -396,7 +396,7 @@
   background: #f8f9fa !important;
 }
 
-.smart-toc-search-input {
+.eagle-toc-search-input {
   width: 100%;
   height: 60px;
   border: none;
@@ -409,12 +409,12 @@
   font-family: inherit;
 }
 
-.smart-toc-search-input::placeholder {
+.eagle-toc-search-input::placeholder {
   color: #8b949e !important;
   font-weight: 400;
 }
 
-.smart-toc-search-icon {
+.eagle-toc-search-icon {
   position: absolute;
   right: 20px;
   font-size: 18px;
@@ -422,7 +422,7 @@
   pointer-events: none;
 }
 
-.smart-toc-search-results {
+.eagle-toc-search-results {
   max-height: 400px;
   overflow-y: auto;
   scrollbar-width: thin;
@@ -430,20 +430,20 @@
   background: #ffffff !important;
 }
 
-.smart-toc-search-results::-webkit-scrollbar {
+.eagle-toc-search-results::-webkit-scrollbar {
   width: 6px;
 }
 
-.smart-toc-search-results::-webkit-scrollbar-track {
+.eagle-toc-search-results::-webkit-scrollbar-track {
   background: transparent;
 }
 
-.smart-toc-search-results::-webkit-scrollbar-thumb {
+.eagle-toc-search-results::-webkit-scrollbar-thumb {
   background: rgba(0, 0, 0, 0.2);
   border-radius: 3px;
 }
 
-.smart-toc-search-result-item {
+.eagle-toc-search-result-item {
   display: flex;
   align-items: center;
   padding: 14px 20px;
@@ -454,21 +454,21 @@
   background: #ffffff !important;
 }
 
-.smart-toc-search-result-item:hover,
-.smart-toc-search-result-item.selected {
+.eagle-toc-search-result-item:hover,
+.eagle-toc-search-result-item.selected {
   background: #f6f8fa !important;
 }
 
-.smart-toc-search-result-item:last-child {
+.eagle-toc-search-result-item:last-child {
   border-bottom: none;
 }
 
-.smart-toc-search-result-content {
+.eagle-toc-search-result-content {
   flex: 1;
   min-width: 0;
 }
 
-.smart-toc-search-result-title {
+.eagle-toc-search-result-title {
   font-size: 16px;
   font-weight: 600;
   color: #1f2328 !important;
@@ -479,32 +479,32 @@
   white-space: nowrap;
 }
 
-.smart-toc-search-result-level {
+.eagle-toc-search-result-level {
   font-size: 12px;
   color: #8b949e !important;
   font-weight: 400;
 }
 
-.smart-toc-search-footer {
+.eagle-toc-search-footer {
   padding: 10px 20px;
   background: #f8f9fa !important;
   border-top: 1px solid #d1d9e0;
 }
 
-.smart-toc-search-tips {
+.eagle-toc-search-tips {
   display: flex;
   gap: 16px;
   font-size: 11px;
   color: #8b949e !important;
 }
 
-.smart-toc-search-tips span {
+.eagle-toc-search-tips span {
   display: flex;
   align-items: center;
   gap: 4px;
 }
 
-.smart-toc-search-no-results {
+.eagle-toc-search-no-results {
   padding: 40px 20px;
   text-align: center;
   color: #86868b;
@@ -512,23 +512,23 @@
 }
 
 /* Search highlighting */
-.smart-toc-link.search-highlight {
+.eagle-toc-link.search-highlight {
   background: rgba(255, 212, 59, 0.3);
   border-radius: 2px;
 }
 
-.smart-toc-search-match {
+.eagle-toc-search-match {
   background: rgba(255, 212, 59, 0.6);
   font-weight: 600;
 }
 
 /* Hide non-matching items during search */
-.smart-toc-panel.searching .smart-toc-item:not(.search-match) {
+.eagle-toc-panel.searching .eagle-toc-item:not(.search-match) {
   display: none;
 }
 
 /* Search no results */
-.smart-toc-no-search-results {
+.eagle-toc-no-search-results {
   padding: 16px;
   text-align: center;
   color: #8b949e;
@@ -538,8 +538,8 @@
   user-select: none;
 }
 
-.smart-toc-depth-increase,
-.smart-toc-depth-decrease {
+.eagle-toc-depth-increase,
+.eagle-toc-depth-decrease {
   font-size: 12px !important;
   font-weight: 600 !important;
   color: #0969da !important;
@@ -556,27 +556,27 @@
   justify-content: center;
 }
 
-.smart-toc-depth-increase:hover,
-.smart-toc-depth-decrease:hover {
+.eagle-toc-depth-increase:hover,
+.eagle-toc-depth-decrease:hover {
   background: rgba(9, 105, 218, 0.15) !important;
   color: #0550ae !important;
   opacity: 1 !important;
 }
 
-.smart-toc-depth-increase:disabled,
-.smart-toc-depth-decrease:disabled {
+.eagle-toc-depth-increase:disabled,
+.eagle-toc-depth-decrease:disabled {
   cursor: not-allowed;
   opacity: 0.3 !important;
 }
 
-.smart-toc-depth-increase:disabled:hover,
-.smart-toc-depth-decrease:disabled:hover {
+.eagle-toc-depth-increase:disabled:hover,
+.eagle-toc-depth-decrease:disabled:hover {
   background: transparent !important;
   color: #0969da !important;
   opacity: 0.3 !important;
 }
 
-.smart-toc-content {
+.eagle-toc-content {
   padding: 12px 0;
   max-height: calc(80vh - 60px);
   overflow-y: auto;
@@ -587,8 +587,8 @@
   scrollbar-color: rgba(193, 200, 205, 0.6) transparent;
 }
 
-.smart-toc-loading,
-.smart-toc-no-headings {
+.eagle-toc-loading,
+.eagle-toc-no-headings {
   padding: 20px 16px;
   text-align: center;
   color: #656d76;
@@ -596,14 +596,14 @@
   font-size: 14px; /* Fixed size for messages */
 }
 
-.smart-toc-list {
+.eagle-toc-list {
   list-style: none;
   margin: 0;
   padding: 0;
   font-size: 16px; /* Default list font size */
 }
 
-.smart-toc-item {
+.eagle-toc-item {
   margin: 0;
   padding: 0;
   position: relative;
@@ -611,7 +611,7 @@
   align-items: center;
 }
 
-.smart-toc-link {
+.eagle-toc-link {
   display: block;
   padding: 6px 16px;
   text-decoration: none;
@@ -625,7 +625,7 @@
 }
 
 /* Copy link button */
-.smart-toc-copy-btn {
+.eagle-toc-copy-btn {
   position: absolute;
   right: 8px;
   top: 50%;
@@ -647,17 +647,17 @@
   z-index: 1;
 }
 
-.smart-toc-item:hover .smart-toc-copy-btn {
+.eagle-toc-item:hover .eagle-toc-copy-btn {
   opacity: 1;
 }
 
-.smart-toc-copy-btn:hover {
+.eagle-toc-copy-btn:hover {
   background: rgba(0, 0, 0, 0.1);
   color: #24292f;
   transform: translateY(-50%) scale(1.1);
 }
 
-.smart-toc-copy-btn.smart-toc-copy-success {
+.eagle-toc-copy-btn.eagle-toc-copy-success {
   background: #28a745;
   color: white;
   opacity: 1;
@@ -665,47 +665,47 @@
   font-weight: 500;
 }
 
-.smart-toc-link:hover {
+.eagle-toc-link:hover {
   background: #f6f8fa;
   border-left-color: #0969da;
   color: #0969da;
 }
 
-.smart-toc-level-1 .smart-toc-link {
+.eagle-toc-level-1 .eagle-toc-link {
   font-weight: 600;
   padding-left: 16px;
 }
 
-.smart-toc-level-2 .smart-toc-link {
+.eagle-toc-level-2 .eagle-toc-link {
   padding-left: 32px;
   font-size: 13px;
 }
 
-.smart-toc-level-3 .smart-toc-link {
+.eagle-toc-level-3 .eagle-toc-link {
   padding-left: 48px;
   font-size: 12px;
   color: #656d76;
 }
 
-.smart-toc-level-4 .smart-toc-link {
+.eagle-toc-level-4 .eagle-toc-link {
   padding-left: 64px;
   font-size: 12px;
   color: #656d76;
 }
 
-.smart-toc-level-5 .smart-toc-link {
+.eagle-toc-level-5 .eagle-toc-link {
   padding-left: 80px;
   font-size: 11px;
   color: #8c959f;
 }
 
-.smart-toc-level-6 .smart-toc-link {
+.eagle-toc-level-6 .eagle-toc-link {
   padding-left: 96px;
   font-size: 11px;
   color: #8c959f;
 }
 
-.smart-toc-level-7 .smart-toc-link {
+.eagle-toc-level-7 .eagle-toc-link {
   padding-left: 112px;
   font-size: 11px;
   color: #8c959f;
@@ -713,20 +713,20 @@
   border-left: 2px solid #e1e5e9;
 }
 
-.smart-toc-level-7 .smart-toc-link:hover {
+.eagle-toc-level-7 .eagle-toc-link:hover {
   background: #fff3cd;
   border-left-color: #ffc107;
   color: #856404;
 }
 
-.smart-toc-level-7 .smart-toc-link.smart-toc-active {
+.eagle-toc-level-7 .eagle-toc-link.eagle-toc-active {
   background: #fff3cd;
   border-left-color: #ffc107;
   color: #856404;
   font-weight: 500;
 }
 
-.smart-toc-link.smart-toc-active {
+.eagle-toc-link.eagle-toc-active {
   background: #e6f3ff;
   border-left-color: #0969da;
   color: #0969da;
@@ -734,7 +734,7 @@
 }
 
 @media (max-width: 768px) {
-  .smart-toc-panel {
+  .eagle-toc-panel {
     width: calc(100vw - 40px);
     right: 20px;
     left: 20px;
@@ -742,76 +742,76 @@
   }
 }
 
-.smart-toc-content::-webkit-scrollbar {
+.eagle-toc-content::-webkit-scrollbar {
   width: 4px;
 }
 
-.smart-toc-content::-webkit-scrollbar-track {
+.eagle-toc-content::-webkit-scrollbar-track {
   background: transparent;
 }
 
-.smart-toc-content::-webkit-scrollbar-thumb {
+.eagle-toc-content::-webkit-scrollbar-thumb {
   background: rgba(193, 200, 205, 0.6);
   border-radius: 2px;
   transition: background 0.2s ease;
 }
 
-.smart-toc-content::-webkit-scrollbar-thumb:hover {
+.eagle-toc-content::-webkit-scrollbar-thumb:hover {
   background: rgba(168, 176, 184, 0.8);
 }
 
 
-.smart-toc-panel.smart-toc-dragging {
+.eagle-toc-panel.eagle-toc-dragging {
   transition: none;
   cursor: grabbing;
 }
 
 
-.smart-toc-panel.smart-toc-glance {
+.eagle-toc-panel.eagle-toc-glance {
   opacity: 0.9;
   backdrop-filter: blur(2px);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
 }
 
-body.smart-toc-glance-mode h1,
-body.smart-toc-glance-mode h2,
-body.smart-toc-glance-mode h3,
-body.smart-toc-glance-mode h4,
-body.smart-toc-glance-mode h5,
-body.smart-toc-glance-mode h6 {
+body.eagle-toc-glance-mode h1,
+body.eagle-toc-glance-mode h2,
+body.eagle-toc-glance-mode h3,
+body.eagle-toc-glance-mode h4,
+body.eagle-toc-glance-mode h5,
+body.eagle-toc-glance-mode h6 {
   cursor: help;
   transition: background-color 0.2s ease;
 }
 
-body.smart-toc-glance-mode h1:hover,
-body.smart-toc-glance-mode h2:hover,
-body.smart-toc-glance-mode h3:hover,
-body.smart-toc-glance-mode h4:hover,
-body.smart-toc-glance-mode h5:hover,
-body.smart-toc-glance-mode h6:hover {
+body.eagle-toc-glance-mode h1:hover,
+body.eagle-toc-glance-mode h2:hover,
+body.eagle-toc-glance-mode h3:hover,
+body.eagle-toc-glance-mode h4:hover,
+body.eagle-toc-glance-mode h5:hover,
+body.eagle-toc-glance-mode h6:hover {
   background-color: rgba(102, 126, 234, 0.1);
   border-radius: 4px;
 }
 
 /* Collapsed panel state */
-.smart-toc-panel.smart-toc-collapsed .smart-toc-content {
+.eagle-toc-panel.eagle-toc-collapsed .eagle-toc-content {
   display: none;
 }
 
 
-.smart-toc-panel.smart-toc-collapsed {
+.eagle-toc-panel.eagle-toc-collapsed {
   height: auto !important;
   min-height: 0 !important;
   max-height: none !important;
   overflow: visible;
 }
 
-.smart-toc-expand {
+.eagle-toc-expand {
   display: none;
 }
 
 /* Settings modal styles */
-.smart-toc-settings-modal {
+.eagle-toc-settings-modal {
   position: fixed;
   top: 0;
   left: 0;
@@ -823,14 +823,14 @@ body.smart-toc-glance-mode h6:hover {
   transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.smart-toc-settings-modal.show {
+.eagle-toc-settings-modal.show {
   display: flex;
   align-items: center;
   justify-content: center;
   opacity: 1;
 }
 
-.smart-toc-settings-overlay {
+.eagle-toc-settings-overlay {
   position: absolute;
   top: 0;
   left: 0;
@@ -841,7 +841,7 @@ body.smart-toc-glance-mode h6:hover {
   -webkit-backdrop-filter: blur(8px);
 }
 
-.smart-toc-settings-dialog {
+.eagle-toc-settings-dialog {
   position: relative;
   width: 90%;
   max-width: 600px;
@@ -856,11 +856,11 @@ body.smart-toc-glance-mode h6:hover {
   border: 2px solid rgba(255, 255, 255, 0.2);
 }
 
-.smart-toc-settings-modal.show .smart-toc-settings-dialog {
+.eagle-toc-settings-modal.show .eagle-toc-settings-dialog {
   transform: scale(1);
 }
 
-.smart-toc-settings-header {
+.eagle-toc-settings-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -870,7 +870,7 @@ body.smart-toc-glance-mode h6:hover {
   color: white;
 }
 
-.smart-toc-settings-title {
+.eagle-toc-settings-title {
   font-size: 20px;
   font-weight: 700;
   color: #ffffff;
@@ -878,7 +878,7 @@ body.smart-toc-glance-mode h6:hover {
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-.smart-toc-settings-close {
+.eagle-toc-settings-close {
   width: 32px;
   height: 32px;
   border: 2px solid rgba(255, 255, 255, 0.3);
@@ -894,19 +894,19 @@ body.smart-toc-glance-mode h6:hover {
   backdrop-filter: blur(10px);
 }
 
-.smart-toc-settings-close:hover {
+.eagle-toc-settings-close:hover {
   background: rgba(255, 255, 255, 0.2);
   border-color: rgba(255, 255, 255, 0.5);
   transform: scale(1.05);
 }
 
-.smart-toc-settings-content {
+.eagle-toc-settings-content {
   padding: 24px;
   max-height: calc(80vh - 120px);
   overflow-y: auto;
 }
 
-.smart-toc-settings-item {
+.eagle-toc-settings-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -920,30 +920,30 @@ body.smart-toc-glance-mode h6:hover {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
-.smart-toc-settings-item:hover {
+.eagle-toc-settings-item:hover {
   background: #f8f9fa;
   border-color: #667eea;
   box-shadow: 0 4px 16px rgba(102, 126, 234, 0.15);
   transform: translateY(-1px);
 }
 
-.smart-toc-settings-item:last-child {
+.eagle-toc-settings-item:last-child {
   margin-bottom: 0;
 }
 
-.smart-toc-settings-label {
+.eagle-toc-settings-label {
   color: #1a202c;
   font-weight: 700;
   font-size: 16px;
   letter-spacing: -0.025em;
 }
 
-.smart-toc-font-controls {
+.eagle-toc-font-controls {
   display: flex;
   gap: 2px;
 }
 
-.smart-toc-font-btn {
+.eagle-toc-font-btn {
   width: 32px;
   height: 32px;
   border: 2px solid #667eea;
@@ -960,14 +960,14 @@ body.smart-toc-glance-mode h6:hover {
   box-shadow: 0 2px 4px rgba(102, 126, 234, 0.3);
 }
 
-.smart-toc-font-btn:hover {
+.eagle-toc-font-btn:hover {
   transform: scale(1.05);
   box-shadow: 0 4px 8px rgba(102, 126, 234, 0.4);
   background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
 }
 
-.smart-toc-font-size-display,
-.smart-toc-highlight-duration-display {
+.eagle-toc-font-size-display,
+.eagle-toc-highlight-duration-display {
   min-width: 60px;
   text-align: center;
   font-size: 16px;
@@ -981,7 +981,7 @@ body.smart-toc-glance-mode h6:hover {
 }
 
 /* Whitelist styles */
-.smart-toc-whitelist-section {
+.eagle-toc-whitelist-section {
   flex-direction: column;
   align-items: stretch !important;
   margin-bottom: 0 !important;
@@ -991,27 +991,27 @@ body.smart-toc-glance-mode h6:hover {
   border-radius: 0 0 12px 12px;
 }
 
-.smart-toc-whitelist-header {
+.eagle-toc-whitelist-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 12px;
 }
 
-.smart-toc-whitelist-toggle {
+.eagle-toc-whitelist-toggle {
   position: relative;
   display: inline-block;
   width: 34px;
   height: 20px;
 }
 
-.smart-toc-whitelist-toggle input {
+.eagle-toc-whitelist-toggle input {
   opacity: 0;
   width: 0;
   height: 0;
 }
 
-.smart-toc-toggle-slider {
+.eagle-toc-toggle-slider {
   position: absolute;
   cursor: pointer;
   top: 0;
@@ -1023,7 +1023,7 @@ body.smart-toc-glance-mode h6:hover {
   border-radius: 20px;
 }
 
-.smart-toc-toggle-slider:before {
+.eagle-toc-toggle-slider:before {
   position: absolute;
   content: "";
   height: 16px;
@@ -1035,25 +1035,25 @@ body.smart-toc-glance-mode h6:hover {
   border-radius: 50%;
 }
 
-.smart-toc-whitelist-toggle input:checked + .smart-toc-toggle-slider {
+.eagle-toc-whitelist-toggle input:checked + .eagle-toc-toggle-slider {
   background-color: #0969da;
 }
 
-.smart-toc-whitelist-toggle input:checked + .smart-toc-toggle-slider:before {
+.eagle-toc-whitelist-toggle input:checked + .eagle-toc-toggle-slider:before {
   transform: translateX(14px);
 }
 
-.smart-toc-whitelist-controls {
+.eagle-toc-whitelist-controls {
   margin-bottom: 8px;
 }
 
-.smart-toc-whitelist-input-row {
+.eagle-toc-whitelist-input-row {
   display: flex;
   gap: 4px;
   margin-bottom: 6px;
 }
 
-.smart-toc-whitelist-input {
+.eagle-toc-whitelist-input {
   flex: 1;
   padding: 4px 6px;
   border: 1px solid #d1d9e0;
@@ -1062,11 +1062,11 @@ body.smart-toc-glance-mode h6:hover {
   outline: none;
 }
 
-.smart-toc-whitelist-input:focus {
+.eagle-toc-whitelist-input:focus {
   border-color: #0969da;
 }
 
-.smart-toc-whitelist-add {
+.eagle-toc-whitelist-add {
   width: 24px;
   height: 24px;
   padding: 0;
@@ -1083,18 +1083,18 @@ body.smart-toc-glance-mode h6:hover {
   transition: all 0.2s ease;
 }
 
-.smart-toc-whitelist-add:hover {
+.eagle-toc-whitelist-add:hover {
   background: #f6f8fa;
   border-color: #0969da;
 }
 
-.smart-toc-whitelist-actions {
+.eagle-toc-whitelist-actions {
   display: flex;
   gap: 4px;
 }
 
-.smart-toc-whitelist-add-current,
-.smart-toc-whitelist-reset {
+.eagle-toc-whitelist-add-current,
+.eagle-toc-whitelist-reset {
   padding: 3px 6px;
   border: 1px solid #d1d9e0;
   background: white;
@@ -1105,14 +1105,14 @@ body.smart-toc-glance-mode h6:hover {
   transition: all 0.2s ease;
 }
 
-.smart-toc-whitelist-add-current:hover,
-.smart-toc-whitelist-reset:hover {
+.eagle-toc-whitelist-add-current:hover,
+.eagle-toc-whitelist-reset:hover {
   background: #f6f8fa;
   border-color: #0969da;
   color: #0969da;
 }
 
-.smart-toc-whitelist-list {
+.eagle-toc-whitelist-list {
   max-height: 150px;
   overflow-y: auto;
   border: 2px solid #e2e8f0;
@@ -1121,7 +1121,7 @@ body.smart-toc-glance-mode h6:hover {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
-.smart-toc-whitelist-item {
+.eagle-toc-whitelist-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -1131,16 +1131,16 @@ body.smart-toc-glance-mode h6:hover {
   transition: all 0.2s ease;
 }
 
-.smart-toc-whitelist-item:hover {
+.eagle-toc-whitelist-item:hover {
   background: linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.08) 100%);
   transform: translateX(4px);
 }
 
-.smart-toc-whitelist-item:last-child {
+.eagle-toc-whitelist-item:last-child {
   border-bottom: none;
 }
 
-.smart-toc-whitelist-domain {
+.eagle-toc-whitelist-domain {
   color: #1a202c;
   font-weight: 600;
   font-size: 15px;
@@ -1148,7 +1148,7 @@ body.smart-toc-glance-mode h6:hover {
   flex: 1;
 }
 
-.smart-toc-whitelist-remove {
+.eagle-toc-whitelist-remove {
   width: 16px;
   height: 16px;
   padding: 0;
@@ -1164,7 +1164,7 @@ body.smart-toc-glance-mode h6:hover {
   transition: all 0.2s ease;
 }
 
-.smart-toc-whitelist-remove:hover {
+.eagle-toc-whitelist-remove:hover {
   background: #ffebee;
   color: #d73a49;
 }
@@ -1181,14 +1181,14 @@ body.smart-toc-glance-mode h6:hover {
   }
 }
 
-.smart-toc-highlighted {
+.eagle-toc-highlighted {
   animation: smart-toc-highlight var(--smart-toc-highlight-duration, 5s) ease-out forwards;
   border-radius: 4px;
   transition: all 0.3s ease;
 }
 
 /* Notification styles */
-.smart-toc-notification {
+.eagle-toc-notification {
   position: fixed;
   top: 50%;
   left: 50%;
@@ -1204,12 +1204,12 @@ body.smart-toc-glance-mode h6:hover {
   pointer-events: none;
 }
 
-.smart-toc-notification.show {
+.eagle-toc-notification.show {
   opacity: 1;
 }
 
 /* Auto-show notification styles */
-.smart-toc-auto-notification {
+.eagle-toc-auto-notification {
   position: fixed;
   top: 20px;
   right: 20px;
@@ -1229,18 +1229,18 @@ body.smart-toc-glance-mode h6:hover {
   backdrop-filter: blur(8px);
 }
 
-.smart-toc-auto-notification.show {
+.eagle-toc-auto-notification.show {
   opacity: 1;
   transform: translateX(0);
 }
 
-.smart-toc-auto-notification.fade-out {
+.eagle-toc-auto-notification.fade-out {
   opacity: 0;
   transform: translateX(20px);
 }
 
 /* Pin action notification styles */
-.smart-toc-pin-notification {
+.eagle-toc-pin-notification {
   position: fixed;
   top: 50%;
   left: 50%;
@@ -1263,12 +1263,12 @@ body.smart-toc-glance-mode h6:hover {
   -webkit-backdrop-filter: blur(10px);
 }
 
-.smart-toc-pin-notification.show {
+.eagle-toc-pin-notification.show {
   opacity: 1;
   transform: translate(-50%, -50%) scale(1);
 }
 
-.smart-toc-pin-notification.fade-out {
+.eagle-toc-pin-notification.fade-out {
   opacity: 0;
   transform: translate(-50%, -50%) scale(0.95);
 }
@@ -1276,7 +1276,7 @@ body.smart-toc-glance-mode h6:hover {
 /* ==================== DARK THEME ==================== */
 @media (prefers-color-scheme: dark) {
   /* Main TOC Panel */
-  .smart-toc-panel {
+  .eagle-toc-panel {
     background: rgba(28, 28, 30, 0.95);
     border: 1px solid rgba(72, 72, 74, 0.6);
     box-shadow: 0 16px 48px rgba(0, 0, 0, 0.25), 
@@ -1288,7 +1288,7 @@ body.smart-toc-glance-mode h6:hover {
   }
 
   /* Header */
-  .smart-toc-header {
+  .eagle-toc-header {
     background: rgba(44, 44, 46, 0.8);
     border-bottom: 1px solid rgba(72, 72, 74, 0.5);
     color: #ffffff;
@@ -1297,311 +1297,311 @@ body.smart-toc-glance-mode h6:hover {
   }
 
   /* Buttons */
-  .smart-toc-controls button {
+  .eagle-toc-controls button {
     color: #98989a;
   }
 
-  .smart-toc-controls button:hover {
+  .eagle-toc-controls button:hover {
     background: #38383a;
     color: #ffffff;
   }
 
   /* Depth controls */
-  .smart-toc-depth-controls {
+  .eagle-toc-depth-controls {
     background: rgba(0, 122, 255, 0.15);
     border: 1px solid rgba(0, 122, 255, 0.3);
   }
 
-  .smart-toc-depth-display {
+  .eagle-toc-depth-display {
     color: #007aff;
     background: rgba(0, 122, 255, 0.2);
   }
 
   /* Settings Modal */
-  .smart-toc-settings-dialog {
+  .eagle-toc-settings-dialog {
     background: #1a202c;
     border-color: rgba(255, 255, 255, 0.1);
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
   }
 
-  .smart-toc-settings-header {
+  .eagle-toc-settings-header {
     background: linear-gradient(135deg, #4c51bf 0%, #553c9a 100%);
   }
 
-  .smart-toc-settings-title {
+  .eagle-toc-settings-title {
     color: #ffffff;
   }
 
-  .smart-toc-settings-close {
+  .eagle-toc-settings-close {
     color: #ffffff;
     border-color: rgba(255, 255, 255, 0.2);
     background: rgba(255, 255, 255, 0.1);
   }
 
-  .smart-toc-settings-close:hover {
+  .eagle-toc-settings-close:hover {
     background: rgba(255, 255, 255, 0.2);
     border-color: rgba(255, 255, 255, 0.4);
   }
 
-  .smart-toc-settings-item {
+  .eagle-toc-settings-item {
     background: #2d3748;
     border-color: #4a5568;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
   }
 
-  .smart-toc-settings-item:hover {
+  .eagle-toc-settings-item:hover {
     background: #374151;
     border-color: #667eea;
     box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);
   }
 
-  .smart-toc-settings-label {
+  .eagle-toc-settings-label {
     color: #f7fafc;
   }
 
-  .smart-toc-font-btn {
+  .eagle-toc-font-btn {
     background: linear-gradient(135deg, #4c51bf 0%, #553c9a 100%);
     border-color: #4c51bf;
     box-shadow: 0 2px 4px rgba(76, 81, 191, 0.4);
   }
 
-  .smart-toc-font-btn:hover {
+  .eagle-toc-font-btn:hover {
     background: linear-gradient(135deg, #3730a3 0%, #44337a 100%);
     box-shadow: 0 4px 8px rgba(76, 81, 191, 0.5);
   }
 
-  .smart-toc-font-size-display,
-  .smart-toc-highlight-duration-display {
+  .eagle-toc-font-size-display,
+  .eagle-toc-highlight-duration-display {
     color: #f7fafc;
     background: linear-gradient(135deg, #374151 0%, #4a5568 100%);
     border-color: #6b7280;
   }
 
-  .smart-toc-whitelist-section {
+  .eagle-toc-whitelist-section {
     background: linear-gradient(135deg, rgba(76, 81, 191, 0.1) 0%, rgba(85, 60, 154, 0.1) 100%);
     border-top-color: #4c51bf;
   }
 
-  .smart-toc-whitelist-list {
+  .eagle-toc-whitelist-list {
     background: #2d3748;
     border-color: #4a5568;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   }
 
-  .smart-toc-whitelist-item {
+  .eagle-toc-whitelist-item {
     border-bottom-color: #4a5568;
   }
 
-  .smart-toc-whitelist-item:hover {
+  .eagle-toc-whitelist-item:hover {
     background: linear-gradient(135deg, rgba(76, 81, 191, 0.15) 0%, rgba(85, 60, 154, 0.15) 100%);
   }
 
-  .smart-toc-whitelist-domain {
+  .eagle-toc-whitelist-domain {
     color: #f7fafc;
   }
 
-  .smart-toc-font-btn {
+  .eagle-toc-font-btn {
     background: #2c2c2e;
     border: 1px solid #48484a;
     color: #ffffff;
   }
 
-  .smart-toc-font-btn:hover {
+  .eagle-toc-font-btn:hover {
     background: #38383a;
   }
 
-  .smart-toc-font-size-display,
-  .smart-toc-highlight-duration-display {
+  .eagle-toc-font-size-display,
+  .eagle-toc-highlight-duration-display {
     color: #ffffff;
   }
 
   /* Whitelist Section */
-  .smart-toc-whitelist-input {
+  .eagle-toc-whitelist-input {
     background: #2c2c2e;
     border: 1px solid #48484a;
     color: #ffffff;
   }
 
-  .smart-toc-whitelist-input::placeholder {
+  .eagle-toc-whitelist-input::placeholder {
     color: #98989a;
   }
 
-  .smart-toc-whitelist-input:focus {
+  .eagle-toc-whitelist-input:focus {
     border-color: #007aff;
   }
 
-  .smart-toc-whitelist-add {
+  .eagle-toc-whitelist-add {
     background: #2c2c2e;
     border: 1px solid #48484a;
     color: #007aff;
   }
 
-  .smart-toc-whitelist-add:hover {
+  .eagle-toc-whitelist-add:hover {
     background: #38383a;
     border-color: #007aff;
   }
 
-  .smart-toc-whitelist-add-current,
-  .smart-toc-whitelist-reset {
+  .eagle-toc-whitelist-add-current,
+  .eagle-toc-whitelist-reset {
     background: #2c2c2e;
     border: 1px solid #48484a;
     color: #98989a;
   }
 
-  .smart-toc-whitelist-add-current:hover,
-  .smart-toc-whitelist-reset:hover {
+  .eagle-toc-whitelist-add-current:hover,
+  .eagle-toc-whitelist-reset:hover {
     background: #38383a;
     color: #ffffff;
   }
 
-  .smart-toc-whitelist-item {
+  .eagle-toc-whitelist-item {
     background: #2c2c2e;
     border: 1px solid #48484a;
   }
 
-  .smart-toc-whitelist-domain {
+  .eagle-toc-whitelist-domain {
     color: #ffffff;
   }
 
-  .smart-toc-whitelist-remove {
+  .eagle-toc-whitelist-remove {
     color: #ff453a;
   }
 
-  .smart-toc-whitelist-remove:hover {
+  .eagle-toc-whitelist-remove:hover {
     background: rgba(255, 69, 58, 0.1);
     color: #ff453a;
   }
 
   /* Toggle Switch */
-  .smart-toc-toggle-slider {
+  .eagle-toc-toggle-slider {
     background-color: #48484a;
   }
 
-  .smart-toc-whitelist-enabled:checked + .smart-toc-toggle-slider {
+  .eagle-toc-whitelist-enabled:checked + .eagle-toc-toggle-slider {
     background-color: #007aff;
   }
 
-  .smart-toc-toggle-slider:before {
+  .eagle-toc-toggle-slider:before {
     background-color: #ffffff;
   }
 
   /* TOC Content */
-  .smart-toc-content {
+  .eagle-toc-content {
     background: #1c1c1e;
     color: #ffffff;
   }
 
-  .smart-toc-loading {
+  .eagle-toc-loading {
     color: #98989a;
   }
 
-  .smart-toc-item {
+  .eagle-toc-item {
     color: #ffffff;
   }
 
-  .smart-toc-item:hover {
+  .eagle-toc-item:hover {
     background: #2c2c2e;
   }
 
-  .smart-toc-link:hover {
+  .eagle-toc-link:hover {
     background: #2c2c2e !important;
     border-left-color: #5B9BD5 !important;
     color: #ffffff !important;
   }
 
-  .smart-toc-item.smart-toc-active {
+  .eagle-toc-item.eagle-toc-active {
     background: rgba(56, 88, 152, 0.4) !important;
     color: #ffffff !important;
     border-left: 3px solid #5B9BD5 !important;
   }
 
-  .smart-toc-link.smart-toc-active {
+  .eagle-toc-link.eagle-toc-active {
     background: rgba(56, 88, 152, 0.4) !important;
     color: #ffffff !important;
     border-left-color: #5B9BD5 !important;
     font-weight: 500;
   }
 
-  .smart-toc-item.smart-toc-filtered {
+  .eagle-toc-item.eagle-toc-filtered {
     opacity: 0.5;
   }
 
   /* Copy button dark theme */
-  .smart-toc-copy-btn {
+  .eagle-toc-copy-btn {
     color: #8b949e;
   }
 
-  .smart-toc-copy-btn:hover {
+  .eagle-toc-copy-btn:hover {
     background: rgba(255, 255, 255, 0.1);
     color: #ffffff;
   }
 
-  .smart-toc-copy-btn.smart-toc-copy-success {
+  .eagle-toc-copy-btn.eagle-toc-copy-success {
     background: #238636;
     color: white;
   }
 
   /* Search Modal */
-  .smart-toc-search-dialog {
+  .eagle-toc-search-dialog {
     background: #0d1117 !important;
     border: 1px solid #21262d;
     box-shadow: 0 16px 32px rgba(0, 0, 0, 0.4);
   }
 
-  .smart-toc-search-input-container {
+  .eagle-toc-search-input-container {
     border-bottom: 1px solid #21262d;
     background: #0d1117 !important;
   }
 
-  .smart-toc-search-input {
+  .eagle-toc-search-input {
     background: transparent !important;
     color: #e6edf3 !important;
     font-weight: 500;
   }
 
-  .smart-toc-search-input::placeholder {
+  .eagle-toc-search-input::placeholder {
     color: #8b949e !important;
     font-weight: 400;
   }
 
-  .smart-toc-search-icon {
+  .eagle-toc-search-icon {
     color: #8b949e !important;
   }
 
-  .smart-toc-search-results {
+  .eagle-toc-search-results {
     background: #0d1117 !important;
   }
 
-  .smart-toc-search-result-item {
+  .eagle-toc-search-result-item {
     color: #e6edf3 !important;
     border-bottom: 1px solid #21262d;
     background: #0d1117 !important;
   }
 
-  .smart-toc-search-result-item:hover {
+  .eagle-toc-search-result-item:hover {
     background: #161b22 !important;
   }
 
-  .smart-toc-search-result-item.selected {
+  .eagle-toc-search-result-item.selected {
     background: #21262d !important;
     color: #58a6ff !important;
   }
 
-  .smart-toc-search-result-title {
+  .eagle-toc-search-result-title {
     color: #e6edf3 !important;
     font-weight: 600;
   }
 
-  .smart-toc-search-result-level {
+  .eagle-toc-search-result-level {
     color: #8b949e !important;
   }
 
-  .smart-toc-search-footer {
+  .eagle-toc-search-footer {
     background: #010409 !important;
     border-top: 1px solid #21262d;
   }
 
-  .smart-toc-search-tips span {
+  .eagle-toc-search-tips span {
     color: #8b949e !important;
   }
 
@@ -1617,23 +1617,23 @@ body.smart-toc-glance-mode h6:hover {
     }
   }
 
-  .smart-toc-highlighted {
+  .eagle-toc-highlighted {
     animation: smart-toc-highlight-dark var(--smart-toc-highlight-duration, 5s) ease-out forwards;
   }
 
   /* Notifications */
-  .smart-toc-notification {
+  .eagle-toc-notification {
     background: rgba(28, 28, 30, 0.9);
     color: #ffffff;
   }
 
-  .smart-toc-auto-notification {
+  .eagle-toc-auto-notification {
     background: linear-gradient(135deg, #5a67d8 0%, #667eea 100%);
     border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: 0 4px 16px rgba(90, 103, 216, 0.4);
   }
 
-  .smart-toc-pin-notification {
+  .eagle-toc-pin-notification {
     background: linear-gradient(135deg, #198754 0%, #20c997 100%);
     border: 1px solid rgba(255, 255, 255, 0.15);
     box-shadow: 0 8px 32px rgba(25, 135, 84, 0.4);
@@ -1641,36 +1641,36 @@ body.smart-toc-glance-mode h6:hover {
 
 
   /* Collapsed state */
-  .smart-toc-panel.smart-toc-collapsed {
+  .eagle-toc-panel.eagle-toc-collapsed {
     background: #1c1c1e;
     border: 1px solid #38383a;
   }
 
   /* Scrollbar for dark theme */
-  .smart-toc-content::-webkit-scrollbar-track {
+  .eagle-toc-content::-webkit-scrollbar-track {
     background: transparent;
   }
 
-  .smart-toc-content::-webkit-scrollbar-thumb {
+  .eagle-toc-content::-webkit-scrollbar-thumb {
     background: rgba(72, 72, 74, 0.6);
   }
 
-  .smart-toc-content::-webkit-scrollbar-thumb:hover {
+  .eagle-toc-content::-webkit-scrollbar-thumb:hover {
     background: rgba(88, 88, 90, 0.8);
   }
   
   /* Theme menu dark mode */
-  .smart-toc-theme-menu {
+  .eagle-toc-theme-menu {
     background: #2c2c2e;
     border: 1px solid #48484a;
     color: #ffffff;
   }
   
-  .smart-toc-theme-option:hover {
+  .eagle-toc-theme-option:hover {
     background: #3a3a3c;
   }
   
-  .smart-toc-theme-option.active {
+  .eagle-toc-theme-option.active {
     background: #1a365d;
   }
 
@@ -1692,12 +1692,12 @@ body.smart-toc-glance-mode h6:hover {
 }
 
 /* ==================== THEME SYSTEM STYLES ==================== */
-.smart-toc-theme-container {
+.eagle-toc-theme-container {
   position: relative;
   display: inline-block;
 }
 
-.smart-toc-theme-menu {
+.eagle-toc-theme-menu {
   position: absolute;
   top: 100%;
   right: 0;
@@ -1712,7 +1712,7 @@ body.smart-toc-glance-mode h6:hover {
   backdrop-filter: blur(8px);
 }
 
-.smart-toc-theme-option {
+.eagle-toc-theme-option {
   display: flex;
   align-items: center;
   padding: 6px 10px;
@@ -1723,20 +1723,20 @@ body.smart-toc-glance-mode h6:hover {
   color: #333;
 }
 
-.smart-toc-theme-option:hover {
+.eagle-toc-theme-option:hover {
   background: #f6f8fa;
 }
 
-.smart-toc-theme-option.active {
+.eagle-toc-theme-option.active {
   background: #e6f3ff;
 }
 
-.smart-toc-theme-option.active .smart-toc-theme-dot {
+.eagle-toc-theme-option.active .eagle-toc-theme-dot {
   border-color: #0969da;
   box-shadow: 0 0 0 2px rgba(9, 105, 218, 0.2);
 }
 
-.smart-toc-theme-dot {
+.eagle-toc-theme-dot {
   width: 16px;
   height: 16px;
   border-radius: 50%;
@@ -1747,37 +1747,37 @@ body.smart-toc-glance-mode h6:hover {
 }
 
 /* Theme dot colors */
-.smart-toc-theme-dot.auto {
+.eagle-toc-theme-dot.auto {
   background: linear-gradient(45deg, #667eea 0%, #764ba2 50%, #22c55e 100%);
 }
 
-.smart-toc-theme-dot.light {
+.eagle-toc-theme-dot.light {
   background: #ffffff;
   border: 2px solid #e1e5e9;
 }
 
-.smart-toc-theme-dot.dark {
+.eagle-toc-theme-dot.dark {
   background: #1c1c1e;
 }
 
-.smart-toc-theme-dot.ocean {
+.eagle-toc-theme-dot.ocean {
   background: #667eea;
 }
 
-.smart-toc-theme-dot.forest {
+.eagle-toc-theme-dot.forest {
   background: #22c55e;
 }
 
-.smart-toc-theme-dot.sunset {
+.eagle-toc-theme-dot.sunset {
   background: #fb923c;
 }
 
-.smart-toc-theme-dot.coral {
+.eagle-toc-theme-dot.coral {
   background: #ff6b6b;
 }
 
 /* Theme Toast */
-.smart-toc-theme-toast {
+.eagle-toc-theme-toast {
   position: absolute;
   bottom: 15px;
   left: 50%;
@@ -1795,19 +1795,19 @@ body.smart-toc-glance-mode h6:hover {
   pointer-events: none;
 }
 
-.smart-toc-theme-toast.show {
+.eagle-toc-theme-toast.show {
   opacity: 1;
 }
 
 /* 更多選單容器 */
-.smart-toc-more-container {
+.eagle-toc-more-container {
   position: relative;
   display: inline-block;
   z-index: 100;
 }
 
 /* 更多按鈕 */
-.smart-toc-more {
+.eagle-toc-more {
   background: none;
   border: none;
   cursor: pointer;
@@ -1824,22 +1824,22 @@ body.smart-toc-glance-mode h6:hover {
   position: relative;
 }
 
-.smart-toc-more:hover {
+.eagle-toc-more:hover {
   background: #f3f4f6;
   color: #656d76;
   opacity: 1;
 }
 
-.smart-toc-more svg {
+.eagle-toc-more svg {
   transition: transform 0.2s ease;
 }
 
-.smart-toc-more:hover svg {
+.eagle-toc-more:hover svg {
   transform: scale(1.1);
 }
 
 /* 更多選單 */
-.smart-toc-more-menu {
+.eagle-toc-more-menu {
   position: absolute;
   top: 100%;
   right: 0;
@@ -1855,7 +1855,7 @@ body.smart-toc-glance-mode h6:hover {
   animation: slideDown 0.2s ease-out;
 }
 
-.smart-toc-more-menu.show {
+.eagle-toc-more-menu.show {
   display: block;
 }
 
@@ -1872,7 +1872,7 @@ body.smart-toc-glance-mode h6:hover {
 }
 
 /* 更多選單選項 */
-.smart-toc-more-option {
+.eagle-toc-more-option {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -1890,12 +1890,12 @@ body.smart-toc-glance-mode h6:hover {
   min-height: 36px;
 }
 
-.smart-toc-more-option:hover {
+.eagle-toc-more-option:hover {
   background: #f6f8fa;
   transform: translateX(2px);
 }
 
-.smart-toc-more-icon {
+.eagle-toc-more-icon {
   font-size: 12px;
   width: 16px;
   display: flex;
@@ -1903,13 +1903,13 @@ body.smart-toc-glance-mode h6:hover {
   justify-content: center;
 }
 
-.smart-toc-more-text {
+.eagle-toc-more-text {
   flex: 1;
   font-size: 13px;
 }
 
 /* Toggle 按鈕（收合/展開） */
-.smart-toc-toggle {
+.eagle-toc-toggle {
   background: none;
   border: none;
   cursor: pointer;
@@ -1926,29 +1926,29 @@ body.smart-toc-glance-mode h6:hover {
   margin-right: 8px;
 }
 
-.smart-toc-toggle:hover {
+.eagle-toc-toggle:hover {
   background: #f3f4f6;
   color: #656d76;
   opacity: 1;
 }
 
 /* 當面板收合時，旋轉收合按鈕的圖示 */
-.smart-toc-collapsed .smart-toc-toggle svg {
+.eagle-toc-collapsed .eagle-toc-toggle svg {
   transform: rotate(180deg);
 }
 
-.smart-toc-toggle svg {
+.eagle-toc-toggle svg {
   transition: transform 0.2s ease;
 }
 
 
 /* 關閉按鈕位置調整 */
-.smart-toc-close {
+.eagle-toc-close {
   font-size: 16px;
   order: 3;
 }
 
-.smart-toc-more-container {
+.eagle-toc-more-container {
   order: 2;
 }
 
@@ -2087,7 +2087,7 @@ body.smart-toc-glance-mode h6:hover {
 }
 
 /* Zen Mode 樣式 - 版本1: 基礎跑馬燈效果 */
-.smart-toc-zen-container {
+.eagle-toc-zen-container {
   position: fixed;
   top: 0;
   left: 0;
@@ -2098,7 +2098,7 @@ body.smart-toc-glance-mode h6:hover {
   overflow: hidden;
 }
 
-.smart-toc-zen-overlay {
+.eagle-toc-zen-overlay {
   position: absolute;
   top: 0;
   left: 0;
@@ -2109,7 +2109,7 @@ body.smart-toc-glance-mode h6:hover {
   -webkit-backdrop-filter: blur(20px);
 }
 
-.smart-toc-zen-scroll-container {
+.eagle-toc-zen-scroll-container {
   position: relative;
   width: 100%;
   height: 100vh;
@@ -2119,7 +2119,7 @@ body.smart-toc-glance-mode h6:hover {
   justify-content: center;
 }
 
-.smart-toc-zen-content {
+.eagle-toc-zen-content {
   width: 80%;
   max-width: 800px;
   text-align: center;
@@ -2128,14 +2128,14 @@ body.smart-toc-glance-mode h6:hover {
   box-sizing: border-box;
 }
 
-.smart-toc-zen-item {
+.eagle-toc-zen-item {
   opacity: 0.9;
   transition: opacity 0.3s ease;
   margin: 0 auto;
   padding: 20px 0;
 }
 
-.smart-toc-zen-item-text {
+.eagle-toc-zen-item-text {
   font-size: 32px;
   line-height: 1.4;
   font-weight: 300;
@@ -2144,43 +2144,43 @@ body.smart-toc-glance-mode h6:hover {
 }
 
 /* 不同層級的大綱項目樣式 */
-.smart-toc-zen-item.zen-level-1 .smart-toc-zen-item-text {
+.eagle-toc-zen-item.zen-level-1 .eagle-toc-zen-item-text {
   font-size: 42px;
   font-weight: 400;
   color: #ffffff;
 }
 
-.smart-toc-zen-item.zen-level-2 .smart-toc-zen-item-text {
+.eagle-toc-zen-item.zen-level-2 .eagle-toc-zen-item-text {
   font-size: 36px;
   font-weight: 300;
   color: #e6e6e6;
 }
 
-.smart-toc-zen-item.zen-level-3 .smart-toc-zen-item-text {
+.eagle-toc-zen-item.zen-level-3 .eagle-toc-zen-item-text {
   font-size: 30px;
   font-weight: 300;
   color: #cccccc;
 }
 
-.smart-toc-zen-item.zen-level-4 .smart-toc-zen-item-text {
+.eagle-toc-zen-item.zen-level-4 .eagle-toc-zen-item-text {
   font-size: 26px;
   font-weight: 300;
   color: #b3b3b3;
 }
 
-.smart-toc-zen-item.zen-level-5 .smart-toc-zen-item-text {
+.eagle-toc-zen-item.zen-level-5 .eagle-toc-zen-item-text {
   font-size: 24px;
   font-weight: 300;
   color: #999999;
 }
 
-.smart-toc-zen-item.zen-level-6 .smart-toc-zen-item-text {
+.eagle-toc-zen-item.zen-level-6 .eagle-toc-zen-item-text {
   font-size: 22px;
   font-weight: 300;
   color: #808080;
 }
 
-.smart-toc-zen-instructions {
+.eagle-toc-zen-instructions {
   position: absolute;
   bottom: 30px;
   left: 50%;
@@ -2196,7 +2196,7 @@ body.smart-toc-glance-mode h6:hover {
 }
 
 /* Zen Mode 按鈕樣式 */
-.smart-toc-toolbar-zen {
+.eagle-toc-toolbar-zen {
   background: none !important;
   border: none !important;
   color: inherit !important;
@@ -2209,13 +2209,13 @@ body.smart-toc-glance-mode h6:hover {
   justify-content: center !important;
 }
 
-.smart-toc-toolbar-zen:hover {
+.eagle-toc-toolbar-zen:hover {
   background: rgba(0, 0, 0, 0.05) !important;
   transform: scale(1.05) !important;
 }
 
 /* 版本2: 進階控制面板樣式 */
-.zen-v2-advanced .smart-toc-zen-controls {
+.zen-v2-advanced .eagle-toc-zen-controls {
   position: absolute;
   top: 30px;
   left: 50%;
@@ -2309,13 +2309,13 @@ body.smart-toc-glance-mode h6:hover {
 }
 
 /* 增強的說明文字 */
-.zen-v2-advanced .smart-toc-zen-instructions {
+.zen-v2-advanced .eagle-toc-zen-instructions {
   bottom: 20px;
   background: rgba(0, 0, 0, 0.4);
   padding: 12px 20px;
 }
 
-.zen-v2-advanced .smart-toc-zen-instructions div {
+.zen-v2-advanced .eagle-toc-zen-instructions div {
   display: flex;
   gap: 15px;
   align-items: center;
@@ -2323,11 +2323,11 @@ body.smart-toc-glance-mode h6:hover {
 }
 
 /* 淡入淡出動畫增強 */
-.zen-v2-advanced .smart-toc-zen-overlay {
+.zen-v2-advanced .eagle-toc-zen-overlay {
   animation: zenOverlayFadeIn 1s ease forwards;
 }
 
-.zen-v2-advanced .smart-toc-zen-content {
+.zen-v2-advanced .eagle-toc-zen-content {
   animation: zenContentFadeIn 1.2s ease 0.3s both;
 }
 
@@ -2368,12 +2368,12 @@ body.smart-toc-glance-mode h6:hover {
 }
 
 /* 滾動項目的視覺增強 */
-.zen-v2-advanced .smart-toc-zen-item {
+.zen-v2-advanced .eagle-toc-zen-item {
   transition: all 0.4s ease;
   position: relative;
 }
 
-.zen-v2-advanced .smart-toc-zen-item::before {
+.zen-v2-advanced .eagle-toc-zen-item::before {
   content: '';
   position: absolute;
   left: -20px;
@@ -2386,24 +2386,24 @@ body.smart-toc-glance-mode h6:hover {
   transition: height 0.3s ease;
 }
 
-.zen-v2-advanced .smart-toc-zen-item.zen-level-1::before {
+.zen-v2-advanced .eagle-toc-zen-item.zen-level-1::before {
   height: 60px;
   background: linear-gradient(135deg, #ff6b6b, #ee5a24);
 }
 
-.zen-v2-advanced .smart-toc-zen-item.zen-level-2::before {
+.zen-v2-advanced .eagle-toc-zen-item.zen-level-2::before {
   height: 50px;
   background: linear-gradient(135deg, #4a90e2, #7db9e8);
 }
 
-.zen-v2-advanced .smart-toc-zen-item.zen-level-3::before {
+.zen-v2-advanced .eagle-toc-zen-item.zen-level-3::before {
   height: 40px;
   background: linear-gradient(135deg, #26de81, #20bf6b);
 }
 
 /* 響應式設計 */
 @media (max-width: 768px) {
-  .zen-v2-advanced .smart-toc-zen-controls {
+  .zen-v2-advanced .eagle-toc-zen-controls {
     width: 90%;
     max-width: 320px;
     padding: 15px;
@@ -2419,32 +2419,32 @@ body.smart-toc-glance-mode h6:hover {
     font-size: 14px;
   }
   
-  .smart-toc-zen-content {
+  .eagle-toc-zen-content {
     width: 90%;
     padding: 0 20px;
   }
   
-  .smart-toc-zen-item.zen-level-1 .smart-toc-zen-item-text {
+  .eagle-toc-zen-item.zen-level-1 .eagle-toc-zen-item-text {
     font-size: 32px;
   }
   
-  .smart-toc-zen-item.zen-level-2 .smart-toc-zen-item-text {
+  .eagle-toc-zen-item.zen-level-2 .eagle-toc-zen-item-text {
     font-size: 28px;
   }
   
-  .smart-toc-zen-item.zen-level-3 .smart-toc-zen-item-text {
+  .eagle-toc-zen-item.zen-level-3 .eagle-toc-zen-item-text {
     font-size: 24px;
   }
   
-  .smart-toc-zen-item.zen-level-4 .smart-toc-zen-item-text {
+  .eagle-toc-zen-item.zen-level-4 .eagle-toc-zen-item-text {
     font-size: 22px;
   }
   
-  .smart-toc-zen-item.zen-level-5 .smart-toc-zen-item-text {
+  .eagle-toc-zen-item.zen-level-5 .eagle-toc-zen-item-text {
     font-size: 20px;
   }
   
-  .smart-toc-zen-item.zen-level-6 .smart-toc-zen-item-text {
+  .eagle-toc-zen-item.zen-level-6 .eagle-toc-zen-item-text {
     font-size: 18px;
   }
 }
@@ -2452,7 +2452,7 @@ body.smart-toc-glance-mode h6:hover {
 /* ==================== 版本3: 個性化設置和主題系統 ==================== */
 
 /* 設置面板樣式 */
-.smart-toc-zen-settings-panel {
+.eagle-toc-zen-settings-panel {
   position: absolute;
   top: 30px;
   right: 30px;
@@ -2469,7 +2469,7 @@ body.smart-toc-glance-mode h6:hover {
   z-index: 10;
 }
 
-.smart-toc-zen-settings-panel.show {
+.eagle-toc-zen-settings-panel.show {
   opacity: 1;
   transform: translateX(0);
 }
@@ -2666,22 +2666,22 @@ body.smart-toc-glance-mode h6:hover {
 }
 
 /* 主題應用樣式 */
-.zen-v3-premium .smart-toc-zen-container {
+.zen-v3-premium .eagle-toc-zen-container {
   transition: all 0.6s ease;
 }
 
 /* Classic 主題 */
-.zen-theme-classic .smart-toc-zen-overlay {
+.zen-theme-classic .eagle-toc-zen-overlay {
   background: rgba(0, 0, 0, 0.95);
 }
 
 /* Starry 主題 */
-.zen-theme-starry .smart-toc-zen-overlay {
+.zen-theme-starry .eagle-toc-zen-overlay {
   background: radial-gradient(ellipse at bottom, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
   position: relative;
 }
 
-.zen-theme-starry .smart-toc-zen-overlay::before {
+.zen-theme-starry .eagle-toc-zen-overlay::before {
   content: '';
   position: absolute;
   top: 0;
@@ -2705,41 +2705,41 @@ body.smart-toc-glance-mode h6:hover {
 }
 
 /* Ocean 主題 */
-.zen-theme-ocean .smart-toc-zen-overlay {
+.zen-theme-ocean .eagle-toc-zen-overlay {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
-.zen-theme-ocean .smart-toc-zen-item-text {
+.zen-theme-ocean .eagle-toc-zen-item-text {
   color: #e8f4f8;
   text-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
 }
 
 /* Forest 主題 */
-.zen-theme-forest .smart-toc-zen-overlay {
+.zen-theme-forest .eagle-toc-zen-overlay {
   background: linear-gradient(135deg, #134e5e 0%, #71b280 100%);
 }
 
-.zen-theme-forest .smart-toc-zen-item-text {
+.zen-theme-forest .eagle-toc-zen-item-text {
   color: #e8f5e8;
   text-shadow: 0 2px 8px rgba(19, 78, 94, 0.3);
 }
 
 /* Sunset 主題 */
-.zen-theme-sunset .smart-toc-zen-overlay {
+.zen-theme-sunset .eagle-toc-zen-overlay {
   background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
 }
 
-.zen-theme-sunset .smart-toc-zen-item-text {
+.zen-theme-sunset .eagle-toc-zen-item-text {
   color: #ffeaa7;
   text-shadow: 0 2px 8px rgba(250, 112, 154, 0.3);
 }
 
 /* Galaxy 主題 */
-.zen-theme-galaxy .smart-toc-zen-overlay {
+.zen-theme-galaxy .eagle-toc-zen-overlay {
   background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
 }
 
-.zen-theme-galaxy .smart-toc-zen-item-text {
+.zen-theme-galaxy .eagle-toc-zen-item-text {
   color: #2d3436;
   text-shadow: 0 2px 8px rgba(168, 237, 234, 0.3);
 }
@@ -2787,7 +2787,7 @@ body.smart-toc-glance-mode h6:hover {
 .zen-particle:nth-child(10) { left: 15%; animation-delay: 3.5s; }
 
 /* 版本3增強說明 */
-.zen-v3-premium .smart-toc-zen-instructions {
+.zen-v3-premium .eagle-toc-zen-instructions {
   bottom: 20px;
   background: rgba(0, 0, 0, 0.4);
   padding: 12px 20px;
@@ -2798,7 +2798,7 @@ body.smart-toc-glance-mode h6:hover {
   font-size: 12px;
 }
 
-.zen-v3-premium .smart-toc-zen-instructions span {
+.zen-v3-premium .eagle-toc-zen-instructions span {
   display: flex;
   align-items: center;
   gap: 4px;
@@ -2806,7 +2806,7 @@ body.smart-toc-glance-mode h6:hover {
 
 /* 響應式設計 - 版本3 */
 @media (max-width: 768px) {
-  .smart-toc-zen-settings-panel {
+  .eagle-toc-zen-settings-panel {
     top: 20px;
     right: 20px;
     left: 20px;
@@ -2851,7 +2851,7 @@ body.smart-toc-glance-mode h6:hover {
 /* ==================== 版本2: 增強導出功能樣式 ==================== */
 
 /* 導出按鈕樣式 */
-.smart-toc-toolbar-export {
+.eagle-toc-toolbar-export {
   background: none;
   border: none;
   color: #666;
@@ -2865,19 +2865,19 @@ body.smart-toc-glance-mode h6:hover {
   margin: 0 2px;
 }
 
-.smart-toc-toolbar-export:hover {
+.eagle-toc-toolbar-export:hover {
   background: rgba(74, 144, 226, 0.1);
   color: #4a90e2;
   transform: translateY(-1px);
 }
 
-.smart-toc-toolbar-export svg {
+.eagle-toc-toolbar-export svg {
   width: 12px;
   height: 12px;
 }
 
 /* 增強導出模態框 */
-.smart-toc-enhanced-export-modal {
+.eagle-toc-enhanced-export-modal {
   position: fixed;
   top: 0;
   left: 0;
@@ -2893,7 +2893,7 @@ body.smart-toc-glance-mode h6:hover {
   animation: fadeIn 0.3s ease;
 }
 
-.smart-toc-enhanced-export-content {
+.eagle-toc-enhanced-export-content {
   background: #ffffff;
   border-radius: 16px;
   max-width: 900px;
@@ -2905,7 +2905,7 @@ body.smart-toc-glance-mode h6:hover {
 }
 
 /* 模態框標題 */
-.smart-toc-enhanced-export-header {
+.eagle-toc-enhanced-export-header {
   padding: 24px 32px 16px;
   border-bottom: 2px solid #f5f5f5;
   display: flex;
@@ -2916,13 +2916,13 @@ body.smart-toc-glance-mode h6:hover {
   border-radius: 16px 16px 0 0;
 }
 
-.smart-toc-enhanced-export-header h3 {
+.eagle-toc-enhanced-export-header h3 {
   margin: 0;
   font-size: 1.5rem;
   font-weight: 600;
 }
 
-.smart-toc-enhanced-export-close {
+.eagle-toc-enhanced-export-close {
   background: none;
   border: none;
   color: white;
@@ -2938,20 +2938,20 @@ body.smart-toc-glance-mode h6:hover {
   transition: all 0.2s ease;
 }
 
-.smart-toc-enhanced-export-close:hover {
+.eagle-toc-enhanced-export-close:hover {
   background: rgba(255, 255, 255, 0.2);
   transform: rotate(90deg);
 }
 
 /* 導出選項容器 */
-.smart-toc-enhanced-export-options {
+.eagle-toc-enhanced-export-options {
   padding: 24px 32px;
   display: grid;
   gap: 24px;
 }
 
 /* 選項區塊 */
-.smart-toc-enhanced-export-section {
+.eagle-toc-enhanced-export-section {
   background: #f8f9fa;
   padding: 20px;
   border-radius: 12px;
@@ -2959,12 +2959,12 @@ body.smart-toc-glance-mode h6:hover {
   transition: all 0.3s ease;
 }
 
-.smart-toc-enhanced-export-section:hover {
+.eagle-toc-enhanced-export-section:hover {
   border-color: #e3f2fd;
   box-shadow: 0 4px 16px rgba(74, 144, 226, 0.1);
 }
 
-.smart-toc-enhanced-export-section h4 {
+.eagle-toc-enhanced-export-section h4 {
   margin: 0 0 16px 0;
   color: #2c3e50;
   font-size: 1.1rem;
@@ -2975,18 +2975,18 @@ body.smart-toc-glance-mode h6:hover {
 }
 
 /* 模板選擇卡片 */
-.smart-toc-enhanced-export-templates {
+.eagle-toc-enhanced-export-templates {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 16px;
 }
 
-.smart-toc-enhanced-export-template {
+.eagle-toc-enhanced-export-template {
   cursor: pointer;
   display: block;
 }
 
-.smart-toc-enhanced-export-template input[type="radio"] {
+.eagle-toc-enhanced-export-template input[type="radio"] {
   display: none;
 }
 
@@ -3008,7 +3008,7 @@ body.smart-toc-glance-mode h6:hover {
   transform: translateY(-2px);
 }
 
-.smart-toc-enhanced-export-template input:checked + .template-card {
+.eagle-toc-enhanced-export-template input:checked + .template-card {
   border-color: #4a90e2;
   background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
   box-shadow: 0 8px 25px rgba(74, 144, 226, 0.2);
@@ -3039,15 +3039,15 @@ body.smart-toc-glance-mode h6:hover {
 }
 
 /* 複選框和單選框樣式 */
-.smart-toc-enhanced-export-checkboxes,
-.smart-toc-enhanced-export-formats {
+.eagle-toc-enhanced-export-checkboxes,
+.eagle-toc-enhanced-export-formats {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 12px;
 }
 
-.smart-toc-enhanced-export-checkboxes label,
-.smart-toc-enhanced-export-formats label {
+.eagle-toc-enhanced-export-checkboxes label,
+.eagle-toc-enhanced-export-formats label {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -3059,20 +3059,20 @@ body.smart-toc-glance-mode h6:hover {
   transition: all 0.2s ease;
 }
 
-.smart-toc-enhanced-export-checkboxes label:hover,
-.smart-toc-enhanced-export-formats label:hover {
+.eagle-toc-enhanced-export-checkboxes label:hover,
+.eagle-toc-enhanced-export-formats label:hover {
   border-color: #4a90e2;
   background: #f8fbff;
 }
 
-.smart-toc-enhanced-export-checkboxes input:checked + span,
-.smart-toc-enhanced-export-formats input:checked + span {
+.eagle-toc-enhanced-export-checkboxes input:checked + span,
+.eagle-toc-enhanced-export-formats input:checked + span {
   color: #4a90e2;
   font-weight: 600;
 }
 
-.smart-toc-enhanced-export-checkboxes input,
-.smart-toc-enhanced-export-formats input {
+.eagle-toc-enhanced-export-checkboxes input,
+.eagle-toc-enhanced-export-formats input {
   width: 18px;
   height: 18px;
   margin: 0;
@@ -3080,18 +3080,18 @@ body.smart-toc-glance-mode h6:hover {
 }
 
 /* 預覽區域 */
-.smart-toc-enhanced-export-preview {
+.eagle-toc-enhanced-export-preview {
   padding: 0 32px 24px;
 }
 
-.smart-toc-enhanced-export-preview h4 {
+.eagle-toc-enhanced-export-preview h4 {
   margin: 0 0 16px 0;
   color: #2c3e50;
   font-size: 1.1rem;
   font-weight: 600;
 }
 
-.smart-toc-enhanced-export-textarea {
+.eagle-toc-enhanced-export-textarea {
   width: 100%;
   min-height: 300px;
   max-height: 400px;
@@ -3107,22 +3107,22 @@ body.smart-toc-glance-mode h6:hover {
   transition: border-color 0.2s ease;
 }
 
-.smart-toc-enhanced-export-textarea:focus {
+.eagle-toc-enhanced-export-textarea:focus {
   outline: none;
   border-color: #4a90e2;
   box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
 }
 
 /* 操作按鈕 */
-.smart-toc-enhanced-export-actions {
+.eagle-toc-enhanced-export-actions {
   padding: 0 32px 32px;
   display: flex;
   gap: 16px;
   justify-content: center;
 }
 
-.smart-toc-enhanced-export-copy,
-.smart-toc-enhanced-export-download {
+.eagle-toc-enhanced-export-copy,
+.eagle-toc-enhanced-export-download {
   padding: 12px 24px;
   border: none;
   border-radius: 8px;
@@ -3137,23 +3137,23 @@ body.smart-toc-glance-mode h6:hover {
   justify-content: center;
 }
 
-.smart-toc-enhanced-export-copy {
+.eagle-toc-enhanced-export-copy {
   background: #4a90e2;
   color: white;
 }
 
-.smart-toc-enhanced-export-copy:hover {
+.eagle-toc-enhanced-export-copy:hover {
   background: #357abd;
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(74, 144, 226, 0.3);
 }
 
-.smart-toc-enhanced-export-download {
+.eagle-toc-enhanced-export-download {
   background: #27ae60;
   color: white;
 }
 
-.smart-toc-enhanced-export-download:hover {
+.eagle-toc-enhanced-export-download:hover {
   background: #219a52;
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(39, 174, 96, 0.3);
@@ -3161,29 +3161,29 @@ body.smart-toc-glance-mode h6:hover {
 
 /* 響應式設計 */
 @media (max-width: 768px) {
-  .smart-toc-enhanced-export-content {
+  .eagle-toc-enhanced-export-content {
     margin: 10px;
     max-height: 95vh;
   }
   
-  .smart-toc-enhanced-export-header,
-  .smart-toc-enhanced-export-options,
-  .smart-toc-enhanced-export-preview,
-  .smart-toc-enhanced-export-actions {
+  .eagle-toc-enhanced-export-header,
+  .eagle-toc-enhanced-export-options,
+  .eagle-toc-enhanced-export-preview,
+  .eagle-toc-enhanced-export-actions {
     padding-left: 20px;
     padding-right: 20px;
   }
   
-  .smart-toc-enhanced-export-templates {
+  .eagle-toc-enhanced-export-templates {
     grid-template-columns: 1fr;
   }
   
-  .smart-toc-enhanced-export-checkboxes,
-  .smart-toc-enhanced-export-formats {
+  .eagle-toc-enhanced-export-checkboxes,
+  .eagle-toc-enhanced-export-formats {
     grid-template-columns: 1fr;
   }
   
-  .smart-toc-enhanced-export-actions {
+  .eagle-toc-enhanced-export-actions {
     flex-direction: column;
   }
   
@@ -3220,16 +3220,16 @@ body.smart-toc-glance-mode h6:hover {
 
 /* 深色主題支持 */
 @media (prefers-color-scheme: dark) {
-  .smart-toc-enhanced-export-content {
+  .eagle-toc-enhanced-export-content {
     background: #2c3e50;
     color: #ecf0f1;
   }
   
-  .smart-toc-enhanced-export-section {
+  .eagle-toc-enhanced-export-section {
     background: #34495e;
   }
   
-  .smart-toc-enhanced-export-section h4 {
+  .eagle-toc-enhanced-export-section h4 {
     color: #ecf0f1;
   }
   
@@ -3243,7 +3243,7 @@ body.smart-toc-glance-mode h6:hover {
     border-color: #5dade2;
   }
   
-  .smart-toc-enhanced-export-template input:checked + .template-card {
+  .eagle-toc-enhanced-export-template input:checked + .template-card {
     background: linear-gradient(135deg, #2980b9 0%, #8e44ad 100%);
     border-color: #5dade2;
   }
@@ -3256,33 +3256,33 @@ body.smart-toc-glance-mode h6:hover {
     color: #bdc3c7;
   }
   
-  .smart-toc-enhanced-export-checkboxes label,
-  .smart-toc-enhanced-export-formats label {
+  .eagle-toc-enhanced-export-checkboxes label,
+  .eagle-toc-enhanced-export-formats label {
     background: #34495e;
     border-color: #4a5f7a;
     color: #ecf0f1;
   }
   
-  .smart-toc-enhanced-export-checkboxes label:hover,
-  .smart-toc-enhanced-export-formats label:hover {
+  .eagle-toc-enhanced-export-checkboxes label:hover,
+  .eagle-toc-enhanced-export-formats label:hover {
     background: #3f5670;
     border-color: #5dade2;
   }
   
-  .smart-toc-enhanced-export-textarea {
+  .eagle-toc-enhanced-export-textarea {
     background: #34495e;
     border-color: #4a5f7a;
     color: #ecf0f1;
   }
   
-  .smart-toc-enhanced-export-textarea:focus {
+  .eagle-toc-enhanced-export-textarea:focus {
     border-color: #5dade2;
   }
 }
 
 /* ==================== V3 HORIZONTAL TOOLBAR DESIGN ==================== */
 
-.smart-toc-enhanced-export-modal.smart-toc-v3 .smart-toc-enhanced-export-content {
+.eagle-toc-enhanced-export-modal.eagle-toc-v3 .eagle-toc-enhanced-export-content {
   max-width: 880px;
   background: rgba(255, 255, 255, 0.98);
   backdrop-filter: blur(32px);
@@ -3294,7 +3294,7 @@ body.smart-toc-glance-mode h6:hover {
     inset 0 1px 0 rgba(255, 255, 255, 0.4);
 }
 
-.smart-toc-enhanced-export-modal.smart-toc-v3 .smart-toc-enhanced-export-header {
+.eagle-toc-enhanced-export-modal.eagle-toc-v3 .eagle-toc-enhanced-export-header {
   background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
   padding: 24px 32px;
   border-radius: 20px 20px 0 0;
@@ -3303,7 +3303,7 @@ body.smart-toc-glance-mode h6:hover {
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.smart-toc-enhanced-export-modal.smart-toc-v3 .smart-toc-enhanced-export-header::before {
+.eagle-toc-enhanced-export-modal.eagle-toc-v3 .eagle-toc-enhanced-export-header::before {
   content: '';
   position: absolute;
   top: 0;
@@ -3314,7 +3314,7 @@ body.smart-toc-glance-mode h6:hover {
   pointer-events: none;
 }
 
-.smart-toc-enhanced-export-modal.smart-toc-v3 .smart-toc-enhanced-export-header h3 {
+.eagle-toc-enhanced-export-modal.eagle-toc-v3 .eagle-toc-enhanced-export-header h3 {
   font-size: 1.4rem;
   font-weight: 600;
   letter-spacing: -0.02em;
@@ -3323,7 +3323,7 @@ body.smart-toc-glance-mode h6:hover {
   margin: 0;
 }
 
-.smart-toc-enhanced-export-modal.smart-toc-v3 .smart-toc-enhanced-export-toolbar {
+.eagle-toc-enhanced-export-modal.eagle-toc-v3 .eagle-toc-enhanced-export-toolbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -3334,13 +3334,13 @@ body.smart-toc-glance-mode h6:hover {
   min-height: 64px;
 }
 
-.smart-toc-enhanced-export-modal.smart-toc-v3 .toolbar-section {
+.eagle-toc-enhanced-export-modal.eagle-toc-v3 .toolbar-section {
   display: flex;
   align-items: center;
   gap: 12px;
 }
 
-.smart-toc-enhanced-export-modal.smart-toc-v3 .section-label {
+.eagle-toc-enhanced-export-modal.eagle-toc-v3 .section-label {
   font-size: 0.875rem;
   font-weight: 600;
   color: #475569;
@@ -3349,13 +3349,13 @@ body.smart-toc-glance-mode h6:hover {
   font-size: 0.75rem;
 }
 
-.smart-toc-enhanced-export-modal.smart-toc-v3 .inline-options {
+.eagle-toc-enhanced-export-modal.eagle-toc-v3 .inline-options {
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-.smart-toc-enhanced-export-modal.smart-toc-v3 .inline-option {
+.eagle-toc-enhanced-export-modal.eagle-toc-v3 .inline-option {
   display: flex;
   align-items: center;
   gap: 6px;
@@ -3371,34 +3371,34 @@ body.smart-toc-glance-mode h6:hover {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
-.smart-toc-enhanced-export-modal.smart-toc-v3 .inline-option:hover {
+.eagle-toc-enhanced-export-modal.eagle-toc-v3 .inline-option:hover {
   background: rgba(255, 255, 255, 0.95);
   border-color: rgba(99, 102, 241, 0.3);
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.smart-toc-enhanced-export-modal.smart-toc-v3 .inline-option.selected {
+.eagle-toc-enhanced-export-modal.eagle-toc-v3 .inline-option.selected {
   background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
   color: white;
   border-color: transparent;
   box-shadow: 0 4px 16px rgba(99, 102, 241, 0.3);
 }
 
-.smart-toc-enhanced-export-modal.smart-toc-v3 .inline-option input {
+.eagle-toc-enhanced-export-modal.eagle-toc-v3 .inline-option input {
   display: none;
 }
 
-.smart-toc-enhanced-export-modal.smart-toc-v3 .option-icon {
+.eagle-toc-enhanced-export-modal.eagle-toc-v3 .option-icon {
   font-size: 14px;
 }
 
-.smart-toc-enhanced-export-modal.smart-toc-v3 .option-text {
+.eagle-toc-enhanced-export-modal.eagle-toc-v3 .option-text {
   font-size: 0.8rem;
   font-weight: 500;
 }
 
-.smart-toc-enhanced-export-modal.smart-toc-v3 .inline-checkbox {
+.eagle-toc-enhanced-export-modal.eagle-toc-v3 .inline-checkbox {
   display: flex;
   align-items: center;
   gap: 6px;
@@ -3413,25 +3413,25 @@ body.smart-toc-glance-mode h6:hover {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
-.smart-toc-enhanced-export-modal.smart-toc-v3 .inline-checkbox:hover {
+.eagle-toc-enhanced-export-modal.eagle-toc-v3 .inline-checkbox:hover {
   background: rgba(255, 255, 255, 0.95);
   border-color: rgba(99, 102, 241, 0.3);
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.smart-toc-enhanced-export-modal.smart-toc-v3 .inline-checkbox.active {
+.eagle-toc-enhanced-export-modal.eagle-toc-v3 .inline-checkbox.active {
   background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
   color: white;
   border-color: transparent;
   box-shadow: 0 4px 16px rgba(99, 102, 241, 0.25);
 }
 
-.smart-toc-enhanced-export-modal.smart-toc-v3 .inline-checkbox input {
+.eagle-toc-enhanced-export-modal.eagle-toc-v3 .inline-checkbox input {
   display: none;
 }
 
-.smart-toc-enhanced-export-modal.smart-toc-v3 .checkbox-indicator {
+.eagle-toc-enhanced-export-modal.eagle-toc-v3 .checkbox-indicator {
   width: 12px;
   height: 12px;
   border: 1px solid #dee2e6;
@@ -3442,19 +3442,19 @@ body.smart-toc-glance-mode h6:hover {
   transition: all 0.2s ease;
 }
 
-.smart-toc-enhanced-export-modal.smart-toc-v3 .inline-checkbox.active .checkbox-indicator {
+.eagle-toc-enhanced-export-modal.eagle-toc-v3 .inline-checkbox.active .checkbox-indicator {
   background: white;
   border-color: white;
 }
 
-.smart-toc-enhanced-export-modal.smart-toc-v3 .inline-checkbox.active .checkbox-indicator::after {
+.eagle-toc-enhanced-export-modal.eagle-toc-v3 .inline-checkbox.active .checkbox-indicator::after {
   content: '✓';
   color: #7b68ee;
   font-size: 9px;
   font-weight: bold;
 }
 
-.smart-toc-enhanced-export-modal.smart-toc-v3 .inline-dropdown {
+.eagle-toc-enhanced-export-modal.eagle-toc-v3 .inline-dropdown {
   padding: 10px 16px;
   border: 2px solid rgba(203, 213, 225, 0.4);
   border-radius: 12px;
@@ -3474,21 +3474,21 @@ body.smart-toc-glance-mode h6:hover {
   color: #1e293b;
 }
 
-.smart-toc-enhanced-export-modal.smart-toc-v3 .inline-dropdown:hover {
+.eagle-toc-enhanced-export-modal.eagle-toc-v3 .inline-dropdown:hover {
   background: rgba(255, 255, 255, 1);
   border-color: rgba(99, 102, 241, 0.6);
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(99, 102, 241, 0.1);
 }
 
-.smart-toc-enhanced-export-modal.smart-toc-v3 .inline-dropdown:focus {
+.eagle-toc-enhanced-export-modal.eagle-toc-v3 .inline-dropdown:focus {
   outline: none;
   border-color: #6366f1;
   box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.12);
   background: rgba(255, 255, 255, 1);
 }
 
-.smart-toc-enhanced-export-modal.smart-toc-v3 .toolbar-divider {
+.eagle-toc-enhanced-export-modal.eagle-toc-v3 .toolbar-divider {
   width: 1px;
   height: 32px;
   background: linear-gradient(135deg, rgba(203, 213, 225, 0.6) 0%, rgba(226, 232, 240, 0.4) 100%);
@@ -3496,12 +3496,12 @@ body.smart-toc-glance-mode h6:hover {
   border-radius: 1px;
 }
 
-.smart-toc-enhanced-export-modal.smart-toc-v3 .actions-section {
+.eagle-toc-enhanced-export-modal.eagle-toc-v3 .actions-section {
   margin-left: auto;
   gap: 8px;
 }
 
-.smart-toc-enhanced-export-modal.smart-toc-v3 .toolbar-action {
+.eagle-toc-enhanced-export-modal.eagle-toc-v3 .toolbar-action {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -3516,7 +3516,7 @@ body.smart-toc-glance-mode h6:hover {
   overflow: hidden;
 }
 
-.smart-toc-enhanced-export-modal.smart-toc-v3 .toolbar-action.primary {
+.eagle-toc-enhanced-export-modal.eagle-toc-v3 .toolbar-action.primary {
   background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
   color: white;
   box-shadow: 
@@ -3525,7 +3525,7 @@ body.smart-toc-glance-mode h6:hover {
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
-.smart-toc-enhanced-export-modal.smart-toc-v3 .toolbar-action.secondary {
+.eagle-toc-enhanced-export-modal.eagle-toc-v3 .toolbar-action.secondary {
   background: rgba(255, 255, 255, 0.9);
   color: #475569;
   border: 2px solid rgba(203, 213, 225, 0.4);
@@ -3535,26 +3535,26 @@ body.smart-toc-glance-mode h6:hover {
     inset 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 
-.smart-toc-enhanced-export-modal.smart-toc-v3 .toolbar-action.tertiary {
+.eagle-toc-enhanced-export-modal.eagle-toc-v3 .toolbar-action.tertiary {
   background: rgba(248, 250, 252, 0.9);
   color: #475569;
   border: 1px solid rgba(203, 213, 225, 0.6);
   backdrop-filter: blur(10px);
 }
 
-.smart-toc-enhanced-export-modal.smart-toc-v3 .toolbar-action:hover {
+.eagle-toc-enhanced-export-modal.eagle-toc-v3 .toolbar-action:hover {
   transform: translateY(-2px);
   scale: 1.02;
 }
 
-.smart-toc-enhanced-export-modal.smart-toc-v3 .toolbar-action.primary:hover {
+.eagle-toc-enhanced-export-modal.eagle-toc-v3 .toolbar-action.primary:hover {
   box-shadow: 
     0 12px 32px rgba(99, 102, 241, 0.3),
     0 8px 16px rgba(99, 102, 241, 0.15),
     inset 0 1px 0 rgba(255, 255, 255, 0.3);
 }
 
-.smart-toc-enhanced-export-modal.smart-toc-v3 .toolbar-action.secondary:hover {
+.eagle-toc-enhanced-export-modal.eagle-toc-v3 .toolbar-action.secondary:hover {
   background: rgba(255, 255, 255, 1);
   border-color: rgba(99, 102, 241, 0.3);
   box-shadow: 
@@ -3562,39 +3562,39 @@ body.smart-toc-glance-mode h6:hover {
     inset 0 1px 0 rgba(255, 255, 255, 0.8);
 }
 
-.smart-toc-enhanced-export-modal.smart-toc-v3 .action-icon {
+.eagle-toc-enhanced-export-modal.eagle-toc-v3 .action-icon {
   font-size: 16px;
 }
 
-.smart-toc-enhanced-export-modal.smart-toc-v3 .action-label {
+.eagle-toc-enhanced-export-modal.eagle-toc-v3 .action-label {
   font-size: 0.875rem;
   letter-spacing: -0.01em;
 }
 
 /* Responsive adjustments for V3 */
 @media (max-width: 768px) {
-  .smart-toc-enhanced-export-modal.smart-toc-v3 .smart-toc-enhanced-export-toolbar {
+  .eagle-toc-enhanced-export-modal.eagle-toc-v3 .eagle-toc-enhanced-export-toolbar {
     flex-direction: column;
     align-items: stretch;
     gap: 12px;
   }
   
-  .smart-toc-enhanced-export-modal.smart-toc-v3 .toolbar-section {
+  .eagle-toc-enhanced-export-modal.eagle-toc-v3 .toolbar-section {
     justify-content: space-between;
   }
   
-  .smart-toc-enhanced-export-modal.smart-toc-v3 .actions-section {
+  .eagle-toc-enhanced-export-modal.eagle-toc-v3 .actions-section {
     margin-left: 0;
     justify-content: center;
   }
   
-  .smart-toc-enhanced-export-modal.smart-toc-v3 .toolbar-divider {
+  .eagle-toc-enhanced-export-modal.eagle-toc-v3 .toolbar-divider {
     display: none;
   }
 }
 
 /* V3 預覽區域樣式 */
-.smart-toc-enhanced-export-modal.smart-toc-v3 .smart-toc-enhanced-export-preview.compact-horizontal {
+.eagle-toc-enhanced-export-modal.eagle-toc-v3 .eagle-toc-enhanced-export-preview.compact-horizontal {
   margin: 0 24px 24px;
   background: rgba(255, 255, 255, 0.98);
   backdrop-filter: blur(24px);
@@ -3608,7 +3608,7 @@ body.smart-toc-glance-mode h6:hover {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.smart-toc-enhanced-export-modal.smart-toc-v3 .smart-toc-enhanced-export-preview.compact-horizontal .preview-header {
+.eagle-toc-enhanced-export-modal.eagle-toc-v3 .eagle-toc-enhanced-export-preview.compact-horizontal .preview-header {
   background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
   padding: 12px 16px;
   display: flex;
@@ -3620,7 +3620,7 @@ body.smart-toc-glance-mode h6:hover {
   border-bottom: 1px solid rgba(203, 213, 225, 0.3);
 }
 
-.smart-toc-enhanced-export-modal.smart-toc-v3 .smart-toc-enhanced-export-preview.compact-horizontal .preview-close {
+.eagle-toc-enhanced-export-modal.eagle-toc-v3 .eagle-toc-enhanced-export-preview.compact-horizontal .preview-close {
   background: none;
   border: none;
   font-size: 18px;
@@ -3636,13 +3636,13 @@ body.smart-toc-glance-mode h6:hover {
   transition: all 0.2s ease;
 }
 
-.smart-toc-enhanced-export-modal.smart-toc-v3 .smart-toc-enhanced-export-preview.compact-horizontal .preview-close:hover {
+.eagle-toc-enhanced-export-modal.eagle-toc-v3 .eagle-toc-enhanced-export-preview.compact-horizontal .preview-close:hover {
   background: rgba(100, 116, 139, 0.1);
   color: #475569;
   transform: scale(1.1);
 }
 
-.smart-toc-enhanced-export-modal.smart-toc-v3 .smart-toc-enhanced-export-preview.compact-horizontal .smart-toc-enhanced-export-textarea {
+.eagle-toc-enhanced-export-modal.eagle-toc-v3 .eagle-toc-enhanced-export-preview.compact-horizontal .eagle-toc-enhanced-export-textarea {
   border: none;
   background: transparent;
   margin: 0;
@@ -3661,7 +3661,7 @@ body.smart-toc-glance-mode h6:hover {
   transition: all 0.2s ease;
 }
 
-.smart-toc-enhanced-export-modal.smart-toc-v3 .smart-toc-enhanced-export-preview.compact-horizontal .smart-toc-enhanced-export-textarea:focus {
+.eagle-toc-enhanced-export-modal.eagle-toc-v3 .eagle-toc-enhanced-export-preview.compact-horizontal .eagle-toc-enhanced-export-textarea:focus {
   outline: none;
   background: rgba(255, 255, 255, 0.6);
   box-shadow: inset 0 0 0 2px rgba(99, 102, 241, 0.15);

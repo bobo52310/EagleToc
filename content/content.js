@@ -1,4 +1,4 @@
-class SmartTOC {
+class EagleTOC {
   constructor() {
     this.tocPanel = null;
     this.headings = [];
@@ -218,105 +218,105 @@ class SmartTOC {
 
   createTOCPanel() {
     this.tocPanel = document.createElement('div');
-    this.tocPanel.id = 'smart-toc-panel';
-    this.tocPanel.className = 'smart-toc-panel';
+    this.tocPanel.id = 'eagle-toc-panel';
+    this.tocPanel.className = 'eagle-toc-panel';
     this.tocPanel.innerHTML = `
-      <div class="smart-toc-header">
-        <div class="smart-toc-controls">
-          <button class="smart-toc-toggle" title="收合/展開面板">
+      <div class="eagle-toc-header">
+        <div class="eagle-toc-controls">
+          <button class="eagle-toc-toggle" title="收合/展開面板">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="12" height="12">
               <path d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z" fill="currentColor"/>
             </svg>
           </button>
-          <div class="smart-toc-depth-controls">
-            <button class="smart-toc-depth-decrease" title="減少顯示深度">−</button>
-            <span class="smart-toc-depth-display">H${this.settings.maxHeadingLevels}</span>
-            <button class="smart-toc-depth-increase" title="增加顯示深度">+</button>
+          <div class="eagle-toc-depth-controls">
+            <button class="eagle-toc-depth-decrease" title="減少顯示深度">−</button>
+            <span class="eagle-toc-depth-display">H${this.settings.maxHeadingLevels}</span>
+            <button class="eagle-toc-depth-increase" title="增加顯示深度">+</button>
           </div>
-          <div class="smart-toc-font-toolbar-controls">
-            <button class="smart-toc-font-toolbar-decrease" title="減小字體">−</button>
-            <span class="smart-toc-font-toolbar-display">${this.settings.fontSize}px</span>
-            <button class="smart-toc-font-toolbar-increase" title="增大字體">+</button>
+          <div class="eagle-toc-font-toolbar-controls">
+            <button class="eagle-toc-font-toolbar-decrease" title="減小字體">−</button>
+            <span class="eagle-toc-font-toolbar-display">${this.settings.fontSize}px</span>
+            <button class="eagle-toc-font-toolbar-increase" title="增大字體">+</button>
           </div>
-          <button class="smart-toc-toolbar-search" title="搜尋">
+          <button class="eagle-toc-toolbar-search" title="搜尋">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="12" height="12">
               <path d="M6.5 0C2.91 0 0 2.91 0 6.5S2.91 13 6.5 13c1.61 0 3.09-.59 4.23-1.57l4.92 4.92a.75.75 0 1 0 1.06-1.06l-4.92-4.92A6.5 6.5 0 0 0 6.5 0zM1.5 6.5a5 5 0 1 1 10 0 5 5 0 0 1-10 0z" fill="currentColor"/>
             </svg>
           </button>
-          <button class="smart-toc-toolbar-export" title="智能導出 - 多格式導出選項">
+          <button class="eagle-toc-toolbar-export" title="智能導出 - 多格式導出選項">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="12" height="12">
               <path d="M8.5 1.5a.5.5 0 0 0-1 0v5.793L5.354 5.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 7.293V1.5z" fill="currentColor"/>
               <path d="M3 9.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5z" fill="currentColor"/>
               <path d="M2.5 11.5A1.5 1.5 0 0 0 4 13h8a1.5 1.5 0 0 0 1.5-1.5v-1a.5.5 0 0 0-1 0v1a.5.5 0 0 1-.5.5H4a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 0-1 0v1z" fill="currentColor"/>
             </svg>
           </button>
-          <button class="smart-toc-toolbar-zen" title="Zen Mode - 全螢幕閱讀模式">
+          <button class="eagle-toc-toolbar-zen" title="Zen Mode - 全螢幕閱讀模式">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="12" height="12">
               <path d="M1.5 1a.5.5 0 0 0-.5.5v4a.5.5 0 0 1-1 0v-4A1.5 1.5 0 0 1 1.5 0h4a.5.5 0 0 1 0 1h-4zM10 .5a.5.5 0 0 1 .5-.5h4A1.5 1.5 0 0 1 16 1.5v4a.5.5 0 0 1-1 0v-4a.5.5 0 0 0-.5-.5h-4a.5.5 0 0 1-.5-.5zM.5 10a.5.5 0 0 1 .5.5v4a.5.5 0 0 0 .5.5h4a.5.5 0 0 1 0 1h-4A1.5 1.5 0 0 1 0 14.5v-4a.5.5 0 0 1 .5-.5zm15 0a.5.5 0 0 1 .5.5v4a1.5 1.5 0 0 1-1.5 1.5h-4a.5.5 0 0 1 0-1h4a.5.5 0 0 0 .5-.5v-4a.5.5 0 0 1 .5-.5z" fill="currentColor"/>
             </svg>
           </button>
-          <div class="smart-toc-action-buttons">
-            <button class="smart-toc-close" title="關閉">×</button>
-            <div class="smart-toc-more-container">
-              <button class="smart-toc-more" title="更多選項">
+          <div class="eagle-toc-action-buttons">
+            <button class="eagle-toc-close" title="關閉">×</button>
+            <div class="eagle-toc-more-container">
+              <button class="eagle-toc-more" title="更多選項">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="12" height="12">
                   <path d="M8 9a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zM1.5 9a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zm13 0a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z" fill="currentColor"/>
                 </svg>
               </button>
-              <div class="smart-toc-more-menu">
-                <div class="smart-toc-more-option smart-toc-pin">
-                  <span class="smart-toc-more-icon">📍</span>
-                  <span class="smart-toc-more-text">自動開啟</span>
+              <div class="eagle-toc-more-menu">
+                <div class="eagle-toc-more-option eagle-toc-pin">
+                  <span class="eagle-toc-more-icon">📍</span>
+                  <span class="eagle-toc-more-text">自動開啟</span>
                 </div>
-                <div class="smart-toc-more-option smart-toc-theme-toggle">
-                  <span class="smart-toc-more-icon">🎨</span>
-                  <span class="smart-toc-more-text">主題</span>
+                <div class="eagle-toc-more-option eagle-toc-theme-toggle">
+                  <span class="eagle-toc-more-icon">🎨</span>
+                  <span class="eagle-toc-more-text">主題</span>
                 </div>
-                <div class="smart-toc-more-option smart-toc-copy">
-                  <span class="smart-toc-more-icon">📋</span>
-                  <span class="smart-toc-more-text">複製</span>
+                <div class="eagle-toc-more-option eagle-toc-copy">
+                  <span class="eagle-toc-more-icon">📋</span>
+                  <span class="eagle-toc-more-text">複製</span>
                 </div>
-                <div class="smart-toc-more-option smart-toc-settings">
-                  <span class="smart-toc-more-icon">⚙️</span>
-                  <span class="smart-toc-more-text">設定</span>
+                <div class="eagle-toc-more-option eagle-toc-settings">
+                  <span class="eagle-toc-more-icon">⚙️</span>
+                  <span class="eagle-toc-more-text">設定</span>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <div class="smart-toc-theme-menu" style="display: none;">
-          <div class="smart-toc-theme-option" data-theme="auto">
-            <div class="smart-toc-theme-dot auto"></div>
+        <div class="eagle-toc-theme-menu" style="display: none;">
+          <div class="eagle-toc-theme-option" data-theme="auto">
+            <div class="eagle-toc-theme-dot auto"></div>
             <span>自動適應</span>
           </div>
-          <div class="smart-toc-theme-option" data-theme="light">
-            <div class="smart-toc-theme-dot light"></div>
+          <div class="eagle-toc-theme-option" data-theme="light">
+            <div class="eagle-toc-theme-dot light"></div>
             <span>亮色</span>
           </div>
-          <div class="smart-toc-theme-option" data-theme="dark">
-            <div class="smart-toc-theme-dot dark"></div>
+          <div class="eagle-toc-theme-option" data-theme="dark">
+            <div class="eagle-toc-theme-dot dark"></div>
             <span>深色</span>
           </div>
-          <div class="smart-toc-theme-option" data-theme="ocean">
-            <div class="smart-toc-theme-dot ocean"></div>
+          <div class="eagle-toc-theme-option" data-theme="ocean">
+            <div class="eagle-toc-theme-dot ocean"></div>
             <span>海洋</span>
           </div>
-          <div class="smart-toc-theme-option" data-theme="forest">
-            <div class="smart-toc-theme-dot forest"></div>
+          <div class="eagle-toc-theme-option" data-theme="forest">
+            <div class="eagle-toc-theme-dot forest"></div>
             <span>森林</span>
           </div>
-          <div class="smart-toc-theme-option" data-theme="sunset">
-            <div class="smart-toc-theme-dot sunset"></div>
+          <div class="eagle-toc-theme-option" data-theme="sunset">
+            <div class="eagle-toc-theme-dot sunset"></div>
             <span>日落</span>
           </div>
-          <div class="smart-toc-theme-option" data-theme="coral">
-            <div class="smart-toc-theme-dot coral"></div>
+          <div class="eagle-toc-theme-option" data-theme="coral">
+            <div class="eagle-toc-theme-dot coral"></div>
             <span>珊瑚</span>
           </div>
         </div>
       </div>
-      <div class="smart-toc-content">
-        <div class="smart-toc-loading">Analyzing page structure...</div>
+      <div class="eagle-toc-content">
+        <div class="eagle-toc-loading">Analyzing page structure...</div>
       </div>
       <!-- 調整大小的處理元素 -->
       <div class="resize-handle resize-handle-right"></div>
@@ -353,50 +353,50 @@ class SmartTOC {
   createSettingsModal() {
     // Create settings modal container
     this.settingsModal = document.createElement('div');
-    this.settingsModal.className = 'smart-toc-settings-modal';
+    this.settingsModal.className = 'eagle-toc-settings-modal';
     this.settingsModal.innerHTML = `
-      <div class="smart-toc-settings-overlay"></div>
-      <div class="smart-toc-settings-dialog">
-        <div class="smart-toc-settings-header">
-          <h3 class="smart-toc-settings-title">Smart TOC 設定</h3>
-          <button class="smart-toc-settings-close" title="關閉設定">×</button>
+      <div class="eagle-toc-settings-overlay"></div>
+      <div class="eagle-toc-settings-dialog">
+        <div class="eagle-toc-settings-header">
+          <h3 class="eagle-toc-settings-title">Smart TOC 設定</h3>
+          <button class="eagle-toc-settings-close" title="關閉設定">×</button>
         </div>
-        <div class="smart-toc-settings-content">
-          <div class="smart-toc-settings-item">
-            <span class="smart-toc-settings-label">字體大小</span>
-            <div class="smart-toc-font-controls">
-              <button class="smart-toc-font-btn smart-toc-font-decrease" title="減小字體">-</button>
-              <span class="smart-toc-font-size-display">16px</span>
-              <button class="smart-toc-font-btn smart-toc-font-increase" title="增大字體">+</button>
+        <div class="eagle-toc-settings-content">
+          <div class="eagle-toc-settings-item">
+            <span class="eagle-toc-settings-label">字體大小</span>
+            <div class="eagle-toc-font-controls">
+              <button class="eagle-toc-font-btn eagle-toc-font-decrease" title="減小字體">-</button>
+              <span class="eagle-toc-font-size-display">16px</span>
+              <button class="eagle-toc-font-btn eagle-toc-font-increase" title="增大字體">+</button>
             </div>
           </div>
-          <div class="smart-toc-settings-item">
-            <span class="smart-toc-settings-label">高亮時間</span>
-            <div class="smart-toc-font-controls">
-              <button class="smart-toc-font-btn smart-toc-highlight-decrease" title="減少時間">-</button>
-              <span class="smart-toc-highlight-duration-display">5s</span>
-              <button class="smart-toc-font-btn smart-toc-highlight-increase" title="增加時間">+</button>
+          <div class="eagle-toc-settings-item">
+            <span class="eagle-toc-settings-label">高亮時間</span>
+            <div class="eagle-toc-font-controls">
+              <button class="eagle-toc-font-btn eagle-toc-highlight-decrease" title="減少時間">-</button>
+              <span class="eagle-toc-highlight-duration-display">5s</span>
+              <button class="eagle-toc-font-btn eagle-toc-highlight-increase" title="增加時間">+</button>
             </div>
           </div>
-          <div class="smart-toc-settings-item smart-toc-whitelist-section">
-            <div class="smart-toc-whitelist-header">
-              <span class="smart-toc-settings-label">自動顯示白名單</span>
-              <label class="smart-toc-whitelist-toggle">
-                <input type="checkbox" class="smart-toc-whitelist-enabled" checked />
-                <span class="smart-toc-toggle-slider"></span>
+          <div class="eagle-toc-settings-item eagle-toc-whitelist-section">
+            <div class="eagle-toc-whitelist-header">
+              <span class="eagle-toc-settings-label">自動顯示白名單</span>
+              <label class="eagle-toc-whitelist-toggle">
+                <input type="checkbox" class="eagle-toc-whitelist-enabled" checked />
+                <span class="eagle-toc-toggle-slider"></span>
               </label>
             </div>
-            <div class="smart-toc-whitelist-controls">
-              <div class="smart-toc-whitelist-input-row">
-                <input type="text" class="smart-toc-whitelist-input" placeholder="新增網域 (例: example.com)" />
-                <button class="smart-toc-whitelist-add" title="新增網域">+</button>
+            <div class="eagle-toc-whitelist-controls">
+              <div class="eagle-toc-whitelist-input-row">
+                <input type="text" class="eagle-toc-whitelist-input" placeholder="新增網域 (例: example.com)" />
+                <button class="eagle-toc-whitelist-add" title="新增網域">+</button>
               </div>
-              <div class="smart-toc-whitelist-actions">
-                <button class="smart-toc-whitelist-add-current" title="新增當前網域">新增當前網域</button>
-                <button class="smart-toc-whitelist-reset" title="重置為預設值">重置</button>
+              <div class="eagle-toc-whitelist-actions">
+                <button class="eagle-toc-whitelist-add-current" title="新增當前網域">新增當前網域</button>
+                <button class="eagle-toc-whitelist-reset" title="重置為預設值">重置</button>
               </div>
             </div>
-            <div class="smart-toc-whitelist-list">
+            <div class="eagle-toc-whitelist-list">
               <!-- 白名單項目會動態生成 -->
             </div>
           </div>
@@ -415,13 +415,13 @@ class SmartTOC {
     if (!this.settingsModal) return;
     
     // Close button
-    const closeBtn = this.settingsModal.querySelector('.smart-toc-settings-close');
+    const closeBtn = this.settingsModal.querySelector('.eagle-toc-settings-close');
     closeBtn.addEventListener('click', () => {
       this.hideSettingsPanel();
     });
     
     // Background overlay click
-    const overlay = this.settingsModal.querySelector('.smart-toc-settings-overlay');
+    const overlay = this.settingsModal.querySelector('.eagle-toc-settings-overlay');
     overlay.addEventListener('click', () => {
       this.hideSettingsPanel();
     });
@@ -437,29 +437,29 @@ class SmartTOC {
     }, true); // Use capture phase for higher priority
     
     // Prevent modal dialog click from closing
-    const dialog = this.settingsModal.querySelector('.smart-toc-settings-dialog');
+    const dialog = this.settingsModal.querySelector('.eagle-toc-settings-dialog');
     dialog.addEventListener('click', (e) => {
       e.stopPropagation();
     });
     
     // Font size controls
-    const fontIncreaseBtn = this.settingsModal.querySelector('.smart-toc-font-increase');
+    const fontIncreaseBtn = this.settingsModal.querySelector('.eagle-toc-font-increase');
     if (fontIncreaseBtn) {
       fontIncreaseBtn.addEventListener('click', async () => await this.changeFontSize(1));
     }
 
-    const fontDecreaseBtn = this.settingsModal.querySelector('.smart-toc-font-decrease');
+    const fontDecreaseBtn = this.settingsModal.querySelector('.eagle-toc-font-decrease');
     if (fontDecreaseBtn) {
       fontDecreaseBtn.addEventListener('click', async () => await this.changeFontSize(-1));
     }
 
     // Highlight duration controls
-    const highlightIncreaseBtn = this.settingsModal.querySelector('.smart-toc-highlight-increase');
+    const highlightIncreaseBtn = this.settingsModal.querySelector('.eagle-toc-highlight-increase');
     if (highlightIncreaseBtn) {
       highlightIncreaseBtn.addEventListener('click', async () => await this.changeHighlightDuration(1));
     }
 
-    const highlightDecreaseBtn = this.settingsModal.querySelector('.smart-toc-highlight-decrease');
+    const highlightDecreaseBtn = this.settingsModal.querySelector('.eagle-toc-highlight-decrease');
     if (highlightDecreaseBtn) {
       highlightDecreaseBtn.addEventListener('click', async () => await this.changeHighlightDuration(-1));
     }
@@ -471,11 +471,11 @@ class SmartTOC {
   setupModalWhitelistEventListeners() {
     if (!this.settingsModal) return;
     
-    const whitelistToggle = this.settingsModal.querySelector('.smart-toc-whitelist-enabled');
-    const whitelistInput = this.settingsModal.querySelector('.smart-toc-whitelist-input');
-    const whitelistAddBtn = this.settingsModal.querySelector('.smart-toc-whitelist-add');
-    const addCurrentBtn = this.settingsModal.querySelector('.smart-toc-whitelist-add-current');
-    const resetBtn = this.settingsModal.querySelector('.smart-toc-whitelist-reset');
+    const whitelistToggle = this.settingsModal.querySelector('.eagle-toc-whitelist-enabled');
+    const whitelistInput = this.settingsModal.querySelector('.eagle-toc-whitelist-input');
+    const whitelistAddBtn = this.settingsModal.querySelector('.eagle-toc-whitelist-add');
+    const addCurrentBtn = this.settingsModal.querySelector('.eagle-toc-whitelist-add-current');
+    const resetBtn = this.settingsModal.querySelector('.eagle-toc-whitelist-reset');
     
     if (whitelistToggle) {
       whitelistToggle.addEventListener('change', async () => {
@@ -560,7 +560,7 @@ class SmartTOC {
         element: heading,
         text: this.cleanHeadingText(heading.textContent.trim()),
         level: level,
-        id: heading.id || `smart-toc-heading-${index}`,
+        id: heading.id || `eagle-toc-heading-${index}`,
         index,
         visible: level <= this.settings.maxHeadingLevels
       };
@@ -722,7 +722,7 @@ class SmartTOC {
              style.visibility !== 'hidden' && 
              style.display !== 'none' &&
              heading.textContent.trim().length > 0 &&
-             !heading.closest('.smart-toc-panel');
+             !heading.closest('.eagle-toc-panel');
     });
   }
 
@@ -735,7 +735,7 @@ class SmartTOC {
   }
 
   renderTOC() {
-    const content = this.tocPanel.querySelector('.smart-toc-content');
+    const content = this.tocPanel.querySelector('.eagle-toc-content');
     const tocList = this.createTOCList(this.headings.filter(h => h.visible));
     content.innerHTML = '';
     content.appendChild(tocList);
@@ -747,17 +747,17 @@ class SmartTOC {
 
   createTOCList(headings) {
     const ul = document.createElement('ul');
-    ul.className = 'smart-toc-list';
+    ul.className = 'eagle-toc-list';
 
     headings.forEach(heading => {
       const li = document.createElement('li');
-      li.className = `smart-toc-item smart-toc-level-${heading.level}`;
+      li.className = `eagle-toc-item eagle-toc-level-${heading.level}`;
       li.dataset.headingId = heading.id;
       
       const a = document.createElement('a');
       a.href = `#${heading.id}`;
       a.textContent = heading.text;
-      a.className = 'smart-toc-link';
+      a.className = 'eagle-toc-link';
       a.dataset.headingId = heading.id;
       
       a.addEventListener('click', (e) => {
@@ -768,7 +768,7 @@ class SmartTOC {
 
       // Create copy link button
       const copyBtn = document.createElement('button');
-      copyBtn.className = 'smart-toc-copy-btn';
+      copyBtn.className = 'eagle-toc-copy-btn';
       copyBtn.innerHTML = '🔗';
       copyBtn.title = '複製連結';
       copyBtn.setAttribute('aria-label', '複製此標題的連結');
@@ -841,29 +841,29 @@ class SmartTOC {
   showCopyFeedback(button, message) {
     const originalText = button.innerHTML;
     button.innerHTML = message;
-    button.classList.add('smart-toc-copy-success');
+    button.classList.add('eagle-toc-copy-success');
     
     setTimeout(() => {
       button.innerHTML = originalText;
-      button.classList.remove('smart-toc-copy-success');
+      button.classList.remove('eagle-toc-copy-success');
     }, 1500);
   }
 
   highlightElement(element) {
     // Remove any existing highlights
-    document.querySelectorAll('.smart-toc-highlighted').forEach(el => {
-      el.classList.remove('smart-toc-highlighted');
-      el.style.removeProperty('--smart-toc-highlight-duration');
+    document.querySelectorAll('.eagle-toc-highlighted').forEach(el => {
+      el.classList.remove('eagle-toc-highlighted');
+      el.style.removeProperty('--eagle-toc-highlight-duration');
     });
 
     // Apply highlight with custom duration
-    element.style.setProperty('--smart-toc-highlight-duration', `${this.settings.highlightDuration}s`);
-    element.classList.add('smart-toc-highlighted');
+    element.style.setProperty('--eagle-toc-highlight-duration', `${this.settings.highlightDuration}s`);
+    element.classList.add('eagle-toc-highlighted');
 
     // Remove highlight after animation completes
     setTimeout(() => {
-      element.classList.remove('smart-toc-highlighted');
-      element.style.removeProperty('--smart-toc-highlight-duration');
+      element.classList.remove('eagle-toc-highlighted');
+      element.style.removeProperty('--eagle-toc-highlight-duration');
     }, this.settings.highlightDuration * 1000);
   }
 
@@ -903,19 +903,19 @@ class SmartTOC {
   }
 
   updateCurrentHeading() {
-    const tocLinks = this.tocPanel.querySelectorAll('.smart-toc-link');
+    const tocLinks = this.tocPanel.querySelectorAll('.eagle-toc-link');
     tocLinks.forEach(link => {
       if (link.dataset.headingId === this.currentHeading) {
-        link.classList.add('smart-toc-active');
+        link.classList.add('eagle-toc-active');
         this.scrollTOCToActiveItem(link);
       } else {
-        link.classList.remove('smart-toc-active');
+        link.classList.remove('eagle-toc-active');
       }
     });
   }
 
   scrollTOCToActiveItem(activeLink) {
-    const tocContent = this.tocPanel.querySelector('.smart-toc-content');
+    const tocContent = this.tocPanel.querySelector('.eagle-toc-content');
     const linkRect = activeLink.getBoundingClientRect();
     const contentRect = tocContent.getBoundingClientRect();
     
@@ -926,8 +926,8 @@ class SmartTOC {
   }
 
   showNoHeadingsMessage() {
-    const content = this.tocPanel.querySelector('.smart-toc-content');
-    content.innerHTML = '<div class="smart-toc-no-headings">No headings found on this page.</div>';
+    const content = this.tocPanel.querySelector('.eagle-toc-content');
+    content.innerHTML = '<div class="eagle-toc-no-headings">No headings found on this page.</div>';
   }
 
   setupEventListeners() {
@@ -944,7 +944,7 @@ class SmartTOC {
     });
 
     // 關閉按鈕
-    const closeBtn = this.tocPanel.querySelector('.smart-toc-close');
+    const closeBtn = this.tocPanel.querySelector('.eagle-toc-close');
     closeBtn.addEventListener('click', () => {
       this.hideMoreMenu();
       this.hideSettingsPanel();
@@ -952,7 +952,7 @@ class SmartTOC {
     });
 
     // Toggle 按鈕（收合/展開）
-    const toggleBtn = this.tocPanel.querySelector('.smart-toc-toggle');
+    const toggleBtn = this.tocPanel.querySelector('.eagle-toc-toggle');
     toggleBtn.addEventListener('click', () => {
       if (this.isCollapsed) {
         this.expandPanel();
@@ -962,8 +962,8 @@ class SmartTOC {
     });
 
     // 更多選單按鈕
-    const moreBtn = this.tocPanel.querySelector('.smart-toc-more');
-    const moreMenu = this.tocPanel.querySelector('.smart-toc-more-menu');
+    const moreBtn = this.tocPanel.querySelector('.eagle-toc-more');
+    const moreMenu = this.tocPanel.querySelector('.eagle-toc-more-menu');
     this.moreMenu = moreMenu;
     
     moreBtn.addEventListener('click', (e) => {
@@ -972,21 +972,21 @@ class SmartTOC {
     });
 
     // 工具列搜尋按鈕事件
-    const toolbarSearchBtn = this.tocPanel.querySelector('.smart-toc-toolbar-search');
+    const toolbarSearchBtn = this.tocPanel.querySelector('.eagle-toc-toolbar-search');
     toolbarSearchBtn.addEventListener('click', () => {
       this.hideMoreMenu();
       this.showSearchModal();
     });
 
     // 版本2: 增強導出按鈕事件
-    const toolbarExportBtn = this.tocPanel.querySelector('.smart-toc-toolbar-export');
+    const toolbarExportBtn = this.tocPanel.querySelector('.eagle-toc-toolbar-export');
     toolbarExportBtn.addEventListener('click', () => {
       this.hideMoreMenu();
       this.showEnhancedExportModal();
     });
 
     // Zen Mode 按鈕事件
-    const toolbarZenBtn = this.tocPanel.querySelector('.smart-toc-toolbar-zen');
+    const toolbarZenBtn = this.tocPanel.querySelector('.eagle-toc-toolbar-zen');
     toolbarZenBtn.addEventListener('click', () => {
       this.hideMoreMenu();
       this.toggleZenMode();
@@ -994,25 +994,25 @@ class SmartTOC {
 
     // 更多選單選項事件
 
-    const themeToggle = this.tocPanel.querySelector('.smart-toc-more-option.smart-toc-theme-toggle');
+    const themeToggle = this.tocPanel.querySelector('.eagle-toc-more-option.eagle-toc-theme-toggle');
     themeToggle.addEventListener('click', () => {
       this.hideMoreMenu();
       this.showThemeMenu();
     });
 
-    const settingsOption = this.tocPanel.querySelector('.smart-toc-more-option.smart-toc-settings');
+    const settingsOption = this.tocPanel.querySelector('.eagle-toc-more-option.eagle-toc-settings');
     settingsOption.addEventListener('click', () => {
       this.hideMoreMenu();
       this.toggleSettingsPanel();
     });
 
-    const copyOption = this.tocPanel.querySelector('.smart-toc-more-option.smart-toc-copy');
+    const copyOption = this.tocPanel.querySelector('.eagle-toc-more-option.eagle-toc-copy');
     copyOption.addEventListener('click', () => {
       this.hideMoreMenu();
       this.copyToClipboard();
     });
 
-    const pinOption = this.tocPanel.querySelector('.smart-toc-more-option.smart-toc-pin');
+    const pinOption = this.tocPanel.querySelector('.eagle-toc-more-option.eagle-toc-pin');
     pinOption.addEventListener('click', () => {
       this.hideMoreMenu();
       this.togglePin();
@@ -1023,8 +1023,8 @@ class SmartTOC {
 
 
 
-    const depthIncreaseBtn = this.tocPanel.querySelector('.smart-toc-depth-increase');
-    const depthDecreaseBtn = this.tocPanel.querySelector('.smart-toc-depth-decrease');
+    const depthIncreaseBtn = this.tocPanel.querySelector('.eagle-toc-depth-increase');
+    const depthDecreaseBtn = this.tocPanel.querySelector('.eagle-toc-depth-decrease');
     
     depthIncreaseBtn.addEventListener('click', async () => {
       this.hideSettingsPanel();
@@ -1038,7 +1038,7 @@ class SmartTOC {
     });
 
 
-    const fontIncreaseBtn = this.tocPanel.querySelector('.smart-toc-font-increase');
+    const fontIncreaseBtn = this.tocPanel.querySelector('.eagle-toc-font-increase');
     if (fontIncreaseBtn) {
       fontIncreaseBtn.addEventListener('click', async () => {
         this.hideMoreMenu();
@@ -1046,7 +1046,7 @@ class SmartTOC {
       });
     }
 
-    const fontDecreaseBtn = this.tocPanel.querySelector('.smart-toc-font-decrease');
+    const fontDecreaseBtn = this.tocPanel.querySelector('.eagle-toc-font-decrease');
     if (fontDecreaseBtn) {
       fontDecreaseBtn.addEventListener('click', async () => {
         this.hideMoreMenu();
@@ -1055,7 +1055,7 @@ class SmartTOC {
     }
 
     // Toolbar font controls
-    const fontToolbarIncreaseBtn = this.tocPanel.querySelector('.smart-toc-font-toolbar-increase');
+    const fontToolbarIncreaseBtn = this.tocPanel.querySelector('.eagle-toc-font-toolbar-increase');
     if (fontToolbarIncreaseBtn) {
       fontToolbarIncreaseBtn.addEventListener('click', async () => {
         this.hideMoreMenu();
@@ -1063,7 +1063,7 @@ class SmartTOC {
       });
     }
 
-    const fontToolbarDecreaseBtn = this.tocPanel.querySelector('.smart-toc-font-toolbar-decrease');
+    const fontToolbarDecreaseBtn = this.tocPanel.querySelector('.eagle-toc-font-toolbar-decrease');
     if (fontToolbarDecreaseBtn) {
       fontToolbarDecreaseBtn.addEventListener('click', async () => {
         this.hideMoreMenu();
@@ -1071,7 +1071,7 @@ class SmartTOC {
       });
     }
 
-    const highlightIncreaseBtn = this.tocPanel.querySelector('.smart-toc-highlight-increase');
+    const highlightIncreaseBtn = this.tocPanel.querySelector('.eagle-toc-highlight-increase');
     if (highlightIncreaseBtn) {
       highlightIncreaseBtn.addEventListener('click', async () => {
         this.hideMoreMenu();
@@ -1079,7 +1079,7 @@ class SmartTOC {
       });
     }
 
-    const highlightDecreaseBtn = this.tocPanel.querySelector('.smart-toc-highlight-decrease');
+    const highlightDecreaseBtn = this.tocPanel.querySelector('.eagle-toc-highlight-decrease');
     if (highlightDecreaseBtn) {
       highlightDecreaseBtn.addEventListener('click', async () => {
         this.hideMoreMenu();
@@ -1133,14 +1133,14 @@ class SmartTOC {
 
   collapsePanel() {
     this.isCollapsed = true;
-    this.tocPanel.classList.add('smart-toc-collapsed');
+    this.tocPanel.classList.add('eagle-toc-collapsed');
     // Clear any dynamic height that might interfere with collapse
     this.tocPanel.style.removeProperty('height');
   }
 
   expandPanel() {
     this.isCollapsed = false;
-    this.tocPanel.classList.remove('smart-toc-collapsed');
+    this.tocPanel.classList.remove('eagle-toc-collapsed');
     // Restore default height behavior when expanded
     if (!this.tocPanel.style.height) {
       this.tocPanel.style.removeProperty('height');
@@ -1188,14 +1188,14 @@ class SmartTOC {
     // Remove any existing notification of the same type
     let selector, className;
     if (type === 'auto-show') {
-      selector = '.smart-toc-auto-notification';
-      className = 'smart-toc-auto-notification';
+      selector = '.eagle-toc-auto-notification';
+      className = 'eagle-toc-auto-notification';
     } else if (type === 'pin-action') {
-      selector = '.smart-toc-pin-notification';
-      className = 'smart-toc-pin-notification';
+      selector = '.eagle-toc-pin-notification';
+      className = 'eagle-toc-pin-notification';
     } else {
-      selector = '.smart-toc-notification';
-      className = 'smart-toc-notification';
+      selector = '.eagle-toc-notification';
+      className = 'eagle-toc-notification';
     }
     
     const existingNotification = document.querySelector(selector);
@@ -1301,14 +1301,14 @@ class SmartTOC {
       
       // Update display in settings modal
       if (this.settingsModal) {
-        const display = this.settingsModal.querySelector('.smart-toc-font-size-display');
+        const display = this.settingsModal.querySelector('.eagle-toc-font-size-display');
         if (display) {
           display.textContent = newSize + 'px';
         }
       }
       
       // Update display in toolbar
-      const toolbarDisplay = this.tocPanel.querySelector('.smart-toc-font-toolbar-display');
+      const toolbarDisplay = this.tocPanel.querySelector('.eagle-toc-font-toolbar-display');
       if (toolbarDisplay) {
         toolbarDisplay.textContent = newSize + 'px';
       }
@@ -1324,7 +1324,7 @@ class SmartTOC {
       
       // Update display in settings modal
       if (this.settingsModal) {
-        const display = this.settingsModal.querySelector('.smart-toc-highlight-duration-display');
+        const display = this.settingsModal.querySelector('.eagle-toc-highlight-duration-display');
         if (display) {
           display.textContent = newDuration + 's';
         }
@@ -1335,7 +1335,7 @@ class SmartTOC {
   }
 
   applyContentFontSize() {
-    const tocList = this.tocPanel.querySelector('.smart-toc-list');
+    const tocList = this.tocPanel.querySelector('.eagle-toc-list');
     if (tocList) {
       // Set base font size for the list
       tocList.style.fontSize = this.settings.fontSize + 'px';
@@ -1350,12 +1350,12 @@ class SmartTOC {
       const level6Size = Math.max(9, Math.round(baseFontSize * 0.6875)); // 68.75% of base (11px default)
       
       // Apply font sizes to each level
-      const level1Links = tocList.querySelectorAll('.smart-toc-level-1 .smart-toc-link');
-      const level2Links = tocList.querySelectorAll('.smart-toc-level-2 .smart-toc-link');
-      const level3Links = tocList.querySelectorAll('.smart-toc-level-3 .smart-toc-link');
-      const level4Links = tocList.querySelectorAll('.smart-toc-level-4 .smart-toc-link');
-      const level5Links = tocList.querySelectorAll('.smart-toc-level-5 .smart-toc-link');
-      const level6Links = tocList.querySelectorAll('.smart-toc-level-6 .smart-toc-link');
+      const level1Links = tocList.querySelectorAll('.eagle-toc-level-1 .eagle-toc-link');
+      const level2Links = tocList.querySelectorAll('.eagle-toc-level-2 .eagle-toc-link');
+      const level3Links = tocList.querySelectorAll('.eagle-toc-level-3 .eagle-toc-link');
+      const level4Links = tocList.querySelectorAll('.eagle-toc-level-4 .eagle-toc-link');
+      const level5Links = tocList.querySelectorAll('.eagle-toc-level-5 .eagle-toc-link');
+      const level6Links = tocList.querySelectorAll('.eagle-toc-level-6 .eagle-toc-link');
       
       level1Links.forEach(link => link.style.fontSize = level1Size + 'px');
       level2Links.forEach(link => link.style.fontSize = level2Size + 'px');
@@ -1373,8 +1373,8 @@ class SmartTOC {
   updateSettingsDisplay() {
     // Update displays in settings modal if it exists
     if (this.settingsModal) {
-      const fontSizeDisplay = this.settingsModal.querySelector('.smart-toc-font-size-display');
-      const highlightDurationDisplay = this.settingsModal.querySelector('.smart-toc-highlight-duration-display');
+      const fontSizeDisplay = this.settingsModal.querySelector('.eagle-toc-font-size-display');
+      const highlightDurationDisplay = this.settingsModal.querySelector('.eagle-toc-highlight-duration-display');
       
       if (fontSizeDisplay) {
         fontSizeDisplay.textContent = this.settings.fontSize + 'px';
@@ -1409,9 +1409,9 @@ class SmartTOC {
   }
 
   updateDepthControls() {
-    const depthDisplay = this.tocPanel.querySelector('.smart-toc-depth-display');
-    const increaseBtn = this.tocPanel.querySelector('.smart-toc-depth-increase');
-    const decreaseBtn = this.tocPanel.querySelector('.smart-toc-depth-decrease');
+    const depthDisplay = this.tocPanel.querySelector('.eagle-toc-depth-display');
+    const increaseBtn = this.tocPanel.querySelector('.eagle-toc-depth-increase');
+    const decreaseBtn = this.tocPanel.querySelector('.eagle-toc-depth-decrease');
     
     if (depthDisplay) {
       depthDisplay.textContent = `H${this.settings.maxHeadingLevels}`;
@@ -1592,13 +1592,13 @@ class SmartTOC {
     if (!notifiedDomains.includes(currentDomain)) {
       this.showNotification('TOC 已自動顯示。如不需要，可點擊 × 關閉', 4000, 'auto-show');
       notifiedDomains.push(currentDomain);
-      localStorage.setItem('smart-toc-notified-domains', JSON.stringify(notifiedDomains));
+      localStorage.setItem('eagle-toc-notified-domains', JSON.stringify(notifiedDomains));
     }
   }
 
   getNotifiedDomains() {
     try {
-      const stored = localStorage.getItem('smart-toc-notified-domains');
+      const stored = localStorage.getItem('eagle-toc-notified-domains');
       return stored ? JSON.parse(stored) : [];
     } catch {
       return [];
@@ -1960,11 +1960,11 @@ class SmartTOC {
   }
 
   setupWhitelistEventListeners() {
-    const whitelistToggle = this.tocPanel.querySelector('.smart-toc-whitelist-enabled');
-    const whitelistInput = this.tocPanel.querySelector('.smart-toc-whitelist-input');
-    const whitelistAddBtn = this.tocPanel.querySelector('.smart-toc-whitelist-add');
-    const addCurrentBtn = this.tocPanel.querySelector('.smart-toc-whitelist-add-current');
-    const resetBtn = this.tocPanel.querySelector('.smart-toc-whitelist-reset');
+    const whitelistToggle = this.tocPanel.querySelector('.eagle-toc-whitelist-enabled');
+    const whitelistInput = this.tocPanel.querySelector('.eagle-toc-whitelist-input');
+    const whitelistAddBtn = this.tocPanel.querySelector('.eagle-toc-whitelist-add');
+    const addCurrentBtn = this.tocPanel.querySelector('.eagle-toc-whitelist-add-current');
+    const resetBtn = this.tocPanel.querySelector('.eagle-toc-whitelist-reset');
 
     if (whitelistToggle) {
       whitelistToggle.addEventListener('change', async () => {
@@ -2012,7 +2012,7 @@ class SmartTOC {
 
   async addDomainFromInput() {
     const container = this.getSettingsContainer();
-    const input = container.querySelector('.smart-toc-whitelist-input');
+    const input = container.querySelector('.eagle-toc-whitelist-input');
     const domain = input.value.trim();
     
     if (!domain) {
@@ -2031,9 +2031,9 @@ class SmartTOC {
 
   updateWhitelistUI() {
     const container = this.getSettingsContainer();
-    const toggle = container.querySelector('.smart-toc-whitelist-enabled');
-    const controls = container.querySelector('.smart-toc-whitelist-controls');
-    const list = container.querySelector('.smart-toc-whitelist-list');
+    const toggle = container.querySelector('.eagle-toc-whitelist-enabled');
+    const controls = container.querySelector('.eagle-toc-whitelist-controls');
+    const list = container.querySelector('.eagle-toc-whitelist-list');
 
     if (toggle) {
       toggle.checked = this.settings.whitelistEnabled;
@@ -2052,20 +2052,20 @@ class SmartTOC {
 
   renderWhitelistItems() {
     const container = this.getSettingsContainer();
-    const listContainer = container.querySelector('.smart-toc-whitelist-list');
+    const listContainer = container.querySelector('.eagle-toc-whitelist-list');
     if (!listContainer) return;
 
     const whitelist = this.settings.autoShowWhitelist || [];
     
     listContainer.innerHTML = whitelist.map((domain, index) => `
-      <div class="smart-toc-whitelist-item" data-index="${index}">
-        <span class="smart-toc-whitelist-domain" data-original="${domain}">${domain}</span>
-        <input class="smart-toc-whitelist-input-edit" type="text" value="${domain}" style="display: none;">
-        <div class="smart-toc-whitelist-actions">
-          <button class="smart-toc-whitelist-edit" data-index="${index}" title="編輯">✏️</button>
-          <button class="smart-toc-whitelist-save" data-index="${index}" title="保存" style="display: none;">✓</button>
-          <button class="smart-toc-whitelist-cancel" data-index="${index}" title="取消" style="display: none;">✕</button>
-          <button class="smart-toc-whitelist-remove" data-domain="${domain}" title="移除">🗑️</button>
+      <div class="eagle-toc-whitelist-item" data-index="${index}">
+        <span class="eagle-toc-whitelist-domain" data-original="${domain}">${domain}</span>
+        <input class="eagle-toc-whitelist-input-edit" type="text" value="${domain}" style="display: none;">
+        <div class="eagle-toc-whitelist-actions">
+          <button class="eagle-toc-whitelist-edit" data-index="${index}" title="編輯">✏️</button>
+          <button class="eagle-toc-whitelist-save" data-index="${index}" title="保存" style="display: none;">✓</button>
+          <button class="eagle-toc-whitelist-cancel" data-index="${index}" title="取消" style="display: none;">✕</button>
+          <button class="eagle-toc-whitelist-remove" data-domain="${domain}" title="移除">🗑️</button>
         </div>
       </div>
     `).join('');
@@ -2075,7 +2075,7 @@ class SmartTOC {
 
   bindWhitelistItemEvents(listContainer) {
     // 編輯按鈕事件
-    listContainer.querySelectorAll('.smart-toc-whitelist-edit').forEach(btn => {
+    listContainer.querySelectorAll('.eagle-toc-whitelist-edit').forEach(btn => {
       btn.addEventListener('click', (e) => {
         const index = parseInt(e.target.dataset.index);
         this.startEditWhitelistItem(index);
@@ -2083,7 +2083,7 @@ class SmartTOC {
     });
 
     // 保存按鈕事件
-    listContainer.querySelectorAll('.smart-toc-whitelist-save').forEach(btn => {
+    listContainer.querySelectorAll('.eagle-toc-whitelist-save').forEach(btn => {
       btn.addEventListener('click', async (e) => {
         const index = parseInt(e.target.dataset.index);
         await this.saveWhitelistItemEdit(index);
@@ -2091,7 +2091,7 @@ class SmartTOC {
     });
 
     // 取消按鈕事件
-    listContainer.querySelectorAll('.smart-toc-whitelist-cancel').forEach(btn => {
+    listContainer.querySelectorAll('.eagle-toc-whitelist-cancel').forEach(btn => {
       btn.addEventListener('click', (e) => {
         const index = parseInt(e.target.dataset.index);
         this.cancelWhitelistItemEdit(index);
@@ -2099,7 +2099,7 @@ class SmartTOC {
     });
 
     // 移除按鈕事件
-    listContainer.querySelectorAll('.smart-toc-whitelist-remove').forEach(btn => {
+    listContainer.querySelectorAll('.eagle-toc-whitelist-remove').forEach(btn => {
       btn.addEventListener('click', async (e) => {
         const domain = e.target.dataset.domain;
         if (await this.removeFromWhitelist(domain)) {
@@ -2110,14 +2110,14 @@ class SmartTOC {
     });
 
     // 輸入框 Enter 鍵事件
-    listContainer.querySelectorAll('.smart-toc-whitelist-input-edit').forEach(input => {
+    listContainer.querySelectorAll('.eagle-toc-whitelist-input-edit').forEach(input => {
       input.addEventListener('keydown', async (e) => {
         if (e.key === 'Enter') {
-          const item = input.closest('.smart-toc-whitelist-item');
+          const item = input.closest('.eagle-toc-whitelist-item');
           const index = parseInt(item.dataset.index);
           await this.saveWhitelistItemEdit(index);
         } else if (e.key === 'Escape') {
-          const item = input.closest('.smart-toc-whitelist-item');
+          const item = input.closest('.eagle-toc-whitelist-item');
           const index = parseInt(item.dataset.index);
           this.cancelWhitelistItemEdit(index);
         }
@@ -2126,15 +2126,15 @@ class SmartTOC {
   }
 
   startEditWhitelistItem(index) {
-    const listContainer = this.tocPanel.querySelector('.smart-toc-whitelist-list');
+    const listContainer = this.tocPanel.querySelector('.eagle-toc-whitelist-list');
     const item = listContainer.querySelector(`[data-index="${index}"]`);
     if (!item) return;
 
-    const domainSpan = item.querySelector('.smart-toc-whitelist-domain');
-    const inputEdit = item.querySelector('.smart-toc-whitelist-input-edit');
-    const editBtn = item.querySelector('.smart-toc-whitelist-edit');
-    const saveBtn = item.querySelector('.smart-toc-whitelist-save');
-    const cancelBtn = item.querySelector('.smart-toc-whitelist-cancel');
+    const domainSpan = item.querySelector('.eagle-toc-whitelist-domain');
+    const inputEdit = item.querySelector('.eagle-toc-whitelist-input-edit');
+    const editBtn = item.querySelector('.eagle-toc-whitelist-edit');
+    const saveBtn = item.querySelector('.eagle-toc-whitelist-save');
+    const cancelBtn = item.querySelector('.eagle-toc-whitelist-cancel');
 
     // 切換到編輯模式
     domainSpan.style.display = 'none';
@@ -2149,12 +2149,12 @@ class SmartTOC {
   }
 
   async saveWhitelistItemEdit(index) {
-    const listContainer = this.tocPanel.querySelector('.smart-toc-whitelist-list');
+    const listContainer = this.tocPanel.querySelector('.eagle-toc-whitelist-list');
     const item = listContainer.querySelector(`[data-index="${index}"]`);
     if (!item) return;
 
-    const domainSpan = item.querySelector('.smart-toc-whitelist-domain');
-    const inputEdit = item.querySelector('.smart-toc-whitelist-input-edit');
+    const domainSpan = item.querySelector('.eagle-toc-whitelist-domain');
+    const inputEdit = item.querySelector('.eagle-toc-whitelist-input-edit');
     const originalDomain = domainSpan.dataset.original;
     const newDomain = inputEdit.value.trim();
 
@@ -2187,15 +2187,15 @@ class SmartTOC {
   }
 
   cancelWhitelistItemEdit(index) {
-    const listContainer = this.tocPanel.querySelector('.smart-toc-whitelist-list');
+    const listContainer = this.tocPanel.querySelector('.eagle-toc-whitelist-list');
     const item = listContainer.querySelector(`[data-index="${index}"]`);
     if (!item) return;
 
-    const domainSpan = item.querySelector('.smart-toc-whitelist-domain');
-    const inputEdit = item.querySelector('.smart-toc-whitelist-input-edit');
-    const editBtn = item.querySelector('.smart-toc-whitelist-edit');
-    const saveBtn = item.querySelector('.smart-toc-whitelist-save');
-    const cancelBtn = item.querySelector('.smart-toc-whitelist-cancel');
+    const domainSpan = item.querySelector('.eagle-toc-whitelist-domain');
+    const inputEdit = item.querySelector('.eagle-toc-whitelist-input-edit');
+    const editBtn = item.querySelector('.eagle-toc-whitelist-edit');
+    const saveBtn = item.querySelector('.eagle-toc-whitelist-save');
+    const cancelBtn = item.querySelector('.eagle-toc-whitelist-cancel');
 
     // 恢復原值
     inputEdit.value = domainSpan.dataset.original;
@@ -2212,12 +2212,12 @@ class SmartTOC {
     this.tocPanel.style.display = 'block';
     this.isVisible = true;
     requestAnimationFrame(() => {
-      this.tocPanel.classList.add('smart-toc-visible');
+      this.tocPanel.classList.add('eagle-toc-visible');
     });
   }
 
   hide() {
-    this.tocPanel.classList.remove('smart-toc-visible');
+    this.tocPanel.classList.remove('eagle-toc-visible');
     this.isVisible = false;
     setTimeout(() => {
       this.tocPanel.style.display = 'none';
@@ -2265,7 +2265,7 @@ class SmartTOC {
 
   stopDragging() {
     this.isDragging = false;
-    this.tocPanel.classList.remove('smart-toc-dragging');
+    this.tocPanel.classList.remove('eagle-toc-dragging');
     document.removeEventListener('mousemove', this.boundHandleDrag);
     document.removeEventListener('mouseup', this.boundStopDragging);
     
@@ -2281,7 +2281,7 @@ class SmartTOC {
     document.addEventListener('keydown', (e) => {
       if (e.altKey && !this.altPressed) {
         this.altPressed = true;
-        document.body.classList.add('smart-toc-glance-mode');
+        document.body.classList.add('eagle-toc-glance-mode');
       }
     });
 
@@ -2289,7 +2289,7 @@ class SmartTOC {
       if (!e.altKey && this.altPressed) {
         this.altPressed = false;
         this.glanceMode = false;
-        document.body.classList.remove('smart-toc-glance-mode');
+        document.body.classList.remove('eagle-toc-glance-mode');
         if (this.glanceTimeout) {
           clearTimeout(this.glanceTimeout);
         }
@@ -2323,14 +2323,14 @@ class SmartTOC {
     if (!this.glanceMode && !this.isVisible) {
       this.glanceMode = true;
       this.show();
-      this.tocPanel.classList.add('smart-toc-glance');
+      this.tocPanel.classList.add('eagle-toc-glance');
     }
   }
 
   hideGlance() {
     if (this.glanceMode) {
       this.glanceMode = false;
-      this.tocPanel.classList.remove('smart-toc-glance');
+      this.tocPanel.classList.remove('eagle-toc-glance');
       this.hide();
     }
   }
@@ -2391,17 +2391,17 @@ class SmartTOC {
   createSearchModal() {
     // 創建搜尋模態框
     this.searchModal = document.createElement('div');
-    this.searchModal.className = 'smart-toc-search-modal';
+    this.searchModal.className = 'eagle-toc-search-modal';
     this.searchModal.innerHTML = `
-      <div class="smart-toc-search-overlay"></div>
-      <div class="smart-toc-search-dialog">
-        <div class="smart-toc-search-input-container">
-          <input type="text" class="smart-toc-search-input" placeholder="搜尋標題..." />
-          <div class="smart-toc-search-icon">🔍</div>
+      <div class="eagle-toc-search-overlay"></div>
+      <div class="eagle-toc-search-dialog">
+        <div class="eagle-toc-search-input-container">
+          <input type="text" class="eagle-toc-search-input" placeholder="搜尋標題..." />
+          <div class="eagle-toc-search-icon">🔍</div>
         </div>
-        <div class="smart-toc-search-results"></div>
-        <div class="smart-toc-search-footer">
-          <div class="smart-toc-search-tips">
+        <div class="eagle-toc-search-results"></div>
+        <div class="eagle-toc-search-footer">
+          <div class="eagle-toc-search-tips">
             <span>↑↓ 導航</span>
             <span>Enter 選擇</span>
             <span>ESC 關閉</span>
@@ -2416,9 +2416,9 @@ class SmartTOC {
   }
 
   setupSearch() {
-    const searchToggle = this.tocPanel.querySelector('.smart-toc-toolbar-search');
-    const modalSearchInput = this.searchModal.querySelector('.smart-toc-search-input');
-    const overlay = this.searchModal.querySelector('.smart-toc-search-overlay');
+    const searchToggle = this.tocPanel.querySelector('.eagle-toc-toolbar-search');
+    const modalSearchInput = this.searchModal.querySelector('.eagle-toc-search-input');
+    const overlay = this.searchModal.querySelector('.eagle-toc-search-overlay');
 
     if (searchToggle) {
       searchToggle.addEventListener('click', () => {
@@ -2449,7 +2449,7 @@ class SmartTOC {
     });
 
     // 阻止點擊對話框內部時關閉模態框
-    const searchDialog = this.searchModal.querySelector('.smart-toc-search-dialog');
+    const searchDialog = this.searchModal.querySelector('.eagle-toc-search-dialog');
     if (searchDialog) {
       searchDialog.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -2462,7 +2462,7 @@ class SmartTOC {
     
     // 動態計算搜尋對話框的位置（相對於TOC面板）
     const tocRect = this.tocPanel.getBoundingClientRect();
-    const searchDialog = this.searchModal.querySelector('.smart-toc-search-dialog');
+    const searchDialog = this.searchModal.querySelector('.eagle-toc-search-dialog');
     
     if (searchDialog) {
       // 判斷TOC面板是在左側還是右側
@@ -2486,7 +2486,7 @@ class SmartTOC {
     // 強制瀏覽器重繪，然後添加 show class
     requestAnimationFrame(() => {
       this.searchModal.classList.add('show');
-      const searchInput = this.searchModal.querySelector('.smart-toc-search-input');
+      const searchInput = this.searchModal.querySelector('.eagle-toc-search-input');
       if (searchInput) {
         setTimeout(() => {
           searchInput.focus();
@@ -2544,11 +2544,11 @@ class SmartTOC {
   }
 
   renderSearchResults() {
-    const resultsContainer = this.searchModal.querySelector('.smart-toc-search-results');
+    const resultsContainer = this.searchModal.querySelector('.eagle-toc-search-results');
     
     if (this.filteredHeadings.length === 0) {
       resultsContainer.innerHTML = `
-        <div class="smart-toc-search-no-results">
+        <div class="eagle-toc-search-no-results">
           找不到匹配的標題
         </div>
       `;
@@ -2560,10 +2560,10 @@ class SmartTOC {
       const highlightedTitle = this.highlightMatchingText(heading.text, this.searchQuery);
       
       return `
-        <div class="smart-toc-search-result-item" data-index="${index}">
-          <div class="smart-toc-search-result-content">
-            <div class="smart-toc-search-result-title">${highlightedTitle}</div>
-            <div class="smart-toc-search-result-level">${levelText}</div>
+        <div class="eagle-toc-search-result-item" data-index="${index}">
+          <div class="eagle-toc-search-result-content">
+            <div class="eagle-toc-search-result-title">${highlightedTitle}</div>
+            <div class="eagle-toc-search-result-level">${levelText}</div>
           </div>
         </div>
       `;
@@ -2572,7 +2572,7 @@ class SmartTOC {
     resultsContainer.innerHTML = resultsHTML;
 
     // 綁定點擊事件
-    resultsContainer.querySelectorAll('.smart-toc-search-result-item').forEach((item, index) => {
+    resultsContainer.querySelectorAll('.eagle-toc-search-result-item').forEach((item, index) => {
       item.addEventListener('click', () => {
         this.selectSearchResult(index);
       });
@@ -2596,7 +2596,7 @@ class SmartTOC {
       const afterMatch = originalText.substring(startIndex + query.length);
       
       return beforeMatch + 
-             '<span class="smart-toc-search-match">' + match + '</span>' + 
+             '<span class="eagle-toc-search-match">' + match + '</span>' + 
              afterMatch;
     }
     
@@ -2627,7 +2627,7 @@ class SmartTOC {
     this.selectedResultIndex = Math.max(0, Math.min(maxIndex, this.selectedResultIndex + direction));
     
     // 更新視覺選中狀態
-    const resultItems = this.searchModal.querySelectorAll('.smart-toc-search-result-item');
+    const resultItems = this.searchModal.querySelectorAll('.eagle-toc-search-result-item');
     resultItems.forEach((item, index) => {
       if (index === this.selectedResultIndex) {
         item.classList.add('selected');
@@ -2661,7 +2661,7 @@ class SmartTOC {
   }
 
   clearModalSearch() {
-    const searchInput = this.searchModal.querySelector('.smart-toc-search-input');
+    const searchInput = this.searchModal.querySelector('.eagle-toc-search-input');
     if (searchInput) {
       searchInput.value = '';
     }
@@ -2674,7 +2674,7 @@ class SmartTOC {
     this.filteredHeadings = [];
     this.selectedResultIndex = -1;
     
-    const resultsContainer = this.searchModal.querySelector('.smart-toc-search-results');
+    const resultsContainer = this.searchModal.querySelector('.eagle-toc-search-results');
     if (resultsContainer) {
       resultsContainer.innerHTML = '';
     }
@@ -2683,7 +2683,7 @@ class SmartTOC {
   setupTooltips() {
     // 創建 tooltip 元素
     this.tooltip = document.createElement('div');
-    this.tooltip.className = 'smart-toc-tooltip';
+    this.tooltip.className = 'eagle-toc-tooltip';
     document.body.appendChild(this.tooltip);
     
     // 為所有帶有 title 屬性的按鈕設置 tooltip
@@ -2922,17 +2922,17 @@ class SmartTOC {
     
     // 創建自定義 CSS 變數
     const customStyle = document.createElement('style');
-    customStyle.id = 'smart-toc-adaptive-colors';
+    customStyle.id = 'eagle-toc-adaptive-colors';
     
     // 移除已存在的樣式
-    const existingStyle = document.getElementById('smart-toc-adaptive-colors');
+    const existingStyle = document.getElementById('eagle-toc-adaptive-colors');
     if (existingStyle) {
       existingStyle.remove();
     }
     
     // 使用融合式配色方案
     const cssRules = `
-      .smart-toc-panel {
+      .eagle-toc-panel {
         background: ${colors.panelBg} !important;
         color: ${colors.textColor} !important;
         border: 1px solid ${colors.borderColor} !important;
@@ -2940,155 +2940,155 @@ class SmartTOC {
         backdrop-filter: blur(8px) !important;
       }
       
-      .smart-toc-header {
+      .eagle-toc-header {
         background: ${colors.headerBg} !important;
         border-bottom: 1px solid ${colors.borderColor} !important;
         color: ${colors.textColor} !important;
       }
       
-      .smart-toc-controls button {
+      .eagle-toc-controls button {
         color: ${colors.textColor} !important;
         background: ${colors.buttonBg} !important;
         opacity: 0.8 !important;
       }
       
-      .smart-toc-controls button:hover {
+      .eagle-toc-controls button:hover {
         background: ${colors.buttonHoverBg} !important;
         color: ${colors.textColor} !important;
         opacity: 1 !important;
       }
       
-      .smart-toc-item {
+      .eagle-toc-item {
         color: ${colors.textColor} !important;
       }
       
-      .smart-toc-item:hover {
+      .eagle-toc-item:hover {
         background: ${colors.itemHoverBg} !important;
       }
       
-      .smart-toc-item.active {
+      .eagle-toc-item.active {
         background: ${isDark ? 'rgba(56, 88, 152, 0.4)' : 'rgba(9, 105, 218, 0.15)'} !important;
         color: ${isDark ? '#ffffff' : '#0969da'} !important;
         border-left: 3px solid ${isDark ? '#5B9BD5' : '#0969da'} !important;
       }
       
-      .smart-toc-depth-controls {
+      .eagle-toc-depth-controls {
         background: ${colors.buttonBg} !important;
         border: 1px solid ${colors.borderColor} !important;
       }
       
-      .smart-toc-depth-controls button {
+      .eagle-toc-depth-controls button {
         color: ${colors.textColor} !important;
         background: transparent !important;
       }
       
-      .smart-toc-depth-controls button:hover {
+      .eagle-toc-depth-controls button:hover {
         background: ${colors.buttonHoverBg} !important;
       }
       
-      .smart-toc-depth-display {
+      .eagle-toc-depth-display {
         color: ${colors.textColor} !important;
         background: transparent !important;
       }
       
-      .smart-toc-font-toolbar-controls {
+      .eagle-toc-font-toolbar-controls {
         background: ${colors.buttonBg} !important;
         border: 1px solid ${colors.borderColor} !important;
       }
       
-      .smart-toc-font-toolbar-controls button {
+      .eagle-toc-font-toolbar-controls button {
         color: ${colors.textColor} !important;
         background: transparent !important;
       }
       
-      .smart-toc-font-toolbar-controls button:hover {
+      .eagle-toc-font-toolbar-controls button:hover {
         background: ${colors.buttonHoverBg} !important;
       }
       
-      .smart-toc-font-toolbar-display {
+      .eagle-toc-font-toolbar-display {
         color: ${colors.textColor} !important;
         background: transparent !important;
       }
       
-      .smart-toc-settings-panel {
+      .eagle-toc-settings-panel {
         background: ${colors.panelBg} !important;
         border-top: 1px solid ${colors.borderColor} !important;
       }
       
-      .smart-toc-settings-label {
+      .eagle-toc-settings-label {
         color: ${colors.textColor} !important;
       }
       
-      .smart-toc-font-size-display {
+      .eagle-toc-font-size-display {
         color: ${colors.textColor} !important;
       }
       
-      .smart-toc-search-modal {
+      .eagle-toc-search-modal {
         background: ${colors.panelBg} !important;
         border: 1px solid ${colors.borderColor} !important;
         box-shadow: 0 8px 24px ${colors.shadowColor} !important;
       }
       
-      .smart-toc-search-input {
+      .eagle-toc-search-input {
         background: ${colors.buttonBg} !important;
         color: ${colors.textColor} !important;
         border: 1px solid ${colors.borderColor} !important;
       }
       
-      .smart-toc-search-input::placeholder {
+      .eagle-toc-search-input::placeholder {
         color: ${isDark ? 'rgba(224, 224, 224, 0.6)' : 'rgba(51, 51, 51, 0.6)'} !important;
       }
       
-      .smart-toc-search-results {
+      .eagle-toc-search-results {
         background: ${colors.panelBg} !important;
       }
       
-      .smart-toc-search-result {
+      .eagle-toc-search-result {
         color: ${colors.textColor} !important;
       }
       
-      .smart-toc-search-result:hover,
-      .smart-toc-search-result.selected {
+      .eagle-toc-search-result:hover,
+      .eagle-toc-search-result.selected {
         background: ${colors.itemHoverBg} !important;
       }
       
-      .smart-toc-content {
+      .eagle-toc-content {
         background: ${colors.panelBg} !important;
         color: ${colors.textColor} !important;
       }
       
-      .smart-toc-loading,
-      .smart-toc-no-headings {
+      .eagle-toc-loading,
+      .eagle-toc-no-headings {
         color: ${colors.textColor} !important;
       }
       
-      .smart-toc-link {
+      .eagle-toc-link {
         color: ${colors.textColor} !important;
       }
       
-      .smart-toc-item.smart-toc-active {
+      .eagle-toc-item.eagle-toc-active {
         background: ${isDark ? 'rgba(56, 88, 152, 0.4)' : 'rgba(9, 105, 218, 0.15)'} !important;
         color: ${isDark ? '#ffffff' : '#0969da'} !important;
       }
       
-      .smart-toc-item.smart-toc-active .smart-toc-link {
+      .eagle-toc-item.eagle-toc-active .eagle-toc-link {
         color: ${isDark ? '#ffffff' : '#0969da'} !important;
       }
       
-      .smart-toc-no-search-results {
+      .eagle-toc-no-search-results {
         color: ${colors.textColor} !important;
         opacity: 0.7;
       }
       
-      .smart-toc-content::-webkit-scrollbar-track {
+      .eagle-toc-content::-webkit-scrollbar-track {
         background: ${colors.buttonBg} !important;
       }
       
-      .smart-toc-content::-webkit-scrollbar-thumb {
+      .eagle-toc-content::-webkit-scrollbar-thumb {
         background: ${colors.borderColor} !important;
       }
       
-      .smart-toc-content::-webkit-scrollbar-thumb:hover {
+      .eagle-toc-content::-webkit-scrollbar-thumb:hover {
         background: ${colors.buttonHoverBg} !important;
       }
     `;
@@ -3105,17 +3105,17 @@ class SmartTOC {
     
     // 創建自定義 CSS 變數
     const customStyle = document.createElement('style');
-    customStyle.id = 'smart-toc-adaptive-colors';
+    customStyle.id = 'eagle-toc-adaptive-colors';
     
     // 移除已存在的樣式
-    const existingStyle = document.getElementById('smart-toc-adaptive-colors');
+    const existingStyle = document.getElementById('eagle-toc-adaptive-colors');
     if (existingStyle) {
       existingStyle.remove();
     }
     
     // 使用主題配色方案
     const cssRules = `
-      .smart-toc-panel {
+      .eagle-toc-panel {
         background: ${colors.panelBg} !important;
         color: ${colors.textColor} !important;
         border: 1px solid ${colors.borderColor} !important;
@@ -3123,169 +3123,169 @@ class SmartTOC {
         backdrop-filter: blur(8px) !important;
       }
       
-      .smart-toc-header {
+      .eagle-toc-header {
         background: ${colors.headerBg} !important;
         border-bottom: 1px solid ${colors.borderColor} !important;
         color: ${colors.textColor} !important;
       }
       
-      .smart-toc-controls button {
+      .eagle-toc-controls button {
         color: ${colors.textColor} !important;
         background: ${colors.buttonBg} !important;
         opacity: 0.8 !important;
       }
       
-      .smart-toc-controls button:hover {
+      .eagle-toc-controls button:hover {
         background: ${colors.buttonHoverBg} !important;
         color: ${colors.textColor} !important;
         opacity: 1 !important;
       }
       
-      .smart-toc-item {
+      .eagle-toc-item {
         color: ${colors.textColor} !important;
       }
       
-      .smart-toc-item:hover {
+      .eagle-toc-item:hover {
         background: ${colors.itemHoverBg} !important;
       }
       
-      .smart-toc-item.active {
+      .eagle-toc-item.active {
         background: ${isDark ? 'rgba(56, 88, 152, 0.4)' : 'rgba(9, 105, 218, 0.15)'} !important;
         color: ${isDark ? '#ffffff' : '#0969da'} !important;
         border-left: 3px solid ${isDark ? '#5B9BD5' : '#0969da'} !important;
       }
       
-      .smart-toc-depth-controls {
+      .eagle-toc-depth-controls {
         background: ${colors.buttonBg} !important;
         border: 1px solid ${colors.borderColor} !important;
       }
       
-      .smart-toc-depth-controls button {
+      .eagle-toc-depth-controls button {
         color: ${colors.textColor} !important;
         background: transparent !important;
       }
       
-      .smart-toc-depth-controls button:hover {
+      .eagle-toc-depth-controls button:hover {
         background: ${colors.buttonHoverBg} !important;
       }
       
-      .smart-toc-depth-display {
+      .eagle-toc-depth-display {
         color: ${colors.textColor} !important;
         background: transparent !important;
       }
       
-      .smart-toc-font-toolbar-controls {
+      .eagle-toc-font-toolbar-controls {
         background: ${colors.buttonBg} !important;
         border: 1px solid ${colors.borderColor} !important;
       }
       
-      .smart-toc-font-toolbar-controls button {
+      .eagle-toc-font-toolbar-controls button {
         color: ${colors.textColor} !important;
         background: transparent !important;
       }
       
-      .smart-toc-font-toolbar-controls button:hover {
+      .eagle-toc-font-toolbar-controls button:hover {
         background: ${colors.buttonHoverBg} !important;
       }
       
-      .smart-toc-font-toolbar-display {
+      .eagle-toc-font-toolbar-display {
         color: ${colors.textColor} !important;
         background: transparent !important;
       }
       
-      .smart-toc-settings-panel {
+      .eagle-toc-settings-panel {
         background: ${colors.panelBg} !important;
         border-top: 1px solid ${colors.borderColor} !important;
       }
       
-      .smart-toc-settings-label {
+      .eagle-toc-settings-label {
         color: ${colors.textColor} !important;
       }
       
-      .smart-toc-font-size-display {
+      .eagle-toc-font-size-display {
         color: ${colors.textColor} !important;
       }
       
-      .smart-toc-search-modal {
+      .eagle-toc-search-modal {
         background: ${colors.panelBg} !important;
         border: 1px solid ${colors.borderColor} !important;
         box-shadow: 0 8px 24px ${colors.shadowColor} !important;
       }
       
-      .smart-toc-search-input {
+      .eagle-toc-search-input {
         background: ${colors.buttonBg} !important;
         color: ${colors.textColor} !important;
         border: 1px solid ${colors.borderColor} !important;
       }
       
-      .smart-toc-search-input::placeholder {
+      .eagle-toc-search-input::placeholder {
         color: ${isDark ? 'rgba(224, 224, 224, 0.6)' : 'rgba(51, 51, 51, 0.6)'} !important;
       }
       
-      .smart-toc-search-results {
+      .eagle-toc-search-results {
         background: ${colors.panelBg} !important;
       }
       
-      .smart-toc-search-result {
+      .eagle-toc-search-result {
         color: ${colors.textColor} !important;
       }
       
-      .smart-toc-search-result:hover,
-      .smart-toc-search-result.selected {
+      .eagle-toc-search-result:hover,
+      .eagle-toc-search-result.selected {
         background: ${colors.itemHoverBg} !important;
       }
       
-      .smart-toc-theme-menu {
+      .eagle-toc-theme-menu {
         background: ${colors.panelBg} !important;
         border: 1px solid ${colors.borderColor} !important;
         box-shadow: 0 4px 12px ${colors.shadowColor} !important;
       }
       
-      .smart-toc-theme-option {
+      .eagle-toc-theme-option {
         color: ${colors.textColor} !important;
       }
       
-      .smart-toc-theme-option:hover {
+      .eagle-toc-theme-option:hover {
         background: ${colors.itemHoverBg} !important;
       }
       
-      .smart-toc-content {
+      .eagle-toc-content {
         background: ${colors.panelBg} !important;
         color: ${colors.textColor} !important;
       }
       
-      .smart-toc-loading,
-      .smart-toc-no-headings {
+      .eagle-toc-loading,
+      .eagle-toc-no-headings {
         color: ${colors.textColor} !important;
       }
       
-      .smart-toc-link {
+      .eagle-toc-link {
         color: ${colors.textColor} !important;
       }
       
-      .smart-toc-item.smart-toc-active {
+      .eagle-toc-item.eagle-toc-active {
         background: ${isDark ? 'rgba(56, 88, 152, 0.4)' : 'rgba(9, 105, 218, 0.15)'} !important;
         color: ${isDark ? '#ffffff' : '#0969da'} !important;
       }
       
-      .smart-toc-item.smart-toc-active .smart-toc-link {
+      .eagle-toc-item.eagle-toc-active .eagle-toc-link {
         color: ${isDark ? '#ffffff' : '#0969da'} !important;
       }
       
-      .smart-toc-no-search-results {
+      .eagle-toc-no-search-results {
         color: ${colors.textColor} !important;
         opacity: 0.7;
       }
       
-      .smart-toc-content::-webkit-scrollbar-track {
+      .eagle-toc-content::-webkit-scrollbar-track {
         background: ${colors.buttonBg} !important;
       }
       
-      .smart-toc-content::-webkit-scrollbar-thumb {
+      .eagle-toc-content::-webkit-scrollbar-thumb {
         background: ${colors.borderColor} !important;
       }
       
-      .smart-toc-content::-webkit-scrollbar-thumb:hover {
+      .eagle-toc-content::-webkit-scrollbar-thumb:hover {
         background: ${colors.buttonHoverBg} !important;
       }
     `;
@@ -3336,7 +3336,7 @@ class SmartTOC {
   }
 
   updateThemeMenuSelection() {
-    const themeOptions = this.tocPanel.querySelectorAll('.smart-toc-theme-option');
+    const themeOptions = this.tocPanel.querySelectorAll('.eagle-toc-theme-option');
     themeOptions.forEach(option => {
       const theme = option.dataset.theme;
       if (theme === this.currentTheme) {
@@ -3360,7 +3360,7 @@ class SmartTOC {
     
     // 創建 toast 元素
     const toast = document.createElement('div');
-    toast.className = 'smart-toc-theme-toast';
+    toast.className = 'eagle-toc-theme-toast';
     toast.textContent = `已切換至 ${themeNames[themeName] || themeName}`;
     
     // 添加到面板中
@@ -3385,13 +3385,13 @@ class SmartTOC {
   setupThemeEvents() {
     if (!this.tocPanel) return;
     
-    const themeMenu = this.tocPanel.querySelector('.smart-toc-theme-menu');
+    const themeMenu = this.tocPanel.querySelector('.eagle-toc-theme-menu');
     if (!themeMenu) return;
     
     this.themeMenu = themeMenu;
     
     // 選單項目點擊
-    const themeOptions = themeMenu.querySelectorAll('.smart-toc-theme-option');
+    const themeOptions = themeMenu.querySelectorAll('.eagle-toc-theme-option');
     themeOptions.forEach(option => {
       option.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -3498,13 +3498,13 @@ class SmartTOC {
 
   // 更新釘選按鈕的顯示狀態
   updatePinButtonState() {
-    const pinOption = this.tocPanel.querySelector('.smart-toc-more-option.smart-toc-pin');
+    const pinOption = this.tocPanel.querySelector('.eagle-toc-more-option.eagle-toc-pin');
     if (!pinOption) return;
     
     const currentDomain = window.location.hostname;
     const isExactlyInWhitelist = this.isExactlyInWhitelist(currentDomain);
-    const iconElement = pinOption.querySelector('.smart-toc-more-icon');
-    const textElement = pinOption.querySelector('.smart-toc-more-text');
+    const iconElement = pinOption.querySelector('.eagle-toc-more-icon');
+    const textElement = pinOption.querySelector('.eagle-toc-more-text');
     
     if (isExactlyInWhitelist) {
       iconElement.textContent = '📌';
@@ -3553,7 +3553,7 @@ class SmartTOC {
 
   // 拖曳功能
   makeDraggable() {
-    const header = this.tocPanel.querySelector('.smart-toc-header');
+    const header = this.tocPanel.querySelector('.eagle-toc-header');
     
     // Bind methods once
     this.boundHandleDrag = this.handleDrag.bind(this);
@@ -3563,7 +3563,7 @@ class SmartTOC {
       if (e.target.tagName === 'BUTTON') return;
       
       this.isDragging = true;
-      this.tocPanel.classList.add('smart-toc-dragging');
+      this.tocPanel.classList.add('eagle-toc-dragging');
       const rect = this.tocPanel.getBoundingClientRect();
       this.dragOffset = {
         x: e.clientX - rect.left,
@@ -3611,7 +3611,7 @@ class SmartTOC {
         document.addEventListener('mouseup', this.boundStopResize);
         
         // 添加調整大小時的樣式
-        this.tocPanel.classList.add('smart-toc-resizing');
+        this.tocPanel.classList.add('eagle-toc-resizing');
       });
     });
   }
@@ -3700,7 +3700,7 @@ class SmartTOC {
     document.removeEventListener('mouseup', this.boundStopResize);
     
     // 移除調整大小時的樣式
-    this.tocPanel.classList.remove('smart-toc-resizing');
+    this.tocPanel.classList.remove('eagle-toc-resizing');
     
     // 保存設定
     this.saveSettings();
@@ -3776,14 +3776,14 @@ class SmartTOC {
 
   createZenContainer() {
     this.zenContainer = document.createElement('div');
-    this.zenContainer.className = 'smart-toc-zen-container zen-v3-premium';
+    this.zenContainer.className = 'eagle-toc-zen-container zen-v3-premium';
     
     this.zenContainer.innerHTML = `
-      <div class="smart-toc-zen-overlay"></div>
-      <div class="smart-toc-zen-scroll-container">
-        <div class="smart-toc-zen-content"></div>
+      <div class="eagle-toc-zen-overlay"></div>
+      <div class="eagle-toc-zen-scroll-container">
+        <div class="eagle-toc-zen-content"></div>
       </div>
-      <div class="smart-toc-zen-controls">
+      <div class="eagle-toc-zen-controls">
         <div class="zen-control-group">
           <button class="zen-control-btn zen-play-pause" title="暫停/繼續 (空格鍵)">
             <svg class="zen-play-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
@@ -3812,7 +3812,7 @@ class SmartTOC {
           <span class="zen-progress-text">0%</span>
         </div>
       </div>
-      <div class="smart-toc-zen-instructions">
+      <div class="eagle-toc-zen-instructions">
         <div>ESC: 退出 | 空格: 暫停/繼續 | ↑↓: 手動滾動 | S: 設置</div>
       </div>
       <div class="zen-settings-panel" style="display: none;">
@@ -3872,9 +3872,9 @@ class SmartTOC {
       </div>
     `;
     
-    this.zenScrollContainer = this.zenContainer.querySelector('.smart-toc-zen-scroll-container');
-    this.zenContent = this.zenContainer.querySelector('.smart-toc-zen-content');
-    this.zenControlPanel = this.zenContainer.querySelector('.smart-toc-zen-controls');
+    this.zenScrollContainer = this.zenContainer.querySelector('.eagle-toc-zen-scroll-container');
+    this.zenContent = this.zenContainer.querySelector('.eagle-toc-zen-content');
+    this.zenControlPanel = this.zenContainer.querySelector('.eagle-toc-zen-controls');
     this.zenSettingsPanel = this.zenContainer.querySelector('.zen-settings-panel');
     
     // 設置控制面板事件
@@ -3970,8 +3970,8 @@ class SmartTOC {
       const spacing = index < this.headings.length - 1 ? 'margin-bottom: 80px;' : '';
       
       return `
-        <div class="smart-toc-zen-item ${levelClass}" style="${spacing}" data-index="${index}">
-          <div class="smart-toc-zen-item-text">${heading.text}</div>
+        <div class="eagle-toc-zen-item ${levelClass}" style="${spacing}" data-index="${index}">
+          <div class="eagle-toc-zen-item-text">${heading.text}</div>
         </div>
       `;
     }).join('');
@@ -4264,7 +4264,7 @@ class SmartTOC {
     const theme = this.zenThemes[this.zenTheme];
     if (!theme) return;
 
-    const overlay = this.zenContainer.querySelector('.smart-toc-zen-overlay');
+    const overlay = this.zenContainer.querySelector('.eagle-toc-zen-overlay');
     overlay.style.background = theme.background;
     
     // 添加星空粒子效果
@@ -4279,20 +4279,20 @@ class SmartTOC {
     const theme = this.zenThemes[this.zenTheme];
     if (!theme) return;
 
-    const items = this.zenContainer.querySelectorAll('.smart-toc-zen-item-text');
+    const items = this.zenContainer.querySelectorAll('.eagle-toc-zen-item-text');
     items.forEach((item, index) => {
       item.style.fontSize = this.zenFontSize + 'px';
       item.style.color = theme.textColor;
     });
 
-    const zenItems = this.zenContainer.querySelectorAll('.smart-toc-zen-item');
+    const zenItems = this.zenContainer.querySelectorAll('.eagle-toc-zen-item');
     zenItems.forEach((item, index) => {
       if (index < zenItems.length - 1) {
         item.style.marginBottom = this.zenLineSpacing + 'px';
       }
     });
 
-    const overlay = this.zenContainer.querySelector('.smart-toc-zen-overlay');
+    const overlay = this.zenContainer.querySelector('.eagle-toc-zen-overlay');
     overlay.style.backdropFilter = `blur(${this.zenBlurLevel}px)`;
     overlay.style.webkitBackdropFilter = `blur(${this.zenBlurLevel}px)`;
   }
@@ -4313,7 +4313,7 @@ class SmartTOC {
       "></div>`
     ).join('');
     
-    this.zenContainer.querySelector('.smart-toc-zen-overlay').appendChild(particles);
+    this.zenContainer.querySelector('.eagle-toc-zen-overlay').appendChild(particles);
   }
 
   resetZenSettings() {
@@ -4403,11 +4403,11 @@ class SmartTOC {
       this.tooltip.parentNode.removeChild(this.tooltip);
     }
     // 清理自適應配色樣式
-    const adaptiveStyle = document.getElementById('smart-toc-adaptive-colors');
+    const adaptiveStyle = document.getElementById('eagle-toc-adaptive-colors');
     if (adaptiveStyle) {
       adaptiveStyle.remove();
     }
-    document.body.classList.remove('smart-toc-glance-mode');
+    document.body.classList.remove('eagle-toc-glance-mode');
   }
 
   // ==================== 版本2: 增強導出功能 ====================
@@ -4419,15 +4419,15 @@ class SmartTOC {
     }
 
     this.exportModal = document.createElement('div');
-    this.exportModal.className = 'smart-toc-enhanced-export-modal smart-toc-v3';
+    this.exportModal.className = 'eagle-toc-enhanced-export-modal eagle-toc-v3';
     this.exportModal.innerHTML = `
-      <div class="smart-toc-enhanced-export-content">
-        <div class="smart-toc-enhanced-export-header">
+      <div class="eagle-toc-enhanced-export-content">
+        <div class="eagle-toc-enhanced-export-header">
           <h3>✨ 智能導出</h3>
-          <button class="smart-toc-enhanced-export-close">×</button>
+          <button class="eagle-toc-enhanced-export-close">×</button>
         </div>
         
-        <div class="smart-toc-enhanced-export-toolbar">
+        <div class="eagle-toc-enhanced-export-toolbar">
           <div class="toolbar-section format-section">
             <label class="section-label">格式</label>
             <select class="inline-dropdown" name="format">
@@ -4451,8 +4451,8 @@ class SmartTOC {
           </div>
         </div>
         
-        <div class="smart-toc-enhanced-export-preview compact-horizontal" style="display: block;">
-          <textarea class="smart-toc-enhanced-export-textarea" readonly>${this.generateEnhancedContent('outline', {
+        <div class="eagle-toc-enhanced-export-preview compact-horizontal" style="display: block;">
+          <textarea class="eagle-toc-enhanced-export-textarea" readonly>${this.generateEnhancedContent('outline', {
             includeMetadata: false,
             includeTOC: true,
             format: 'markdown'
@@ -4467,16 +4467,16 @@ class SmartTOC {
 
   setupEnhancedExportEvents() {
     const modal = this.exportModal;
-    const closeBtn = modal.querySelector('.smart-toc-enhanced-export-close');
-    const copyBtn = modal.querySelector('.smart-toc-enhanced-export-copy');
-    const downloadBtn = modal.querySelector('.smart-toc-enhanced-export-download');
+    const closeBtn = modal.querySelector('.eagle-toc-enhanced-export-close');
+    const copyBtn = modal.querySelector('.eagle-toc-enhanced-export-copy');
+    const downloadBtn = modal.querySelector('.eagle-toc-enhanced-export-download');
     const templateRadios = modal.querySelectorAll('input[name="template"]');
     const formatRadios = modal.querySelectorAll('input[name="format"]');
     const checkboxes = modal.querySelectorAll('input[type="checkbox"]');
-    const textarea = modal.querySelector('.smart-toc-enhanced-export-textarea');
+    const textarea = modal.querySelector('.eagle-toc-enhanced-export-textarea');
     
     // V3 specific elements
-    const isV3 = modal.classList.contains('smart-toc-v3');
+    const isV3 = modal.classList.contains('eagle-toc-v3');
     const toolbarActions = modal.querySelectorAll('.toolbar-action');
     const inlineOptions = modal.querySelectorAll('.inline-option');
     const inlineCheckboxes = modal.querySelectorAll('.inline-checkbox');
@@ -4487,7 +4487,7 @@ class SmartTOC {
 
     // V3 toolbar actions
     if (isV3) {
-      const previewSection = modal.querySelector('.smart-toc-enhanced-export-preview.compact-horizontal');
+      const previewSection = modal.querySelector('.eagle-toc-enhanced-export-preview.compact-horizontal');
       
       toolbarActions.forEach(action => {
         action.addEventListener('click', () => {
@@ -4548,7 +4548,7 @@ class SmartTOC {
 
   updateEnhancedPreview() {
     const modal = this.exportModal;
-    const isV3 = modal.classList.contains('smart-toc-v3');
+    const isV3 = modal.classList.contains('eagle-toc-v3');
     
     // V3 has its own preview update method
     if (isV3) return;
@@ -4564,7 +4564,7 @@ class SmartTOC {
     };
 
     const content = this.generateEnhancedContent(selectedTemplate, options);
-    const textarea = modal.querySelector('.smart-toc-enhanced-export-textarea');
+    const textarea = modal.querySelector('.eagle-toc-enhanced-export-textarea');
     if (textarea) {
       textarea.value = content;
     }
@@ -4572,7 +4572,7 @@ class SmartTOC {
 
   toggleV3Preview() {
     const modal = this.exportModal;
-    const previewSection = modal.querySelector('.smart-toc-enhanced-export-preview.compact-horizontal');
+    const previewSection = modal.querySelector('.eagle-toc-enhanced-export-preview.compact-horizontal');
     
     if (previewSection.style.display === 'none') {
       previewSection.style.display = 'block';
@@ -4594,7 +4594,7 @@ class SmartTOC {
     };
 
     const content = this.generateEnhancedContent(selectedTemplate, options);
-    const textarea = modal.querySelector('.smart-toc-enhanced-export-textarea');
+    const textarea = modal.querySelector('.eagle-toc-enhanced-export-textarea');
     if (textarea) {
       textarea.value = content;
     }
@@ -4859,7 +4859,7 @@ class SmartTOC {
 
   async copyEnhancedToClipboard() {
     const modal = this.exportModal;
-    const isV3 = modal.classList.contains('smart-toc-v3');
+    const isV3 = modal.classList.contains('eagle-toc-v3');
     
     let content;
     let copyBtn;
@@ -4880,9 +4880,9 @@ class SmartTOC {
       copyBtn = modal.querySelector('[data-action="copy"]');
     } else {
       // V1/V2: Use textarea content
-      const textarea = modal.querySelector('.smart-toc-enhanced-export-textarea');
+      const textarea = modal.querySelector('.eagle-toc-enhanced-export-textarea');
       content = textarea.value;
-      copyBtn = modal.querySelector('.smart-toc-enhanced-export-copy');
+      copyBtn = modal.querySelector('.eagle-toc-enhanced-export-copy');
     }
     
     try {
@@ -4913,7 +4913,7 @@ class SmartTOC {
         }, 2000);
       } else {
         // V1/V2 fallback
-        const textarea = modal.querySelector('.smart-toc-enhanced-export-textarea');
+        const textarea = modal.querySelector('.eagle-toc-enhanced-export-textarea');
         textarea.select();
         textarea.setSelectionRange(0, 99999);
         
@@ -4935,7 +4935,7 @@ class SmartTOC {
 
   downloadEnhancedFile() {
     const modal = this.exportModal;
-    const isV3 = modal.classList.contains('smart-toc-v3');
+    const isV3 = modal.classList.contains('eagle-toc-v3');
     
     let content, selectedFormat, selectedTemplate, downloadBtn;
     
@@ -4955,10 +4955,10 @@ class SmartTOC {
       downloadBtn = modal.querySelector('[data-action="download"]');
     } else {
       // V1/V2: Use existing content and selectors
-      content = modal.querySelector('.smart-toc-enhanced-export-textarea').value;
+      content = modal.querySelector('.eagle-toc-enhanced-export-textarea').value;
       selectedFormat = modal.querySelector('input[name="format"]:checked').value;
       selectedTemplate = modal.querySelector('input[name="template"]:checked').value;
-      downloadBtn = modal.querySelector('.smart-toc-enhanced-export-download');
+      downloadBtn = modal.querySelector('.eagle-toc-enhanced-export-download');
     }
     
     // 生成文件名
@@ -5033,12 +5033,12 @@ if (typeof window !== 'undefined') {
   console.log('🚀 Smart TOC content script loaded [v2.0 - Pin Fix]');
   
   // Prevent multiple initialization
-  if (window.smartTOC) {
+  if (window.eagleTOC) {
     console.log('🔄 Smart TOC already exists, cleaning up...');
-    window.smartTOC.destroy();
+    window.eagleTOC.destroy();
   }
   
-  console.log('⚡ Initializing Smart TOC v2.0...');
-  window.smartTOC = new SmartTOC();
-  console.log('✅ Smart TOC initialized:', window.smartTOC);
+  console.log('🦅 Initializing EagleTOC v2.0...');
+  window.eagleTOC = new EagleTOC();
+  console.log('✅ EagleTOC initialized:', window.eagleTOC);
 }

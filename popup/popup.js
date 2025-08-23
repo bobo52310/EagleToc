@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   helpBtn.addEventListener('click', () => {
     chrome.tabs.create({
-      url: 'https://github.com/your-username/smart-toc#usage'
+      url: 'https://github.com/your-username/eagle-toc#usage'
     });
     window.close();
   });
@@ -36,7 +36,7 @@ async function updateToggleButton() {
     
     if (!tab.url || tab.url.startsWith('chrome://') || tab.url.startsWith('moz-extension://')) {
       document.querySelector('.popup-info .info-text').textContent = 
-        'Smart TOC is not available on this page.';
+        'EagleToc is not available on this page.';
       document.getElementById('toggle-toc').disabled = true;
       document.getElementById('toggle-toc').style.opacity = '0.5';
       return;
