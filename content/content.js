@@ -176,7 +176,7 @@ class EagleTOC {
     
     // 啟動初始化（不需要等待完成）
     this.init().catch(error => {
-      console.error('Smart TOC initialization failed:', error);
+      console.error('EagleToc initialization failed:', error);
     });
   }
 
@@ -358,7 +358,7 @@ class EagleTOC {
       <div class="eagle-toc-settings-overlay"></div>
       <div class="eagle-toc-settings-dialog">
         <div class="eagle-toc-settings-header">
-          <h3 class="eagle-toc-settings-title">Smart TOC 設定</h3>
+          <h3 class="eagle-toc-settings-title">EagleToc 設定</h3>
           <button class="eagle-toc-settings-close" title="關閉設定">×</button>
         </div>
         <div class="eagle-toc-settings-content">
@@ -3474,7 +3474,7 @@ class EagleTOC {
       success = await this.removeFromWhitelist(currentDomain);
       console.log('Remove result:', success);
       if (success) {
-        this.showNotification(`已取消自動開啟\n${currentDomain} 將不會自動顯示 Smart TOC`, 4000, 'pin-action');
+        this.showNotification(`已取消自動開啟\n${currentDomain} 將不會自動顯示 EagleToc`, 4000, 'pin-action');
       } else {
         this.showNotification(`取消失敗，請稍後再試`);
       }
@@ -3482,7 +3482,7 @@ class EagleTOC {
       success = await this.addToWhitelist(currentDomain);
       console.log('Add result:', success);
       if (success) {
-        this.showNotification(`已設定自動開啟\n下次訪問 ${currentDomain} 將自動顯示 Smart TOC`, 4000, 'pin-action');
+        this.showNotification(`已設定自動開啟\n下次訪問 ${currentDomain} 將自動顯示 EagleToc`, 4000, 'pin-action');
       } else {
         this.showNotification(`設定失敗，請稍後再試`);
       }
@@ -5030,11 +5030,11 @@ class EagleTOC {
 }
 
 if (typeof window !== 'undefined') {
-  console.log('🚀 Smart TOC content script loaded [v2.0 - Pin Fix]');
+  console.log('🦅 EagleToc content script loaded [v2.0 - Eagle Precision]');
   
   // Prevent multiple initialization
   if (window.eagleTOC) {
-    console.log('🔄 Smart TOC already exists, cleaning up...');
+    console.log('🔄 EagleToc already exists, cleaning up...');
     window.eagleTOC.destroy();
   }
   

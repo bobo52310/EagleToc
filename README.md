@@ -172,7 +172,7 @@
 
 ### 📁 專案結構
 ```
-smart-toc/
+eagle-toc/
 ├── manifest.json          # 擴充功能設定檔
 ├── popup/                 # 彈出視窗
 │   ├── popup.html
