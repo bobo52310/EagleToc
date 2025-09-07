@@ -2351,11 +2351,16 @@ class EagleTOC {
     // Use requestAnimationFrame for smooth dragging
     if (!this.dragFrameRequest) {
       this.dragFrameRequest = requestAnimationFrame(() => {
-        const maxX = window.innerWidth - this.tocPanel.offsetWidth;
-        const maxY = window.innerHeight - this.tocPanel.offsetHeight;
+        // 設定安全邊距，確保工具列始終可操作
+        const HEADER_SAFE_MARGIN = 50; // 工具列高度約 40px，加上額外 10px 緩衝
+        const EDGE_PADDING = 10; // 左右邊緣的安全邊距
         
-        const clampedX = Math.max(0, Math.min(this.pendingDragX, maxX));
-        const clampedY = Math.max(0, Math.min(this.pendingDragY, maxY));
+        const maxX = window.innerWidth - this.tocPanel.offsetWidth - EDGE_PADDING;
+        const maxY = window.innerHeight - this.tocPanel.offsetHeight - EDGE_PADDING;
+        
+        // 確保面板不會被拖拽到無法操作的位置
+        const clampedX = Math.max(EDGE_PADDING, Math.min(this.pendingDragX, maxX));
+        const clampedY = Math.max(HEADER_SAFE_MARGIN, Math.min(this.pendingDragY, maxY));
         
         this.tocPanel.style.left = clampedX + 'px';
         this.tocPanel.style.top = clampedY + 'px';
