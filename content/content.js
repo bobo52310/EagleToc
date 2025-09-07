@@ -217,6 +217,12 @@ class EagleTOC {
   }
 
   createTOCPanel() {
+    // 清理可能存在的舊元素
+    const existingPanel = document.getElementById('eagle-toc-panel');
+    const existingTrigger = document.querySelector('.eagle-toc-slide-trigger');
+    if (existingPanel) existingPanel.remove();
+    if (existingTrigger) existingTrigger.remove();
+    
     // Plan B: 創建主面板
     this.tocPanel = document.createElement('div');
     this.tocPanel.id = 'eagle-toc-panel';
@@ -2500,7 +2506,7 @@ class EagleTOC {
       
       // 重置觸發條樣式
       this.slideTrigger.style.transform = 'translateY(-50%)';
-      this.slideTrigger.style.width = '8px';
+      this.slideTrigger.style.width = '20px';
     });
     
     // 點擊事件
