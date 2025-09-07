@@ -57,19 +57,9 @@
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
-.eagle-toc-slide-trigger:hover {
-  width: 32px;
-  background: linear-gradient(135deg, 
-    rgba(59, 130, 246, 1) 0%, 
-    rgba(99, 102, 241, 1) 50%,
-    rgba(139, 92, 246, 1) 100%);
-  box-shadow: -8px 0 32px rgba(59, 130, 246, 0.4);
-  transform: translateY(-50%) translateX(-3px);
-}
+/* hover 效果由 JavaScript 控制，避免與 mouseenter 衝突 */
 
-.eagle-toc-slide-trigger:hover::before {
-  transform: rotate(-180deg) scale(1.2);
-}
+/* before 元素的 hover 效果也由 JavaScript 控制 */
 
 /* 滑動展開狀態 */
 .eagle-toc-panel.eagle-toc-sliding {

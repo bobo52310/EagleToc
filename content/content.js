@@ -2487,9 +2487,17 @@ class EagleTOC {
         clearTimeout(slideTimeout);
       }
       
-      // 加入懸停效果
-      this.slideTrigger.style.transform = 'translateY(-50%) translateX(-8px)';
-      this.slideTrigger.style.width = '40px';
+      // 加入完整的懸停效果
+      this.slideTrigger.style.transform = 'translateY(-50%) translateX(-3px)';
+      this.slideTrigger.style.width = '32px';
+      this.slideTrigger.style.background = 'linear-gradient(135deg, rgba(59, 130, 246, 1) 0%, rgba(99, 102, 241, 1) 50%, rgba(139, 92, 246, 1) 100%)';
+      this.slideTrigger.style.boxShadow = '-8px 0 32px rgba(59, 130, 246, 0.4)';
+      
+      // 箭頭旋轉效果
+      const beforeElement = this.slideTrigger.querySelector('::before') || this.slideTrigger;
+      if (beforeElement.style) {
+        beforeElement.style.transform = 'rotate(-180deg) scale(1.2)';
+      }
       
       // 立即展開，提升響應速度
       slideTimeout = setTimeout(() => {
@@ -2507,6 +2515,14 @@ class EagleTOC {
       // 重置觸發條樣式
       this.slideTrigger.style.transform = 'translateY(-50%)';
       this.slideTrigger.style.width = '20px';
+      this.slideTrigger.style.background = 'linear-gradient(135deg, rgba(59, 130, 246, 0.8) 0%, rgba(99, 102, 241, 0.8) 50%, rgba(139, 92, 246, 0.8) 100%)';
+      this.slideTrigger.style.boxShadow = '-4px 0 16px rgba(59, 130, 246, 0.3)';
+      
+      // 重置箭頭
+      const beforeElement = this.slideTrigger.querySelector('::before') || this.slideTrigger;
+      if (beforeElement.style) {
+        beforeElement.style.transform = 'rotate(0deg) scale(1)';
+      }
     });
     
     // 點擊事件
