@@ -1,7 +1,7 @@
 /* Plan B: 動畫滑動展開式設計 */
 .eagle-toc-panel {
   position: fixed;
-  top: 20%;
+  top: 50%;
   right: -380px; /* 初始完全隱藏 */
   transform: translateY(-50%) scale(0.9);
   width: 400px;
@@ -29,7 +29,7 @@
 /* Plan B: 滑動觸發條 */
 .eagle-toc-slide-trigger {
   position: fixed;
-  top: 20%;
+  top: 50%;
   right: 0;
   transform: translateY(-50%);
   width: 8px;
