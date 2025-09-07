@@ -217,9 +217,18 @@ class EagleTOC {
   }
 
   createTOCPanel() {
+    // Plan B: 創建主面板
     this.tocPanel = document.createElement('div');
     this.tocPanel.id = 'eagle-toc-panel';
-    this.tocPanel.className = 'eagle-toc-panel';
+    this.tocPanel.className = 'eagle-toc-panel'; // 默認隱藏狀態
+    
+    // Plan B: 創建滑動觸發條
+    this.slideTrigger = document.createElement('div');
+    this.slideTrigger.className = 'eagle-toc-slide-trigger';
+    this.slideTrigger.title = 'TOC 滑動展開 - 點擊、滑動或滑鼠操作';
+    this.isExpanded = false;
+    this.isPinned = false;
+    this.isAnimating = false;
     this.tocPanel.innerHTML = `
       <div class="eagle-toc-header">
         <div class="eagle-toc-controls">
@@ -337,7 +346,10 @@ class EagleTOC {
     this.applyContentFontSize();
     
     document.body.appendChild(this.tocPanel);
-    this.tocPanel.style.display = 'none';
+    document.body.appendChild(this.slideTrigger);
+    
+    // Plan B: 初始狀態設置
+    this.tocPanel.style.display = 'block'; // 面板始終存在，通過 CSS 控制位置
     
     // Create settings modal
     this.createSettingsModal();
@@ -1089,6 +1101,9 @@ class EagleTOC {
 
     // 白名單相關事件監聽器
     this.setupWhitelistEventListeners();
+    
+    // Plan B: 設置滑動事件監聽
+    this.setupSlideEvents();
 
     document.addEventListener('click', (e) => {
       if (!this.tocPanel.contains(e.target)) {
@@ -2208,20 +2223,60 @@ class EagleTOC {
     cancelBtn.style.display = 'none';
   }
 
+  // Plan B: 滑動展開 TOC 面板
   show() {
-    this.tocPanel.style.display = 'block';
+    if (this.isAnimating) return;
+    
     this.isVisible = true;
-    requestAnimationFrame(() => {
-      this.tocPanel.classList.add('eagle-toc-visible');
-    });
+    this.isExpanded = true;
+    this.isAnimating = true;
+    
+    // 移除之前的動畫 class
+    this.tocPanel.classList.remove('eagle-toc-slide-out');
+    
+    // 開始滑入動畫
+    this.tocPanel.classList.add('eagle-toc-slide-in', 'eagle-toc-visible', 'eagle-toc-expanded');
+    
+    // 動畫結束後清理 class
+    setTimeout(() => {
+      this.tocPanel.classList.remove('eagle-toc-slide-in');
+      this.isAnimating = false;
+    }, 600);
+    
+    // 隱藏滑動條
+    if (this.slideTrigger) {
+      this.slideTrigger.style.opacity = '0';
+      this.slideTrigger.style.pointerEvents = 'none';
+    }
   }
 
+  // Plan B: 滑動隱藏 TOC 面板
   hide() {
-    this.tocPanel.classList.remove('eagle-toc-visible');
+    if (this.isPinned || this.isAnimating) {
+      return; // 如果固定或正在動畫，不能隱藏
+    }
+    
     this.isVisible = false;
+    this.isExpanded = false;
+    this.isAnimating = true;
+    
+    // 移除之前的動畫 class
+    this.tocPanel.classList.remove('eagle-toc-slide-in', 'eagle-toc-expanded');
+    
+    // 開始滑出動畫
+    this.tocPanel.classList.add('eagle-toc-slide-out');
+    
+    // 動畫結束後清理 class
     setTimeout(() => {
-      this.tocPanel.style.display = 'none';
-    }, 300);
+      this.tocPanel.classList.remove('eagle-toc-slide-out', 'eagle-toc-visible');
+      this.isAnimating = false;
+      
+      // 顯示滑動條
+      if (this.slideTrigger) {
+        this.slideTrigger.style.opacity = '1';
+        this.slideTrigger.style.pointerEvents = 'auto';
+      }
+    }, 400);
     
     // 重置自動顯示標記
     if (this.wasAutoShown) {
@@ -2229,12 +2284,32 @@ class EagleTOC {
     }
   }
 
+  // Plan B: 切換滑動展開/隱藏狀態
   toggle() {
-    if (this.isVisible) {
+    if (this.isAnimating) return;
+    
+    if (this.isExpanded) {
       this.hide();
     } else {
       this.show();
     }
+  }
+  
+  // Plan B: 切換pin狀態和滑動動畫
+  togglePin() {
+    this.isPinned = !this.isPinned;
+    
+    if (this.isPinned) {
+      this.show();
+      this.tocPanel.classList.add('eagle-toc-pinned');
+      this.showNotification('TOC 已固定顯示 - 滑動模式', 2000, 'pin-action');
+    } else {
+      this.tocPanel.classList.remove('eagle-toc-pinned');
+      this.showNotification('TOC 已取消固定', 2000, 'pin-action');
+    }
+    
+    // 更新菜單的pin按鈕狀態
+    this.updatePinButtonState();
   }
 
 
@@ -2386,6 +2461,119 @@ class EagleTOC {
       clearTimeout(timeout);
       timeout = setTimeout(later, wait);
     };
+  }
+  
+  // Plan B: 設置滑動觸發條事件監聽
+  setupSlideEvents() {
+    if (!this.slideTrigger) return;
+    
+    let slideTimeout = null;
+    let isDragging = false;
+    let dragStartY = 0;
+    let dragCurrentY = 0;
+    
+    // 滑鼠懸停事件
+    this.slideTrigger.addEventListener('mouseenter', () => {
+      if (this.isPinned || this.isExpanded || this.isAnimating) return;
+      
+      // 清除之前的延遲
+      if (slideTimeout) {
+        clearTimeout(slideTimeout);
+      }
+      
+      // 加入懸停效果
+      this.slideTrigger.style.transform = 'translateY(-50%) translateX(-8px)';
+      this.slideTrigger.style.width = '25px';
+      
+      // 延遲展開，避免意外觸發
+      slideTimeout = setTimeout(() => {
+        this.show();
+      }, 300);
+    });
+    
+    // 滑鼠離開事件
+    this.slideTrigger.addEventListener('mouseleave', () => {
+      if (slideTimeout) {
+        clearTimeout(slideTimeout);
+        slideTimeout = null;
+      }
+      
+      // 重置觸發條樣式
+      this.slideTrigger.style.transform = 'translateY(-50%)';
+      this.slideTrigger.style.width = '8px';
+    });
+    
+    // 點擊事件
+    this.slideTrigger.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (!isDragging) {
+        this.show();
+      }
+    });
+    
+    // 雙擊固定
+    this.slideTrigger.addEventListener('dblclick', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      this.togglePin();
+    });
+    
+    // 滑動手勢支持
+    this.slideTrigger.addEventListener('mousedown', (e) => {
+      if (e.button !== 0) return; // 只處理左鍵
+      e.preventDefault();
+      
+      isDragging = true;
+      dragStartY = e.clientY;
+      this.slideTrigger.style.cursor = 'grabbing';
+    });
+    
+    document.addEventListener('mousemove', (e) => {
+      if (!isDragging) return;
+      
+      dragCurrentY = e.clientY;
+      const deltaY = dragCurrentY - dragStartY;
+      
+      // 如果向左拖拽足夠的距離，展開面板
+      if (Math.abs(deltaY) > 20) {
+        this.show();
+        isDragging = false;
+        this.slideTrigger.style.cursor = 'pointer';
+      }
+    });
+    
+    document.addEventListener('mouseup', () => {
+      if (isDragging) {
+        isDragging = false;
+        this.slideTrigger.style.cursor = 'pointer';
+      }
+    });
+    
+    // 面板離開時隱藏（如果未固定）
+    this.tocPanel.addEventListener('mouseleave', () => {
+      if (!this.isPinned && this.isExpanded && !this.isAnimating) {
+        // 延遲隱藏，給用戶時間操作
+        setTimeout(() => {
+          if (!this.tocPanel.matches(':hover') && !this.isPinned) {
+            this.hide();
+          }
+        }, 800); // Plan B 的延遲時間較長
+      }
+    });
+    
+    // 键盤快捷鍵支持
+    document.addEventListener('keydown', (e) => {
+      // Ctrl+Shift+S 快速展開滑動面板
+      if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 's') {
+        e.preventDefault();
+        this.toggle();
+      }
+      // 雙擊 ESC 快速隱藏
+      if (e.key === 'Escape' && this.isExpanded && !this.isPinned) {
+        this.hide();
+      }
+    });
   }
 
   createSearchModal() {
