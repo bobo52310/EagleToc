@@ -1155,24 +1155,38 @@ class EagleTOC {
   collapsePanel() {
     this.isCollapsed = true;
     this.tocPanel.classList.add('eagle-toc-collapsed');
-    // Clear any dynamic height that might interfere with collapse
+    
+    // Clear any animation classes that might interfere
+    this.tocPanel.classList.remove('eagle-toc-slide-in', 'eagle-toc-slide-out');
+    
+    // Clear any dynamic styles that might interfere with collapse
     this.tocPanel.style.removeProperty('height');
-    // Ensure position stays centered when collapsing
     this.tocPanel.style.removeProperty('top');
     this.tocPanel.style.removeProperty('left');
+    this.tocPanel.style.removeProperty('transform');
+    
+    // Reset to CSS-controlled positioning
     this.tocPanel.style.right = this.isExpanded ? '0' : '-380px';
   }
 
   expandPanel() {
     this.isCollapsed = false;
     this.tocPanel.classList.remove('eagle-toc-collapsed');
+    
+    // Clear any animation classes that might interfere
+    this.tocPanel.classList.remove('eagle-toc-slide-in', 'eagle-toc-slide-out');
+    
     // Restore default height behavior when expanded
     if (!this.tocPanel.style.height) {
       this.tocPanel.style.removeProperty('height');
     }
-    // Ensure position stays centered when expanding
+    
+    // Clear any dynamic styles and reset positioning
     this.tocPanel.style.removeProperty('top');
     this.tocPanel.style.removeProperty('left');
+    this.tocPanel.style.removeProperty('transform');
+    
+    // Reset to CSS-controlled positioning
     this.tocPanel.style.right = this.isExpanded ? '0' : '-380px';
   }
 
