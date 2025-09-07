@@ -1157,6 +1157,10 @@ class EagleTOC {
     this.tocPanel.classList.add('eagle-toc-collapsed');
     // Clear any dynamic height that might interfere with collapse
     this.tocPanel.style.removeProperty('height');
+    // Ensure position stays centered when collapsing
+    this.tocPanel.style.removeProperty('top');
+    this.tocPanel.style.removeProperty('left');
+    this.tocPanel.style.right = this.isExpanded ? '0' : '-380px';
   }
 
   expandPanel() {
@@ -1166,6 +1170,10 @@ class EagleTOC {
     if (!this.tocPanel.style.height) {
       this.tocPanel.style.removeProperty('height');
     }
+    // Ensure position stays centered when expanding
+    this.tocPanel.style.removeProperty('top');
+    this.tocPanel.style.removeProperty('left');
+    this.tocPanel.style.right = this.isExpanded ? '0' : '-380px';
   }
 
 
