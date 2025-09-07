@@ -2483,12 +2483,12 @@ class EagleTOC {
       
       // 加入懸停效果
       this.slideTrigger.style.transform = 'translateY(-50%) translateX(-8px)';
-      this.slideTrigger.style.width = '25px';
+      this.slideTrigger.style.width = '40px';
       
-      // 延遲展開，避免意外觸發
+      // 立即展開，提升響應速度
       slideTimeout = setTimeout(() => {
         this.show();
-      }, 300);
+      }, 50);
     });
     
     // 滑鼠離開事件

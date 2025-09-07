@@ -32,7 +32,7 @@
   top: 50%;
   right: 0;
   transform: translateY(-50%);
-  width: 8px;
+  width: 20px;
   height: 200px;
   background: linear-gradient(135deg, 
     rgba(59, 130, 246, 0.8) 0%, 
@@ -58,7 +58,7 @@
 }
 
 .eagle-toc-slide-trigger:hover {
-  width: 20px;
+  width: 32px;
   background: linear-gradient(135deg, 
     rgba(59, 130, 246, 1) 0%, 
     rgba(99, 102, 241, 1) 50%,
