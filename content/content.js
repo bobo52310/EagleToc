@@ -5,6 +5,7 @@ class EagleTOC {
     this.isVisible = false;
     this.wasAutoShown = false; // 標記是否為自動顯示
     this.autoShowTimeout = null; // 儲存自動顯示的 setTimeout ID
+    this.autoHideTimeout = null; // 儲存自動隱藏的 setTimeout ID
     this.isCollapsed = false;
     this.currentHeading = null;
     this.intersectionObserver = null;
@@ -1607,6 +1608,9 @@ class EagleTOC {
       this.wasAutoShown = true; // 標記為自動顯示
       this.show();
       this.showAutoDisplayNotification();
+      
+      // 設定 3 秒後自動隱藏
+      this.scheduleAutoHide();
     }
   }
 
@@ -1621,6 +1625,44 @@ class EagleTOC {
     return enabledBySettings;
   }
 
+
+  // 安排自動隱藏 (3 秒後)
+  scheduleAutoHide() {
+    console.log('⏰ Scheduling auto hide in 3 seconds');
+    
+    // 清除之前的自動隱藏計時器
+    if (this.autoHideTimeout) {
+      clearTimeout(this.autoHideTimeout);
+      this.autoHideTimeout = null;
+    }
+    
+    this.autoHideTimeout = setTimeout(() => {
+      // 詳細調試信息
+      const panelHovered = this.tocPanel?.matches(':hover') || false;
+      const triggerHovered = this.slideTrigger?.matches(':hover') || false;
+      
+      console.log(`🔍 Auto hide check: visible=${this.isVisible}, panelHovered=${panelHovered}, triggerHovered=${triggerHovered}`);
+      
+      // 只有在面板仍然可見且沒有被 hover 的情況下才隱藏
+      if (this.isVisible && !panelHovered && !triggerHovered) {
+        console.log('🔄 Auto hiding panel after 3 seconds');
+        this.hide();
+        this.wasAutoShown = false;
+      } else {
+        console.log(`❌ Auto hide cancelled - visible: ${this.isVisible}, panelHovered: ${panelHovered}, triggerHovered: ${triggerHovered}`);
+      }
+      this.autoHideTimeout = null;
+    }, 3000);
+  }
+
+  // 取消自動隱藏 (當用戶 hover 時)
+  cancelAutoHide() {
+    if (this.autoHideTimeout) {
+      console.log('🛑 Cancelling auto hide due to user interaction');
+      clearTimeout(this.autoHideTimeout);
+      this.autoHideTimeout = null;
+    }
+  }
 
   showAutoDisplayNotification() {
     // 只有在用戶首次在此域名看到自動顯示時才顯示通知
@@ -2543,6 +2585,9 @@ class EagleTOC {
       if (this.isPinned || this.isExpanded || this.isAnimating) return;
       if (slideTimeout) clearTimeout(slideTimeout);
       slideTimeout = setTimeout(() => this.show(), 0);
+      
+      // 取消自動隱藏（如果有的話）
+      this.cancelAutoHide();
     });
     
     // 滑鼠離開事件（不做任何視覺變更）
@@ -2598,6 +2643,11 @@ class EagleTOC {
         isDragging = false;
         this.slideTrigger.style.cursor = 'pointer';
       }
+    });
+    
+    // 面板進入時取消自動隱藏
+    this.tocPanel.addEventListener('mouseenter', () => {
+      this.cancelAutoHide();
     });
     
     // 面板離開時隱藏（如果未固定）
