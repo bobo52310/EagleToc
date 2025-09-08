@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EagleToc Animation Comparison - 動畫效果比較</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 20px 0;
+            text-align: center;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .plan-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .plan-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .plan-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-color), var(--accent-light));
+        }
+
+        .plan-a { --accent-color: #4CAF50; --accent-light: #81C784; }
+        .plan-b { --accent-color: #2196F3; --accent-light: #64B5F6; }
+        .plan-c { --accent-color: #FF9800; --accent-light: #FFB74D; }
+
+        .plan-title {
+            font-size: 1.8em;
+            margin-bottom: 10px;
+            color: var(--accent-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .plan-subtitle {
+            color: #666;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+
+        .demo-area {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px 0;
+            position: relative;
+            min-height: 200px;
+            border: 2px dashed #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .demo-panel {
+            width: 300px;
+            height: 150px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1em;
+            color: #666;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .demo-panel:hover {
+            background: #f8f9fa;
+        }
+
+        /* Plan A: Smooth Slide Animation */
+        @keyframes slideInSmooth {
+            0% {
+                transform: translateX(100px);
+                opacity: 0;
+            }
+            100% {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOutSmooth {
+            0% {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translateX(100px);
+                opacity: 0;
+            }
+        }
+
+        .plan-a .demo-panel.animate-in {
+            animation: slideInSmooth 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+        }
+
+        .plan-a .demo-panel.animate-out {
+            animation: slideOutSmooth 0.3s cubic-bezier(0.55, 0.06, 0.68, 0.19) forwards;
+        }
+
+        /* Plan B: Elegant Fade Animation */
+        @keyframes fadeInElegant {
+            0% {
+                transform: scale(0.95);
+                opacity: 0;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeOutElegant {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(0.95);
+                opacity: 0;
+            }
+        }
+
+        .plan-b .demo-panel.animate-in {
+            animation: fadeInElegant 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        .plan-b .demo-panel.animate-out {
+            animation: fadeOutElegant 0.4s cubic-bezier(0.4, 0, 1, 1) forwards;
+        }
+
+        /* Plan C: Material Expand Animation */
+        @keyframes materialExpandIn {
+            0% {
+                transform: translateX(50px) scale(0.9);
+                opacity: 0;
+                box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+            }
+            60% {
+                transform: translateX(5px) scale(0.98);
+                opacity: 0.8;
+                box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+            }
+            100% {
+                transform: translateX(0) scale(1);
+                opacity: 1;
+                box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+            }
+        }
+
+        @keyframes materialExpandOut {
+            0% {
+                transform: translateX(0) scale(1);
+                opacity: 1;
+                box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+            }
+            40% {
+                transform: translateX(5px) scale(0.98);
+                opacity: 0.6;
+                box-shadow: 0 6px 12px rgba(0, 0, 0, 0.12);
+            }
+            100% {
+                transform: translateX(50px) scale(0.9);
+                opacity: 0;
+                box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+            }
+        }
+
+        .plan-c .demo-panel.animate-in {
+            animation: materialExpandIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        .plan-c .demo-panel.animate-out {
+            animation: materialExpandOut 0.5s cubic-bezier(0.4, 0, 1, 1) forwards;
+        }
+
+        .controls {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .btn {
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            margin: 0 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn:hover {
+            background: var(--accent-light);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .features {
+            list-style: none;
+            margin: 20px 0;
+        }
+
+        .features li {
+            padding: 8px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .features li::before {
+            content: '✓';
+            color: var(--accent-color);
+            font-weight: bold;
+            width: 20px;
+            text-align: center;
+        }
+
+        .technical-specs {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .spec-title {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .spec-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .spec-item:last-child {
+            border-bottom: none;
+        }
+
+        .global-controls {
+            text-align: center;
+            margin-bottom: 40px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .global-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 1.1em;
+            margin: 0 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .global-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+        }
+
+        .emoji {
+            font-size: 1.2em;
+            margin-right: 5px;
+        }
+
+        .summary {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            margin-top: 40px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .summary h2 {
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .summary-item {
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            border-left: 4px solid var(--accent-color);
+        }
+
+        .worktree-info {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .worktree-info h3 {
+            color: #333;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .worktree-links {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .worktree-link {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            text-decoration: none;
+            color: #333;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .worktree-link:hover {
+            border-color: var(--accent-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .worktree-link strong {
+            color: var(--accent-color);
+        }
+
+        @media (max-width: 768px) {
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .demo-panel {
+                width: 250px;
+                height: 120px;
+            }
+            
+            .global-btn {
+                padding: 12px 20px;
+                font-size: 1em;
+                margin: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🦅 EagleToc Animation Comparison</h1>
+        <p>三種右側選單動畫效果比較 - Professional Animation Alternatives to Bounce Effects</p>
+    </div>
+
+    <div class="container">
+        <div class="worktree-info">
+            <h3>🌿 Git Worktree Implementations</h3>
+            <p>每種動畫效果都在獨立的 git worktree 中實現，可以分別測試和比較：</p>
+            <div class="worktree-links">
+                <a href="../smart-toc-planA/test.html" class="worktree-link plan-a" target="_blank">
+                    <strong>Plan A</strong><br>
+                    Smooth Slide Animation<br>
+                    <small>../smart-toc-planA/</small>
+                </a>
+                <a href="../smart-toc-planB/test.html" class="worktree-link plan-b" target="_blank">
+                    <strong>Plan B</strong><br>
+                    Elegant Fade Animation<br>
+                    <small>../smart-toc-planB/</small>
+                </a>
+                <a href="../smart-toc-planC/test.html" class="worktree-link plan-c" target="_blank">
+                    <strong>Plan C</strong><br>
+                    Material Expand Animation<br>
+                    <small>../smart-toc-planC/</small>
+                </a>
+            </div>
+        </div>
+
+        <div class="global-controls">
+            <h3 style="margin-bottom: 15px;">🎮 全域控制 Global Controls</h3>
+            <button class="global-btn" onclick="animateAll('in')">▶️ 播放全部動畫</button>
+            <button class="global-btn" onclick="animateAll('out')">⏹️ 隱藏全部動畫</button>
+            <button class="global-btn" onclick="resetAll()">🔄 重置全部</button>
+        </div>
+
+        <div class="comparison-grid">
+            <!-- Plan A: Smooth Slide -->
+            <div class="plan-card plan-a">
+                <h2 class="plan-title"><span class="emoji">🏃‍♂️</span>Plan A - Smooth Slide</h2>
+                <p class="plan-subtitle">平滑滑動 - 專業穩重的水平滑動效果</p>
+                
+                <div class="demo-area">
+                    <div class="demo-panel" id="demo-a">
+                        點擊測試動畫效果
+                    </div>
+                </div>
+
+                <div class="controls">
+                    <button class="btn" onclick="animatePanel('a', 'in')">滑入 Slide In</button>
+                    <button class="btn" onclick="animatePanel('a', 'out')">滑出 Slide Out</button>
+                </div>
+
+                <ul class="features">
+                    <li>純粹水平滑動，無彈跳效果</li>
+                    <li>專業的 ease-in-out 時間函數</li>
+                    <li>簡潔俐落，適合商業應用</li>
+                    <li>快速響應 (0.4s 入場 / 0.3s 離場)</li>
+                    <li>無旋轉和縮放干擾</li>
+                </ul>
+
+                <div class="technical-specs">
+                    <div class="spec-title">🔧 技術規格</div>
+                    <div class="spec-item"><span>動畫時長</span><span>0.4s / 0.3s</span></div>
+                    <div class="spec-item"><span>時間函數</span><span>cubic-bezier</span></div>
+                    <div class="spec-item"><span>變換類型</span><span>translateX + opacity</span></div>
+                    <div class="spec-item"><span>性能影響</span><span>極低</span></div>
+                    <div class="spec-item"><span>瀏覽器支援</span><span>所有現代瀏覽器</span></div>
+                    <div class="spec-item"><span>CSS Keyframes</span><span>slideInSmooth / slideOutSmooth</span></div>
+                </div>
+            </div>
+
+            <!-- Plan B: Elegant Fade -->
+            <div class="plan-card plan-b">
+                <h2 class="plan-title"><span class="emoji">✨</span>Plan B - Elegant Fade</h2>
+                <p class="plan-subtitle">優雅淡入 - 精緻的透明度漸變效果</p>
+                
+                <div class="demo-area">
+                    <div class="demo-panel" id="demo-b">
+                        點擊測試動畫效果
+                    </div>
+                </div>
+
+                <div class="controls">
+                    <button class="btn" onclick="animatePanel('b', 'in')">淡入 Fade In</button>
+                    <button class="btn" onclick="animatePanel('b', 'out')">淡出 Fade Out</button>
+                </div>
+
+                <ul class="features">
+                    <li>優雅的透明度漸變效果</li>
+                    <li>微妙的縮放增加層次感</li>
+                    <li>無水平移動，保持位置穩定</li>
+                    <li>Material Design 啟發的時機</li>
+                    <li>適合內容豐富的界面</li>
+                </ul>
+
+                <div class="technical-specs">
+                    <div class="spec-title">🔧 技術規格</div>
+                    <div class="spec-item"><span>動畫時長</span><span>0.5s / 0.4s</span></div>
+                    <div class="spec-item"><span>時間函數</span><span>Material curves</span></div>
+                    <div class="spec-item"><span>變換類型</span><span>scale + opacity</span></div>
+                    <div class="spec-item"><span>性能影響</span><span>低</span></div>
+                    <div class="spec-item"><span>視覺衝擊</span><span>柔和優雅</span></div>
+                    <div class="spec-item"><span>CSS Keyframes</span><span>fadeInElegant / fadeOutElegant</span></div>
+                </div>
+            </div>
+
+            <!-- Plan C: Material Expand -->
+            <div class="plan-card plan-c">
+                <h2 class="plan-title"><span class="emoji">🎯</span>Plan C - Material Expand</h2>
+                <p class="plan-subtitle">質感展開 - Material Design 風格的立體效果</p>
+                
+                <div class="demo-area">
+                    <div class="demo-panel" id="demo-c">
+                        點擊測試動畫效果
+                    </div>
+                </div>
+
+                <div class="controls">
+                    <button class="btn" onclick="animatePanel('c', 'in')">展開 Expand</button>
+                    <button class="btn" onclick="animatePanel('c', 'out')">收合 Collapse</button>
+                </div>
+
+                <ul class="features">
+                    <li>動態陰影模擬立體提升效果</li>
+                    <li>多階段動畫提供豐富層次</li>
+                    <li>Material Design 標準動作</li>
+                    <li>結合滑動、縮放與陰影</li>
+                    <li>適合現代化設計語言</li>
+                </ul>
+
+                <div class="technical-specs">
+                    <div class="spec-title">🔧 技術規格</div>
+                    <div class="spec-item"><span>動畫時長</span><span>0.6s / 0.5s</span></div>
+                    <div class="spec-item"><span>時間函數</span><span>Material motion</span></div>
+                    <div class="spec-item"><span>變換類型</span><span>translate + scale + shadow</span></div>
+                    <div class="spec-item"><span>性能影響</span><span>中等</span></div>
+                    <div class="spec-item"><span>視覺層次</span><span>豐富立體</span></div>
+                    <div class="spec-item"><span>CSS Keyframes</span><span>materialExpandIn / materialExpandOut</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="summary">
+            <h2>📊 總結比較 Summary Comparison</h2>
+            <div class="summary-grid">
+                <div class="summary-item plan-a">
+                    <h3><span class="emoji">🏃‍♂️</span>Plan A - 適合場景</h3>
+                    <p><strong>最佳選擇：</strong><br>
+                    • 企業級應用與商業網站<br>
+                    • 需要快速響應的界面<br>
+                    • 重視性能優化的場合<br>
+                    • 簡約現代化設計風格<br>
+                    • 追求專業穩重的品牌形象</p>
+                </div>
+                <div class="summary-item plan-b">
+                    <h3><span class="emoji">✨</span>Plan B - 適合場景</h3>
+                    <p><strong>最佳選擇：</strong><br>
+                    • 內容導向的網站與部落格<br>
+                    • 需要優雅過渡效果的場合<br>
+                    • 中高端產品展示頁面<br>
+                    • 注重視覺質感與細節<br>
+                    • 適合較為靜態的內容呈現</p>
+                </div>
+                <div class="summary-item plan-c">
+                    <h3><span class="emoji">🎯</span>Plan C - 適合場景</h3>
+                    <p><strong>最佳選擇：</strong><br>
+                    • 現代化設計系統與 Web App<br>
+                    • 遵循 Material Design 的產品<br>
+                    • 需要視覺層次感的複雜界面<br>
+                    • 品牌形象重要的科技產品<br>
+                    • 追求創新體驗的互動應用</p>
+                </div>
+            </div>
+
+            <div style="margin-top: 30px; padding: 20px; background: #f0f8ff; border-radius: 12px; border-left: 4px solid #2196F3;">
+                <h4>🎬 動畫設計理念</h4>
+                <p>本次重新設計完全摒棄了原有的彈跳效果，改採用更加專業和優雅的動畫方案：</p>
+                <ul style="margin-top: 10px; margin-left: 20px;">
+                    <li><strong>Plan A</strong> 專注於純粹的功能性，提供最直接有效的視覺回饋</li>
+                    <li><strong>Plan B</strong> 強調視覺美感，透過微妙的變化創造溫和的使用體驗</li>
+                    <li><strong>Plan C</strong> 結合現代設計趨勢，利用立體效果增強空間感知</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function animatePanel(plan, direction) {
+            const panel = document.getElementById(`demo-${plan}`);
+            panel.classList.remove('animate-in', 'animate-out');
+            
+            setTimeout(() => {
+                panel.classList.add(`animate-${direction}`);
+            }, 50);
+            
+            // Remove class after animation completes
+            setTimeout(() => {
+                panel.classList.remove('animate-in', 'animate-out');
+            }, direction === 'in' ? 
+                (plan === 'a' ? 400 : plan === 'b' ? 500 : 600) + 100 :
+                (plan === 'a' ? 300 : plan === 'b' ? 400 : 500) + 100
+            );
+        }
+
+        function animateAll(direction) {
+            ['a', 'b', 'c'].forEach((plan, index) => {
+                setTimeout(() => {
+                    animatePanel(plan, direction);
+                }, index * 200);
+            });
+        }
+
+        function resetAll() {
+            ['a', 'b', 'c'].forEach(plan => {
+                const panel = document.getElementById(`demo-${plan}`);
+                panel.classList.remove('animate-in', 'animate-out');
+            });
+        }
+
+        // Add click handlers to demo panels
+        document.addEventListener('DOMContentLoaded', function() {
+            ['a', 'b', 'c'].forEach(plan => {
+                const panel = document.getElementById(`demo-${plan}`);
+                panel.addEventListener('click', () => {
+                    animatePanel(plan, 'in');
+                    setTimeout(() => {
+                        animatePanel(plan, 'out');
+                    }, plan === 'a' ? 600 : plan === 'b' ? 700 : 800);
+                });
+            });
+        });
+
+        // Auto demo on page load
+        setTimeout(() => {
+            animateAll('in');
+        }, 1000);
+    </script>
+</body>
+</html>
