@@ -10,6 +10,7 @@ class EagleTOC {
     this.intersectionObserver = null;
     this.isDragging = false;
     this.isResizing = false;
+    this.isManuallyPositioned = false;
     this.dragOffset = { x: 0, y: 0 };
     this.altPressed = false;
     this.glanceMode = false;
@@ -238,9 +239,14 @@ class EagleTOC {
     this.tocPanel.innerHTML = `
       <div class="eagle-toc-header">
         <div class="eagle-toc-controls">
-          <button class="eagle-toc-toggle" title="收合/展開面板">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="12" height="12">
-              <path d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z" fill="currentColor"/>
+          <button class="eagle-toc-toggle" title="固定" aria-pressed="false">
+            <!-- Unpinned icon -->
+            <svg class="icon-unpinned" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="12" height="12" aria-hidden="true">
+              <path fill="currentColor" d="M4.146 14.354a.5.5 0 0 0 .708 0l3.536-3.536 2.121 2.122a.5.5 0 0 0 .708-.708l-2.122-2.121 2.829-2.829c.63-.63.184-1.707-.707-1.707H9.5L6.354 1.146a.5.5 0 1 0-.708.708L8.293 4.5H6.5c-.89 0-1.337 1.077-.707 1.707l2.829 2.829-3.536 3.536a.5.5 0 0 0 0 .708z"/>
+            </svg>
+            <!-- Pinned icon (same glyph, rotated for clarity) -->
+            <svg class="icon-pinned" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="12" height="12" aria-hidden="true">
+              <path fill="currentColor" d="M4.146 14.354a.5.5 0 0 0 .708 0l3.536-3.536 2.121 2.122a.5.5 0 0 0 .708-.708l-2.122-2.121 2.829-2.829c.63-.63.184-1.707-.707-1.707H9.5L6.354 1.146a.5.5 0 1 0-.708.708L8.293 4.5H6.5c-.89 0-1.337 1.077-.707 1.707l2.829 2.829-3.536 3.536a.5.5 0 0 0 0 .708z"/>
             </svg>
           </button>
           <div class="eagle-toc-depth-controls">
@@ -969,14 +975,10 @@ class EagleTOC {
       this.hide();
     });
 
-    // Toggle 按鈕（收合/展開）
+    // Toggle 按鈕（改為：固定/取消固定）
     const toggleBtn = this.tocPanel.querySelector('.eagle-toc-toggle');
     toggleBtn.addEventListener('click', () => {
-      if (this.isCollapsed) {
-        this.expandPanel();
-      } else {
-        this.collapsePanel();
-      }
+      this.togglePinnedState();
     });
 
     // 更多選單按鈕
@@ -1159,14 +1161,11 @@ class EagleTOC {
     // Clear any animation classes that might interfere
     this.tocPanel.classList.remove('eagle-toc-slide-in', 'eagle-toc-slide-out');
     
-    // Clear any dynamic styles that might interfere with collapse
+    // Only adjust height/content visibility; preserve current position (top/left/right/transform)
     this.tocPanel.style.removeProperty('height');
-    this.tocPanel.style.removeProperty('top');
-    this.tocPanel.style.removeProperty('left');
-    this.tocPanel.style.removeProperty('transform');
-    
-    // Reset to CSS-controlled positioning
-    this.tocPanel.style.right = this.isExpanded ? '0' : '-380px';
+    if (this.isManuallyPositioned) {
+      this.tocPanel.style.transform = 'none';
+    }
   }
 
   expandPanel() {
@@ -1180,14 +1179,10 @@ class EagleTOC {
     if (!this.tocPanel.style.height) {
       this.tocPanel.style.removeProperty('height');
     }
-    
-    // Clear any dynamic styles and reset positioning
-    this.tocPanel.style.removeProperty('top');
-    this.tocPanel.style.removeProperty('left');
-    this.tocPanel.style.removeProperty('transform');
-    
-    // Reset to CSS-controlled positioning
-    this.tocPanel.style.right = this.isExpanded ? '0' : '-380px';
+    // Preserve position; do not modify top/left/right/transform here
+    if (this.isManuallyPositioned) {
+      this.tocPanel.style.transform = 'none';
+    }
   }
 
 
@@ -2259,17 +2254,25 @@ class EagleTOC {
     this.isExpanded = true;
     this.isAnimating = true;
     
-    // 移除之前的動畫 class
-    this.tocPanel.classList.remove('eagle-toc-slide-out');
-    
-    // 開始滑入動畫
-    this.tocPanel.classList.add('eagle-toc-slide-in', 'eagle-toc-visible', 'eagle-toc-expanded');
-    
-    // 動畫結束後清理 class
-    setTimeout(() => {
-      this.tocPanel.classList.remove('eagle-toc-slide-in');
-      this.isAnimating = false;
-    }, 600);
+    // 手動定位時避免使用會更改 transform 的滑入動畫
+    if (this.isManuallyPositioned) {
+      this.tocPanel.classList.remove('eagle-toc-slide-out', 'eagle-toc-slide-in');
+      this.tocPanel.classList.add('eagle-toc-visible');
+      this.tocPanel.style.transform = 'none';
+      setTimeout(() => { this.isAnimating = false; }, 0);
+    } else {
+      // 移除之前的動畫 class
+      this.tocPanel.classList.remove('eagle-toc-slide-out');
+      
+      // 開始滑入動畫
+      this.tocPanel.classList.add('eagle-toc-slide-in', 'eagle-toc-visible', 'eagle-toc-expanded');
+      
+      // 動畫結束後清理 class
+      setTimeout(() => {
+        this.tocPanel.classList.remove('eagle-toc-slide-in');
+        this.isAnimating = false;
+      }, 600);
+    }
     
     // 隱藏滑動條
     if (this.slideTrigger) {
@@ -2288,23 +2291,33 @@ class EagleTOC {
     this.isExpanded = false;
     this.isAnimating = true;
     
-    // 移除之前的動畫 class
-    this.tocPanel.classList.remove('eagle-toc-slide-in', 'eagle-toc-expanded');
-    
-    // 開始滑出動畫
-    this.tocPanel.classList.add('eagle-toc-slide-out');
-    
-    // 動畫結束後清理 class
-    setTimeout(() => {
-      this.tocPanel.classList.remove('eagle-toc-slide-out', 'eagle-toc-visible');
+    if (this.isManuallyPositioned) {
+      // 手動定位：淡出，不動 transform；立即移除可互動狀態
+      this.tocPanel.classList.remove('eagle-toc-slide-in', 'eagle-toc-expanded', 'eagle-toc-visible');
       this.isAnimating = false;
-      
-      // 顯示滑動條
       if (this.slideTrigger) {
         this.slideTrigger.style.opacity = '1';
         this.slideTrigger.style.pointerEvents = 'auto';
       }
-    }, 400);
+    } else {
+      // 移除之前的動畫 class
+      this.tocPanel.classList.remove('eagle-toc-slide-in', 'eagle-toc-expanded', 'eagle-toc-visible');
+      
+      // 開始滑出動畫
+      this.tocPanel.classList.add('eagle-toc-slide-out');
+      
+      // 動畫結束後清理 class
+      setTimeout(() => {
+        this.tocPanel.classList.remove('eagle-toc-slide-out');
+        this.isAnimating = false;
+        
+        // 顯示滑動條
+        if (this.slideTrigger) {
+          this.slideTrigger.style.opacity = '1';
+          this.slideTrigger.style.pointerEvents = 'auto';
+        }
+      }, 400);
+    }
     
     // 重置自動顯示標記
     if (this.wasAutoShown) {
@@ -2323,6 +2336,24 @@ class EagleTOC {
     }
   }
   
+  // Header 按鈕專用：只切換「固定/取消固定」狀態，不影響自動開啟白名單
+  togglePinnedState() {
+    this.isPinned = !this.isPinned;
+    if (this.isPinned) {
+      this.show();
+      this.tocPanel.classList.add('eagle-toc-pinned');
+      this.showNotification('已固定此面板', 1600, 'pin-action');
+    } else {
+      this.tocPanel.classList.remove('eagle-toc-pinned');
+      this.showNotification('已取消固定', 1600, 'pin-action');
+    }
+    const toggleBtn = this.tocPanel.querySelector('.eagle-toc-toggle');
+    if (toggleBtn) {
+      toggleBtn.title = this.isPinned ? '取消固定' : '固定';
+      toggleBtn.setAttribute('aria-pressed', String(this.isPinned));
+    }
+  }
+
   // Plan B: 切換pin狀態和滑動動畫
   togglePin() {
     this.isPinned = !this.isPinned;
@@ -2365,6 +2396,8 @@ class EagleTOC {
         this.tocPanel.style.left = clampedX + 'px';
         this.tocPanel.style.top = clampedY + 'px';
         this.tocPanel.style.right = 'auto';
+        this.isManuallyPositioned = true;
+        this.tocPanel.style.transform = 'none';
         
         this.dragFrameRequest = null;
       });
@@ -2505,50 +2538,18 @@ class EagleTOC {
     let dragStartY = 0;
     let dragCurrentY = 0;
     
-    // 滑鼠懸停事件
+    // 滑鼠懸停事件（移除視覺特效，只執行展開）
     this.slideTrigger.addEventListener('mouseenter', () => {
       if (this.isPinned || this.isExpanded || this.isAnimating) return;
-      
-      // 清除之前的延遲
-      if (slideTimeout) {
-        clearTimeout(slideTimeout);
-      }
-      
-      // 加入完整的懸停效果
-      this.slideTrigger.style.transform = 'translateY(-50%) translateX(-3px)';
-      this.slideTrigger.style.width = '32px';
-      this.slideTrigger.style.background = 'linear-gradient(135deg, rgba(59, 130, 246, 1) 0%, rgba(99, 102, 241, 1) 50%, rgba(139, 92, 246, 1) 100%)';
-      this.slideTrigger.style.boxShadow = '-8px 0 32px rgba(59, 130, 246, 0.4)';
-      
-      // 箭頭旋轉效果
-      const beforeElement = this.slideTrigger.querySelector('::before') || this.slideTrigger;
-      if (beforeElement.style) {
-        beforeElement.style.transform = 'rotate(-180deg) scale(1.2)';
-      }
-      
-      // 立即展開，提升響應速度
-      slideTimeout = setTimeout(() => {
-        this.show();
-      }, 50);
+      if (slideTimeout) clearTimeout(slideTimeout);
+      slideTimeout = setTimeout(() => this.show(), 0);
     });
     
-    // 滑鼠離開事件
+    // 滑鼠離開事件（不做任何視覺變更）
     this.slideTrigger.addEventListener('mouseleave', () => {
       if (slideTimeout) {
         clearTimeout(slideTimeout);
         slideTimeout = null;
-      }
-      
-      // 重置觸發條樣式
-      this.slideTrigger.style.transform = 'translateY(-50%)';
-      this.slideTrigger.style.width = '20px';
-      this.slideTrigger.style.background = 'linear-gradient(135deg, rgba(59, 130, 246, 0.8) 0%, rgba(99, 102, 241, 0.8) 50%, rgba(139, 92, 246, 0.8) 100%)';
-      this.slideTrigger.style.boxShadow = '-4px 0 16px rgba(59, 130, 246, 0.3)';
-      
-      // 重置箭頭
-      const beforeElement = this.slideTrigger.querySelector('::before') || this.slideTrigger;
-      if (beforeElement.style) {
-        beforeElement.style.transform = 'rotate(0deg) scale(1)';
       }
     });
     
@@ -3797,7 +3798,8 @@ class EagleTOC {
     this.boundStopDragging = this.stopDragging.bind(this);
     
     header.addEventListener('mousedown', (e) => {
-      if (e.target.tagName === 'BUTTON') return;
+      // 忽略在控制區與任何按鈕/選單上的按下，避免誤觸拖曳
+      if (e.target.closest('button, .eagle-toc-more-container, .eagle-toc-theme-menu, .eagle-toc-depth-controls, .eagle-toc-font-toolbar-controls')) return;
       
       this.isDragging = true;
       this.tocPanel.classList.add('eagle-toc-dragging');
@@ -3916,10 +3918,14 @@ class EagleTOC {
     if (newLeft !== this.tocPanel.style.left) {
       this.tocPanel.style.left = newLeft;
       this.tocPanel.style.right = 'auto';
+      this.isManuallyPositioned = true;
+      this.tocPanel.style.transform = 'none';
     }
     
     if (newTop !== this.tocPanel.style.top) {
       this.tocPanel.style.top = newTop;
+      this.isManuallyPositioned = true;
+      this.tocPanel.style.transform = 'none';
     }
     
     // 更新設定中的寬度

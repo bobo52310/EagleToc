@@ -24,6 +24,7 @@
   will-change: transform, right, opacity;
   backdrop-filter: blur(20px) saturate(200%);
   -webkit-backdrop-filter: blur(20px) saturate(200%);
+  pointer-events: none; /* 隱藏/未展開狀態不阻擋點擊 */
 }
 
 /* Plan B: 滑動觸發條 */
@@ -67,6 +68,7 @@
   transform: translateY(-50%) scale(1);
   opacity: 1;
   transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  pointer-events: auto;
 }
 
 /* 完全展開狀態 */
@@ -77,6 +79,7 @@
   box-shadow: -16px 0 64px rgba(59, 130, 246, 0.2),
               -6px 0 32px rgba(59, 130, 246, 0.15),
               -2px 0 16px rgba(59, 130, 246, 0.1);
+  pointer-events: auto;
 }
 
 /* 固定狀態 */
@@ -250,6 +253,7 @@
 
 .eagle-toc-panel.eagle-toc-visible {
   opacity: 1;
+  pointer-events: auto;
 }
 
 /* Plan B 特定的可見狀態 */
@@ -1956,11 +1960,7 @@ body.eagle-toc-glance-mode h6:hover {
 }
 
 .eagle-toc-more svg {
-  transition: transform 0.2s ease;
-}
-
-.eagle-toc-more:hover svg {
-  transform: scale(1.1);
+  /* 移除 hover 放大特效，避免視覺晃動 */
 }
 
 /* 更多選單 */
@@ -1977,7 +1977,7 @@ body.eagle-toc-glance-mode h6:hover {
   display: none;
   overflow: hidden;
   margin-top: 6px;
-  animation: slideDown 0.2s ease-out;
+  /* 移除下拉動畫，避免晃動 */
 }
 
 .eagle-toc-more-menu.show {
@@ -2057,14 +2057,12 @@ body.eagle-toc-glance-mode h6:hover {
   opacity: 1;
 }
 
-/* 當面板收合時，旋轉收合按鈕的圖示 */
-.eagle-toc-collapsed .eagle-toc-toggle svg {
-  transform: rotate(180deg);
-}
-
-.eagle-toc-toggle svg {
-  transition: transform 0.2s ease;
-}
+/* Pin icon states for clearer pin/unpin */
+.eagle-toc-toggle .icon-pinned { display: none; }
+.eagle-toc-toggle[aria-pressed="true"] .icon-pinned { display: inline; }
+.eagle-toc-toggle[aria-pressed="true"] .icon-unpinned { display: none; }
+.eagle-toc-toggle[aria-pressed="true"] { color: #2da44e; }
+.eagle-toc-toggle .icon-pinned { transform: rotate(-30deg); }
 
 
 /* 關閉按鈕位置調整 */
