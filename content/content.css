@@ -1,4 +1,4 @@
-/* Plan B: 動畫滑動展開式設計 */
+/* Plan B: 天空之靈 (The Spirit of the Sky) */
 .eagle-toc-panel {
   position: fixed;
   top: 50%;
@@ -6,12 +6,12 @@
   transform: translateX(110%) translateY(-50%) scale(0.98);
   width: 400px;
   max-height: 60vh;
-  background: rgba(255, 255, 255, 0.98);
-  border: 2px solid rgba(59, 130, 246, 0.3);
+  background: rgba(192, 192, 192, 0.95);
+  border: 2px solid rgba(25, 25, 112, 0.3);
   border-radius: 20px 0 0 20px; /* 右側不圓角 */
-  box-shadow: -12px 0 48px rgba(59, 130, 246, 0.15),
-              -4px 0 24px rgba(59, 130, 246, 0.1),
-              -1px 0 8px rgba(59, 130, 246, 0.05);
+  box-shadow: -12px 0 48px rgba(25, 25, 112, 0.15),
+              -4px 0 24px rgba(25, 25, 112, 0.1),
+              -1px 0 8px rgba(25, 25, 112, 0.05);
   z-index: 2147483647;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
   line-height: 1.4;
@@ -38,9 +38,9 @@
   width: 20px;
   height: 200px;
   background: linear-gradient(135deg, 
-    rgba(59, 130, 246, 0.8) 0%, 
-    rgba(99, 102, 241, 0.8) 50%,
-    rgba(139, 92, 246, 0.8) 100%);
+    rgba(25, 25, 112, 0.8) 0%, 
+    rgba(112, 128, 144, 0.8) 50%,
+    rgba(0, 127, 255, 0.8) 100%);
   border-radius: 8px 0 0 8px;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -48,7 +48,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: -4px 0 16px rgba(59, 130, 246, 0.3);
+  box-shadow: -4px 0 16px rgba(25, 25, 112, 0.3);
 }
 
 .eagle-toc-slide-trigger::before {
@@ -80,17 +80,17 @@
   right: 0;
   transform: translateX(0) translateY(-50%) scale(1);
   opacity: 1;
-  box-shadow: -16px 0 64px rgba(59, 130, 246, 0.2),
-              -6px 0 32px rgba(59, 130, 246, 0.15),
-              -2px 0 16px rgba(59, 130, 246, 0.1);
+  box-shadow: -16px 0 64px rgba(25, 25, 112, 0.2),
+              -6px 0 32px rgba(25, 25, 112, 0.15),
+              -2px 0 16px rgba(25, 25, 112, 0.1);
   pointer-events: auto;
 }
 
 /* 固定狀態 */
 .eagle-toc-panel.eagle-toc-pinned {
-  border-color: rgba(34, 197, 94, 0.4);
-  box-shadow: -12px 0 48px rgba(34, 197, 94, 0.15),
-              -4px 0 24px rgba(34, 197, 94, 0.1);
+  border-color: rgba(0, 127, 255, 0.4);
+  box-shadow: -12px 0 48px rgba(0, 127, 255, 0.15),
+              -4px 0 24px rgba(0, 127, 255, 0.1);
 }
 
 /* 隱藏滑動條當面板展開 */
@@ -230,14 +230,14 @@
 
 /* 讓調整大小的邊緣在 hover 時更明顯 */
 .eagle-toc-panel .resize-handle:hover {
-  background: rgba(59, 130, 246, 0.1);
+  background: rgba(25, 25, 112, 0.1);
 }
 
 .eagle-toc-panel .resize-handle-corner-nw:hover,
 .eagle-toc-panel .resize-handle-corner-ne:hover,
 .eagle-toc-panel .resize-handle-corner-sw:hover,
 .eagle-toc-panel .resize-handle-corner-se:hover {
-  background: rgba(59, 130, 246, 0.2);
+  background: rgba(25, 25, 112, 0.2);
   border-radius: 2px;
 }
 
@@ -359,8 +359,8 @@
 .eagle-toc-depth-controls {
   display: flex;
   align-items: center;
-  background: rgba(9, 105, 218, 0.08);
-  border: 1px solid rgba(9, 105, 218, 0.15);
+  background: rgba(0, 127, 255, 0.08);
+  border: 1px solid rgba(0, 127, 255, 0.15);
   border-radius: 4px;
   overflow: hidden;
 }
@@ -376,9 +376,9 @@
 .eagle-toc-depth-display {
   font-size: 11px;
   font-weight: 600;
-  color: #0969da;
+  color: #007FFF;
   padding: 3px 6px;
-  background: rgba(9, 105, 218, 0.1);
+  background: rgba(0, 127, 255, 0.1);
   min-width: 24px;
 }
 
@@ -661,7 +661,7 @@
 .eagle-toc-depth-decrease {
   font-size: 12px !important;
   font-weight: 600 !important;
-  color: #0969da !important;
+  color: #007FFF !important;
   width: 20px !important;
   height: 24px !important;
   padding: 0 !important;
@@ -677,7 +677,7 @@
 
 .eagle-toc-depth-increase:hover,
 .eagle-toc-depth-decrease:hover {
-  background: rgba(9, 105, 218, 0.15) !important;
+  background: rgba(0, 127, 255, 0.15) !important;
   color: #0550ae !important;
   opacity: 1 !important;
 }
@@ -691,7 +691,7 @@
 .eagle-toc-depth-increase:disabled:hover,
 .eagle-toc-depth-decrease:disabled:hover {
   background: transparent !important;
-  color: #0969da !important;
+  color: #007FFF !important;
   opacity: 0.3 !important;
 }
 
@@ -786,8 +786,8 @@
 
 .eagle-toc-link:hover {
   background: #f6f8fa;
-  border-left-color: #0969da;
-  color: #0969da;
+  border-left-color: #007FFF;
+  color: #007FFF;
 }
 
 .eagle-toc-level-1 .eagle-toc-link {
@@ -847,8 +847,8 @@
 
 .eagle-toc-link.eagle-toc-active {
   background: #e6f3ff;
-  border-left-color: #0969da;
-  color: #0969da;
+  border-left-color: #007FFF;
+  color: #007FFF;
   font-weight: 500;
 }
 
@@ -1155,7 +1155,7 @@ body.eagle-toc-glance-mode h6:hover {
 }
 
 .eagle-toc-whitelist-toggle input:checked + .eagle-toc-toggle-slider {
-  background-color: #0969da;
+  background-color: #007FFF;
 }
 
 .eagle-toc-whitelist-toggle input:checked + .eagle-toc-toggle-slider:before {
@@ -1182,7 +1182,7 @@ body.eagle-toc-glance-mode h6:hover {
 }
 
 .eagle-toc-whitelist-input:focus {
-  border-color: #0969da;
+  border-color: #007FFF;
 }
 
 .eagle-toc-whitelist-add {
@@ -1198,13 +1198,13 @@ body.eagle-toc-glance-mode h6:hover {
   justify-content: center;
   font-size: 14px;
   font-weight: bold;
-  color: #0969da;
+  color: #007FFF;
   transition: all 0.2s ease;
 }
 
 .eagle-toc-whitelist-add:hover {
   background: #f6f8fa;
-  border-color: #0969da;
+  border-color: #007FFF;
 }
 
 .eagle-toc-whitelist-actions {
@@ -1227,8 +1227,8 @@ body.eagle-toc-glance-mode h6:hover {
 .eagle-toc-whitelist-add-current:hover,
 .eagle-toc-whitelist-reset:hover {
   background: #f6f8fa;
-  border-color: #0969da;
-  color: #0969da;
+  border-color: #007FFF;
+  color: #007FFF;
 }
 
 .eagle-toc-whitelist-list {
@@ -1851,8 +1851,8 @@ body.eagle-toc-glance-mode h6:hover {
 }
 
 .eagle-toc-theme-option.active .eagle-toc-theme-dot {
-  border-color: #0969da;
-  box-shadow: 0 0 0 2px rgba(9, 105, 218, 0.2);
+  border-color: #007FFF;
+  box-shadow: 0 0 0 2px rgba(0, 127, 255, 0.2);
 }
 
 .eagle-toc-theme-dot {
@@ -2077,7 +2077,7 @@ body.eagle-toc-glance-mode h6:hover {
 }
 
 .whitelist-item:hover {
-  background: rgba(9, 105, 218, 0.04);
+  background: rgba(0, 127, 255, 0.04);
 }
 
 .whitelist-item-text {
@@ -2094,9 +2094,9 @@ body.eagle-toc-glance-mode h6:hover {
 
 .whitelist-item-text.editing {
   background: #ffffff;
-  border-color: #0969da;
+  border-color: #007FFF;
   outline: none;
-  box-shadow: 0 0 0 3px rgba(9, 105, 218, 0.1);
+  box-shadow: 0 0 0 3px rgba(0, 127, 255, 0.1);
 }
 
 .whitelist-item-actions {
@@ -3856,10 +3856,10 @@ body.eagle-toc-glance-mode h6:hover {
 }
 
 .eagle-toc-close-confirm-btn:hover {
-  border-color: rgba(59, 130, 246, 0.55);
+  border-color: rgba(25, 25, 112, 0.55);
   background: rgba(248, 250, 252, 0.9);
   transform: translateY(-1px);
-  box-shadow: 0 4px 14px rgba(59, 130, 246, 0.18);
+  box-shadow: 0 4px 14px rgba(25, 25, 112, 0.18);
 }
 
 .eagle-toc-close-confirm-btn:active {
