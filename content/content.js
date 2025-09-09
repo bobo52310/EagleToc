@@ -153,6 +153,12 @@ class EagleTOC {
       highlightDuration: 5,
       theme: 'auto',
       whitelistEnabled: true,
+      // 預設排除不自動啟動的網站（可透過後續 UI/設定擴充）
+      excludedDomains: [
+        'www.youtube.com',
+        'youtube.com',
+        'meet.google.com'
+      ],
       autoShowWhitelist: [
         'wikipedia.org',
         '*.wikipedia.org',
@@ -662,7 +668,13 @@ class EagleTOC {
     
     console.log(`🌐 Checking auto show for domain: ${currentDomain} (純白名單系統)`);
     console.log(`📁 Is local file: ${isLocalFile}, Is localhost: ${isLocalhost}`);
-    
+
+    // 先檢查是否在排除清單中：預設不自動啟動
+    if (this.isInExcludedList(currentDomain)) {
+      console.log('🚫 Domain is in excluded list, skip auto show/init');
+      return false;
+    }
+
     // 特殊處理：本地文件和 localhost 自動啟用（用於開發和測試）
     if (isLocalFile || isLocalhost) {
       console.log('✅ Local development environment, enabling auto show');
@@ -5608,9 +5620,14 @@ if (typeof window !== 'undefined') {
   // Check if TOC is permanently dismissed for this hostname
   const hostname = window.location.hostname || 'localhost';
   const isDismissed = localStorage.getItem(`eagle-toc-dismissed-${hostname}`) === 'true';
+  // 預設排除不自動啟動的網站（仍可透過工具列手動開啟）
+  const __eagleDefaultExcluded = new Set(['www.youtube.com', 'youtube.com', 'meet.google.com']);
+  const isDefaultExcluded = __eagleDefaultExcluded.has(hostname);
 
   if (isDismissed) {
     console.log('🙅 EagleTOC is permanently dismissed for', hostname);
+  } else if (isDefaultExcluded) {
+    console.log('🚫 EagleTOC default-excluded for', hostname, '(no auto init; toolbar can revive)');
   } else {
     console.log('🦅 Initializing EagleTOC v2.0...');
     window.eagleTOC = new EagleTOC();
