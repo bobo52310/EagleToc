@@ -13,8 +13,29 @@
       <p>Configure your eagle eye table of contents preferences</p>
     </header>
 
-    <main class="main">
-      <section class="settings-section">
+    <div class="layout">
+      <aside class="sidebar" aria-label="Settings navigation">
+        <div class="brand">⚙️ Settings</div>
+        <nav class="side-nav">
+          <a href="#general" class="side-link">General</a>
+          <a href="#appearance" class="side-link">Appearance</a>
+          <a href="#shortcuts" class="side-link">Shortcuts</a>
+        </nav>
+        <div class="quick-toggles">
+          <label class="setting-label">
+            <input type="checkbox" id="autoShow_quick" class="setting-checkbox">
+            <span class="checkmark"></span>
+            Auto-show
+          </label>
+          <label class="setting-label">
+            <input type="checkbox" id="enableLocalFiles_quick" class="setting-checkbox">
+            <span class="checkmark"></span>
+            Local files
+          </label>
+        </div>
+      </aside>
+      <main class="main">
+      <section id="general" class="settings-section">
         <h2>General Settings</h2>
         
         <div class="setting-item">
@@ -79,7 +100,7 @@
         </div>
       </section>
 
-      <section class="settings-section">
+      <section id="appearance" class="settings-section">
         <h2>Appearance</h2>
         
         <div class="setting-item">
@@ -112,7 +133,7 @@
         </div>
       </section>
 
-      <section class="settings-section">
+      <section id="shortcuts" class="settings-section">
         <h2>Keyboard Shortcuts</h2>
         <div class="setting-item">
           <p class="shortcut-info">
@@ -121,7 +142,8 @@
           </p>
         </div>
       </section>
-    </main>
+      </main>
+    </div>
 
     <footer class="footer">
       <div class="button-group">
@@ -133,5 +155,18 @@
   </div>
 
   <script src="options.js"></script>
+  <script>
+    // Initialize quick toggle states once settings load
+    document.addEventListener('DOMContentLoaded', () => {
+      setTimeout(() => {
+        const mainAuto = document.getElementById('autoShow');
+        const qAuto = document.getElementById('autoShow_quick');
+        const mainLocal = document.getElementById('enableLocalFiles');
+        const qLocal = document.getElementById('enableLocalFiles_quick');
+        if (mainAuto && qAuto) qAuto.checked = mainAuto.checked;
+        if (mainLocal && qLocal) qLocal.checked = mainLocal.checked;
+      }, 0);
+    });
+  </script>
 </body>
 </html>
