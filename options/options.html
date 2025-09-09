@@ -17,8 +17,8 @@
       <aside class="sidebar" aria-label="Settings navigation">
         <div class="brand">⚙️ Settings</div>
         <nav class="side-nav">
-          <a href="#general" class="side-link">General</a>
           <a href="#appearance" class="side-link">Appearance</a>
+          <a href="#general" class="side-link">General</a>
           <a href="#shortcuts" class="side-link">Shortcuts</a>
         </nav>
         <div class="quick-toggles">
@@ -35,6 +35,39 @@
         </div>
       </aside>
       <main class="main">
+      <section id="appearance" class="settings-section">
+        <h2>Appearance</h2>
+        
+        <div class="setting-item">
+          <label class="setting-label">TOC Position:</label>
+          <select id="tocPosition" class="setting-select">
+            <option value="right">Right side</option>
+            <option value="left">Left side</option>
+            <option value="floating">Floating</option>
+          </select>
+        </div>
+
+        <div class="setting-item">
+          <label class="setting-label">TOC Width:</label>
+          <input type="range" id="tocWidth" min="250" max="500" value="300" class="setting-range">
+          <span id="tocWidthValue" class="range-value">300px</span>
+        </div>
+
+        <div class="setting-item">
+          <label class="setting-label">Font Size:</label>
+          <input type="range" id="fontSize" min="12" max="24" value="16" class="setting-range">
+          <span id="fontSizeValue" class="range-value">16px</span>
+          <p class="setting-description">Font size for the table of contents panel</p>
+        </div>
+
+        <div class="setting-item">
+          <label class="setting-label">Highlight Duration:</label>
+          <input type="range" id="highlightDuration" min="1" max="15" value="5" class="setting-range">
+          <span id="highlightDurationValue" class="range-value">5s</span>
+          <p class="setting-description">How long to highlight clicked headings</p>
+        </div>
+      </section>
+
       <section id="general" class="settings-section">
         <h2>General Settings</h2>
         
@@ -97,39 +130,6 @@
             <option value="6">6 levels (h1-h6)</option>
           </select>
           <p class="setting-description">How many heading levels to include in the TOC</p>
-        </div>
-      </section>
-
-      <section id="appearance" class="settings-section">
-        <h2>Appearance</h2>
-        
-        <div class="setting-item">
-          <label class="setting-label">TOC Position:</label>
-          <select id="tocPosition" class="setting-select">
-            <option value="right">Right side</option>
-            <option value="left">Left side</option>
-            <option value="floating">Floating</option>
-          </select>
-        </div>
-
-        <div class="setting-item">
-          <label class="setting-label">TOC Width:</label>
-          <input type="range" id="tocWidth" min="250" max="500" value="300" class="setting-range">
-          <span id="tocWidthValue" class="range-value">300px</span>
-        </div>
-
-        <div class="setting-item">
-          <label class="setting-label">Font Size:</label>
-          <input type="range" id="fontSize" min="12" max="24" value="16" class="setting-range">
-          <span id="fontSizeValue" class="range-value">16px</span>
-          <p class="setting-description">Font size for the table of contents panel</p>
-        </div>
-
-        <div class="setting-item">
-          <label class="setting-label">Highlight Duration:</label>
-          <input type="range" id="highlightDuration" min="1" max="15" value="5" class="setting-range">
-          <span id="highlightDurationValue" class="range-value">5s</span>
-          <p class="setting-description">How long to highlight clicked headings</p>
         </div>
       </section>
 
