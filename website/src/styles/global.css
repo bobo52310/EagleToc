@@ -1,21 +1,22 @@
 @import "tailwindcss";
 
 @theme {
-  --color-brand-start: #667eea; /* indigo */
-  --color-brand-end: #764ba2;   /* violet */
-  --color-accent: #0969da;
+  /* Plan B: 天空之靈 (The Spirit of the Sky) */
+  --color-brand-start: #191970; /* midnight blue */
+  --color-brand-end: #007FFF;   /* azure */
+  --color-accent: #007FFF;
   --color-success: #22c55e;
 
-  --color-surface: #ffffff;
-  --color-surface-alt: #f6f8fa;
-  --color-border: #e1e5e9;
-  --color-text: #24292f;
-  --color-text-muted: #656d76;
+  --color-surface: #C0C0C0;
+  --color-surface-alt: #e6e6e6;
+  --color-border: #708090;
+  --color-text: #191970;
+  --color-text-muted: #708090;
 
-  --color-dark-surface: #1c1c1e;
-  --color-dark-surface-alt: #2c2c2e;
-  --color-dark-border: #38383a;
-  --color-dark-accent: #007aff;
+  --color-dark-surface: #191970;
+  --color-dark-surface-alt: #25256e;
+  --color-dark-border: #708090;
+  --color-dark-accent: #007FFF;
 }
 
 /* Base styles */

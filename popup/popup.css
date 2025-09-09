@@ -18,7 +18,7 @@ body {
 }
 
 .popup-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #191970 0%, #007FFF 100%);
   color: white;
   padding: 20px;
   text-align: center;
@@ -41,7 +41,7 @@ body {
 
 .primary-button {
   width: 100%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #191970 0%, #007FFF 100%);
   color: white;
   border: none;
   border-radius: 8px;
@@ -59,7 +59,7 @@ body {
 
 .primary-button:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 4px 12px rgba(25, 25, 112, 0.3);
 }
 
 .primary-button:active {
