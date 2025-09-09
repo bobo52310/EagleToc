@@ -3779,3 +3779,174 @@ body.eagle-toc-glance-mode h6:hover {
   background: rgba(255, 255, 255, 0.6);
   box-shadow: inset 0 0 0 2px rgba(99, 102, 241, 0.15);
 }
+
+/* Close Confirmation Popover (subtle, anchored) */
+.eagle-toc-close-confirm-modal {
+  position: fixed;
+  top: 0; /* updated at runtime */
+  left: 0; /* updated at runtime */
+  z-index: 2147483647;
+  display: none;
+}
+
+.eagle-toc-close-confirm-dialog {
+  position: relative;
+  min-width: 280px;
+  max-width: 360px;
+  color: #0f172a;
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 14px;
+  box-shadow: 0 8px 32px rgba(2, 6, 23, 0.18), 0 2px 8px rgba(2, 6, 23, 0.08);
+  backdrop-filter: blur(10px) saturate(140%);
+  -webkit-backdrop-filter: blur(10px) saturate(140%);
+  transform: translateY(6px) scale(0.98);
+  opacity: 0;
+  transition: transform 160ms cubic-bezier(0.2, 0.8, 0.2, 1), opacity 160ms ease;
+  pointer-events: auto; /* interactive */
+}
+
+.eagle-toc-close-confirm-modal.show .eagle-toc-close-confirm-dialog {
+  transform: translateY(0) scale(1);
+  opacity: 1;
+}
+
+.eagle-toc-close-confirm-header {
+  padding: 12px 14px 8px 14px;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+}
+
+.eagle-toc-close-confirm-title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  color: inherit;
+}
+
+.eagle-toc-close-confirm-content {
+  padding: 10px 14px 14px 14px;
+}
+
+.eagle-toc-close-confirm-message {
+  margin: 0 0 10px 0;
+  font-size: 12px;
+  color: rgba(15, 23, 42, 0.65);
+}
+
+.eagle-toc-close-confirm-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.eagle-toc-close-confirm-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 12px;
+  border: 1.5px solid rgba(15, 23, 42, 0.08);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.9);
+  cursor: pointer;
+  transition: all 140ms ease;
+  font-family: inherit;
+  text-align: center;
+}
+
+.eagle-toc-close-confirm-btn:hover {
+  border-color: rgba(59, 130, 246, 0.55);
+  background: rgba(248, 250, 252, 0.9);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(59, 130, 246, 0.18);
+}
+
+.eagle-toc-close-confirm-btn:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+.eagle-toc-close-temp {
+  border-color: rgba(16, 185, 129, 0.35);
+}
+
+.eagle-toc-close-temp:hover {
+  border-color: rgba(16, 185, 129, 0.65);
+  background: rgba(236, 253, 245, 0.9);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.18);
+}
+
+.eagle-toc-close-permanent {
+  border-color: rgba(239, 68, 68, 0.35);
+}
+
+.eagle-toc-close-permanent:hover {
+  border-color: rgba(239, 68, 68, 0.7);
+  background: rgba(254, 242, 242, 0.9);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.18);
+}
+
+.eagle-toc-close-btn-text {
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+
+.eagle-toc-close-temp .eagle-toc-close-btn-text { color: #059669; }
+.eagle-toc-close-permanent .eagle-toc-close-btn-text { color: #dc2626; }
+
+.eagle-toc-close-btn-desc {
+  font-size: 11px;
+  color: rgba(15, 23, 42, 0.6);
+  line-height: 1.35;
+}
+
+/* Orientation hint (subtle arrow) */
+.eagle-toc-close-confirm-dialog::after {
+  content: '';
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: rgba(255, 255, 255, 0.9);
+  border-left: 1px solid rgba(15, 23, 42, 0.08);
+  border-top: 1px solid rgba(15, 23, 42, 0.08);
+  transform: rotate(45deg);
+  right: 16px;
+}
+
+.eagle-toc-close-confirm-modal.pos-below .eagle-toc-close-confirm-dialog::after {
+  top: -5px;
+}
+.eagle-toc-close-confirm-modal.pos-above .eagle-toc-close-confirm-dialog::after {
+  bottom: -5px;
+  transform: rotate(225deg);
+}
+
+/* Dark theme */
+@media (prefers-color-scheme: dark) {
+  .eagle-toc-close-confirm-dialog {
+    color: #e5e7eb;
+    background: rgba(17, 24, 39, 0.8);
+    border-color: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 2px 8px rgba(0, 0, 0, 0.25);
+  }
+  .eagle-toc-close-confirm-header {
+    border-bottom-color: rgba(255, 255, 255, 0.08);
+  }
+  .eagle-toc-close-confirm-message {
+    color: rgba(229, 231, 235, 0.7);
+  }
+  .eagle-toc-close-confirm-btn {
+    background: rgba(31, 41, 55, 0.9);
+    border-color: rgba(255, 255, 255, 0.08);
+  }
+  .eagle-toc-close-confirm-btn:hover {
+    background: rgba(55, 65, 81, 0.9);
+  }
+  .eagle-toc-close-confirm-dialog::after {
+    background: rgba(31, 41, 55, 0.9);
+    border-left-color: rgba(255, 255, 255, 0.08);
+    border-top-color: rgba(255, 255, 255, 0.08);
+  }
+}

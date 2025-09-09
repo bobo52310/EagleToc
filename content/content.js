@@ -24,6 +24,8 @@ class EagleTOC {
     this.currentTheme = 'auto';
     this.themeMenu = null;
     this.moreMenu = null;
+    // After user closes via popover, disable trigger/shortcuts until toolbar icon re-enables
+    this.dismissedUntilToolbar = false;
     // Zen Mode 相關屬性
     this.zenMode = false;
     this.zenContainer = null;
@@ -197,6 +199,9 @@ class EagleTOC {
     this.setupSearch();
     this.setupTooltips();
     this.setupThemeEvents();
+    
+    // 檢查是否應該自動顯示
+    this.checkAutoShow();
   }
 
   async loadSettings() {
@@ -366,6 +371,9 @@ class EagleTOC {
     
     // Create settings modal
     this.createSettingsModal();
+    
+    // Create close confirmation dialog
+    this.createCloseConfirmDialog();
     
     // Update settings display with actual values
     this.updateSettingsDisplay();
@@ -649,7 +657,17 @@ class EagleTOC {
 
   shouldAutoShowBySettings() {
     const currentDomain = window.location.hostname;
+    const isLocalFile = window.location.protocol === 'file:';
+    const isLocalhost = currentDomain === 'localhost' || currentDomain === '127.0.0.1' || currentDomain === '';
+    
     console.log(`🌐 Checking auto show for domain: ${currentDomain} (純白名單系統)`);
+    console.log(`📁 Is local file: ${isLocalFile}, Is localhost: ${isLocalhost}`);
+    
+    // 特殊處理：本地文件和 localhost 自動啟用（用於開發和測試）
+    if (isLocalFile || isLocalhost) {
+      console.log('✅ Local development environment, enabling auto show');
+      return true;
+    }
     
     // 純白名單系統：只檢查當前網站是否在白名單中
     if (this.settings.whitelistEnabled && this.isInWhitelist(currentDomain)) {
@@ -960,6 +978,9 @@ class EagleTOC {
       console.log('Content script received message:', request);
       if (request.action === 'toggle-toc') {
         console.log('Toggling TOC, current visible state:', this.isVisible);
+        // Toolbar icon explicitly re-enables session
+        this.dismissedUntilToolbar = false;
+        if (this.slideTrigger) this.slideTrigger.style.display = '';
         this.toggle();
         sendResponse({ success: true, isVisible: this.isVisible });
       } else if (request.action === 'get-status') {
@@ -973,7 +994,7 @@ class EagleTOC {
     closeBtn.addEventListener('click', () => {
       this.hideMoreMenu();
       this.hideSettingsPanel();
-      this.hide();
+      this.showCloseConfirmDialog();
     });
 
     // Toggle 按鈕（改為：固定/取消固定）
@@ -1133,12 +1154,12 @@ class EagleTOC {
           this.hide();
         }
       }
-      if (e.altKey && e.key.toLowerCase() === 't') {
+      if (!this.dismissedUntilToolbar && e.altKey && e.key.toLowerCase() === 't') {
         e.preventDefault();
         this.toggle();
       }
       // Ctrl/Cmd + K to open search modal (global shortcut)
-      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+      if (!this.dismissedUntilToolbar && (e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
         e.preventDefault();
         // 如果 TOC 沒有開啟，先開啟它
         if (!this.isVisible) {
@@ -1148,7 +1169,7 @@ class EagleTOC {
         this.showSearchModal();
       }
       // Alt + S to open search modal (only when TOC is visible)
-      if (this.isVisible && e.altKey && e.key.toLowerCase() === 's') {
+      if (!this.dismissedUntilToolbar && this.isVisible && e.altKey && e.key.toLowerCase() === 's') {
         e.preventDefault();
         this.showSearchModal();
       }
@@ -1328,6 +1349,214 @@ class EagleTOC {
     }, 300);
     
     console.log('Settings modal hidden');
+  }
+
+  // Create close confirmation popover (subtle, non-blocking)
+  createCloseConfirmDialog() {
+    // Single element used as the popover container (no overlay to avoid full-screen blocking)
+    this.closeConfirmModal = document.createElement('div');
+    this.closeConfirmModal.className = 'eagle-toc-close-confirm-modal';
+    this.closeConfirmModal.innerHTML = `
+      <div class="eagle-toc-close-confirm-dialog">
+        <div class="eagle-toc-close-confirm-header">
+          <h3 class="eagle-toc-close-confirm-title">隱藏目錄</h3>
+        </div>
+        <div class="eagle-toc-close-confirm-content">
+          <p class="eagle-toc-close-confirm-message">選擇關閉方式：</p>
+          <div class="eagle-toc-close-confirm-buttons">
+            <button class="eagle-toc-close-confirm-btn eagle-toc-close-temp" type="button">
+              <span class="eagle-toc-close-btn-text">僅此次關閉</span>
+              <span class="eagle-toc-close-btn-desc">本次瀏覽暫時隱藏</span>
+            </button>
+            <button class="eagle-toc-close-confirm-btn eagle-toc-close-permanent" type="button">
+              <span class="eagle-toc-close-btn-text">永久不顯示</span>
+              <span class="eagle-toc-close-btn-desc">此網站不再顯示</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    // Add to body
+    document.body.appendChild(this.closeConfirmModal);
+    
+    // Add event listeners
+    this.setupCloseConfirmEvents();
+  }
+
+  setupCloseConfirmEvents() {
+    if (!this.closeConfirmModal) return;
+    
+    // ESC key to close while visible (capture for priority)
+    this._onCloseConfirmEsc = (e) => {
+      if (e.key === 'Escape' && this.closeConfirmModal.classList.contains('show')) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.hideCloseConfirmDialog();
+      }
+    };
+    document.addEventListener('keydown', this._onCloseConfirmEsc, true);
+    
+    // Prevent dialog interactions from bubbling to outside-click handler
+    const dialog = this.closeConfirmModal.querySelector('.eagle-toc-close-confirm-dialog');
+    dialog.addEventListener('mousedown', (e) => { e.stopPropagation(); });
+    dialog.addEventListener('click', (e) => { e.stopPropagation(); });
+    
+    // Temporary close button
+    const tempCloseBtn = this.closeConfirmModal.querySelector('.eagle-toc-close-temp');
+    tempCloseBtn.addEventListener('click', () => {
+      this.hideCloseConfirmDialog();
+      // Mark session dismissed to disable passive re-opening
+      this.dismissedUntilToolbar = true;
+      // Allow closing even if currently pinned
+      if (this.isPinned) {
+        this.isPinned = false;
+        this.tocPanel.classList.remove('eagle-toc-pinned');
+      }
+      this.hide();
+      // Hide trigger completely
+      if (this.slideTrigger) {
+        this.slideTrigger.style.opacity = '0';
+        this.slideTrigger.style.pointerEvents = 'none';
+        this.slideTrigger.style.display = 'none';
+      }
+    });
+    
+    // Permanent close button
+    const permanentCloseBtn = this.closeConfirmModal.querySelector('.eagle-toc-close-permanent');
+    permanentCloseBtn.addEventListener('click', () => {
+      this.hideCloseConfirmDialog();
+      this.permanentlyDismiss();
+    });
+  }
+
+  showCloseConfirmDialog() {
+    if (!this.closeConfirmModal) return;
+    
+    // Position popover near the close button
+    const closeBtn = this.tocPanel && this.tocPanel.querySelector('.eagle-toc-close');
+    if (!closeBtn) return;
+
+    const btnRect = closeBtn.getBoundingClientRect();
+
+    // Temporarily show (hidden) to measure
+    this.closeConfirmModal.style.visibility = 'hidden';
+    this.closeConfirmModal.style.display = 'block';
+
+    const dialog = this.closeConfirmModal.querySelector('.eagle-toc-close-confirm-dialog');
+    const width = dialog.offsetWidth || 360;
+    const height = dialog.offsetHeight || 120;
+
+    const padding = 8;
+    let top = btnRect.bottom + padding;
+    let left = Math.min(
+      Math.max(padding, btnRect.right - width),
+      window.innerWidth - width - padding
+    );
+    let positionClass = 'pos-below';
+
+    if (top + height + padding > window.innerHeight) {
+      top = btnRect.top - height - padding;
+      positionClass = 'pos-above';
+    }
+
+    this.closeConfirmModal.style.top = `${Math.max(padding, top)}px`;
+    this.closeConfirmModal.style.left = `${left}px`;
+
+    // Make visible with animation
+    this.closeConfirmModal.style.visibility = '';
+    this.closeConfirmModal.classList.remove('pos-above', 'pos-below');
+    this.closeConfirmModal.classList.add('show', positionClass);
+
+    // Outside click / resize / scroll to close
+    this._onCloseConfirmOutside = (e) => {
+      const withinDialog = dialog.contains(e.target);
+      const withinBtn = closeBtn.contains(e.target);
+      if (!withinDialog && !withinBtn) this.hideCloseConfirmDialog();
+    };
+    document.addEventListener('mousedown', this._onCloseConfirmOutside, false);
+    window.addEventListener('resize', this._onCloseConfirmOutside, { once: true });
+    window.addEventListener('scroll', this._onCloseConfirmOutside, { once: true, capture: true });
+  }
+
+  hideCloseConfirmDialog() {
+    if (!this.closeConfirmModal) return;
+    
+    this.closeConfirmModal.classList.remove('show', 'pos-above', 'pos-below');
+    
+    if (this._onCloseConfirmOutside) {
+      document.removeEventListener('mousedown', this._onCloseConfirmOutside, false);
+      window.removeEventListener('resize', this._onCloseConfirmOutside, { once: true });
+      window.removeEventListener('scroll', this._onCloseConfirmOutside, { once: true, capture: true });
+      this._onCloseConfirmOutside = null;
+    }
+    
+    setTimeout(() => {
+      if (!this.closeConfirmModal.classList.contains('show')) {
+        this.closeConfirmModal.style.display = 'none';
+      }
+    }, 180);
+  }
+
+  permanentlyDismiss() {
+    // Store permanent dismissal in localStorage
+    const hostname = window.location.hostname || 'localhost';
+    localStorage.setItem(`eagle-toc-dismissed-${hostname}`, 'true');
+    
+    // Completely remove TOC elements
+    this.destroy();
+  }
+
+  destroy() {
+    // Remove all TOC elements completely
+    if (this.tocPanel) {
+      this.tocPanel.remove();
+      this.tocPanel = null;
+    }
+    
+    if (this.slideTrigger) {
+      this.slideTrigger.remove();
+      this.slideTrigger = null;
+    }
+    
+    if (this.settingsModal) {
+      this.settingsModal.remove();
+      this.settingsModal = null;
+    }
+    
+    if (this.closeConfirmModal) {
+      this.closeConfirmModal.remove();
+      this.closeConfirmModal = null;
+    }
+    if (this._onCloseConfirmEsc) {
+      try { document.removeEventListener('keydown', this._onCloseConfirmEsc, true); } catch {}
+      this._onCloseConfirmEsc = null;
+    }
+    if (this._onCloseConfirmOutside) {
+      try { document.removeEventListener('mousedown', this._onCloseConfirmOutside, true); } catch {}
+      try { window.removeEventListener('resize', this._onCloseConfirmOutside, { once: true }); } catch {}
+      try { window.removeEventListener('scroll', this._onCloseConfirmOutside, { once: true, capture: true }); } catch {}
+      this._onCloseConfirmOutside = null;
+    }
+    
+    // Clear any intervals or timeouts
+    if (this.autoHideTimeout) {
+      clearTimeout(this.autoHideTimeout);
+      this.autoHideTimeout = null;
+    }
+    
+    if (this.scrollTimeout) {
+      clearTimeout(this.scrollTimeout);
+      this.scrollTimeout = null;
+    }
+    
+    // Remove event listeners
+    document.removeEventListener('scroll', this.handleScroll);
+    
+    // Mark as destroyed
+    this.isDestroyed = true;
+    
+    console.log('🗑️ EagleToc permanently dismissed and destroyed');
   }
 
   async changeFontSize(delta) {
@@ -2291,6 +2520,7 @@ class EagleTOC {
   // Plan B: 滑動展開 TOC 面板
   show() {
     if (this.isAnimating) return;
+    if (this.dismissedUntilToolbar) return;
     
     this.isVisible = true;
     this.isExpanded = true;
@@ -2320,6 +2550,8 @@ class EagleTOC {
     if (this.slideTrigger) {
       this.slideTrigger.style.opacity = '0';
       this.slideTrigger.style.pointerEvents = 'none';
+      // Keep display none if it was intentionally dismissed
+      if (this.dismissedUntilToolbar) this.slideTrigger.style.display = 'none';
     }
   }
 
@@ -2353,10 +2585,17 @@ class EagleTOC {
         this.tocPanel.classList.remove('eagle-toc-slide-out');
         this.isAnimating = false;
         
-        // 顯示滑動條
+        // 顯示滑動條（除非用戶本次會話選擇了關閉）
         if (this.slideTrigger) {
-          this.slideTrigger.style.opacity = '1';
-          this.slideTrigger.style.pointerEvents = 'auto';
+          if (this.dismissedUntilToolbar) {
+            this.slideTrigger.style.opacity = '0';
+            this.slideTrigger.style.pointerEvents = 'none';
+            this.slideTrigger.style.display = 'none';
+          } else {
+            this.slideTrigger.style.display = '';
+            this.slideTrigger.style.opacity = '1';
+            this.slideTrigger.style.pointerEvents = 'auto';
+          }
         }
       }, 400);
     }
@@ -2582,6 +2821,7 @@ class EagleTOC {
     
     // 滑鼠懸停事件（移除視覺特效，只執行展開）
     this.slideTrigger.addEventListener('mouseenter', () => {
+      if (this.dismissedUntilToolbar) return;
       if (this.isPinned || this.isExpanded || this.isAnimating) return;
       if (slideTimeout) clearTimeout(slideTimeout);
       slideTimeout = setTimeout(() => this.show(), 0);
@@ -2602,6 +2842,7 @@ class EagleTOC {
     this.slideTrigger.addEventListener('click', (e) => {
       e.preventDefault();
       e.stopPropagation();
+      if (this.dismissedUntilToolbar) return;
       if (!isDragging) {
         this.show();
       }
@@ -2611,6 +2852,7 @@ class EagleTOC {
     this.slideTrigger.addEventListener('dblclick', (e) => {
       e.preventDefault();
       e.stopPropagation();
+      if (this.dismissedUntilToolbar) return;
       this.togglePin();
     });
     
@@ -2618,6 +2860,7 @@ class EagleTOC {
     this.slideTrigger.addEventListener('mousedown', (e) => {
       if (e.button !== 0) return; // 只處理左鍵
       e.preventDefault();
+      if (this.dismissedUntilToolbar) return;
       
       isDragging = true;
       dragStartY = e.clientY;
@@ -5324,14 +5567,53 @@ class EagleTOC {
 
 if (typeof window !== 'undefined') {
   console.log('🦅 EagleToc content script loaded [v2.0 - Eagle Precision]');
-  
+
   // Prevent multiple initialization
   if (window.eagleTOC) {
     console.log('🔄 EagleToc already exists, cleaning up...');
     window.eagleTOC.destroy();
   }
-  
-  console.log('🦅 Initializing EagleTOC v2.0...');
-  window.eagleTOC = new EagleTOC();
-  console.log('✅ EagleTOC initialized:', window.eagleTOC);
+
+  // Always install a lightweight pre-init message listener so the action icon works
+  // even if the user previously chose "永久不顯示" for this site.
+  if (!window.__eaglePreMessageListenerInstalled) {
+    window.__eaglePreMessageListenerInstalled = true;
+    try {
+      chrome.runtime && chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+        // Only handle here when the main instance is NOT present; otherwise, let
+        // EagleTOC's own listener (installed during init) handle the message.
+        if (request && request.action === 'toggle-toc' && !window.eagleTOC) {
+          const hostname = window.location.hostname || 'localhost';
+          // Clear dismissal so the explicit user action can re-enable the UI
+          try { localStorage.removeItem(`eagle-toc-dismissed-${hostname}`); } catch {}
+          console.log('🧹 Removed dismissal flag for', hostname, 'and initializing EagleTOC...');
+          try {
+            window.eagleTOC = new EagleTOC();
+            // Defer the toggle to let init attach DOM and listeners
+            setTimeout(() => {
+              try { window.eagleTOC.toggle(); } catch {}
+            }, 0);
+            sendResponse({ success: true, revived: true });
+          } catch (e) {
+            console.error('Failed to revive EagleTOC on toggle:', e);
+            sendResponse({ success: false, error: String(e) });
+          }
+          return true; // async response
+        }
+        return false; // not handled here
+      });
+    } catch {}
+  }
+
+  // Check if TOC is permanently dismissed for this hostname
+  const hostname = window.location.hostname || 'localhost';
+  const isDismissed = localStorage.getItem(`eagle-toc-dismissed-${hostname}`) === 'true';
+
+  if (isDismissed) {
+    console.log('🙅 EagleTOC is permanently dismissed for', hostname);
+  } else {
+    console.log('🦅 Initializing EagleTOC v2.0...');
+    window.eagleTOC = new EagleTOC();
+    console.log('✅ EagleTOC initialized:', window.eagleTOC);
+  }
 }

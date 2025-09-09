@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test Close Functionality - EagleTOC</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.6;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      background: #f8fafc;
+    }
+    
+    .test-info {
+      background: #e3f2fd;
+      border: 2px solid #2196f3;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 32px;
+    }
+    
+    .test-info h2 {
+      margin: 0 0 12px 0;
+      color: #1976d2;
+    }
+    
+    .test-info p {
+      margin: 8px 0;
+      color: #424242;
+    }
+    
+    h1, h2, h3, h4, h5, h6 {
+      color: #2c3e50;
+      margin: 32px 0 16px 0;
+    }
+    
+    h1 { font-size: 2.5em; }
+    h2 { font-size: 2em; }
+    h3 { font-size: 1.5em; }
+    h4 { font-size: 1.25em; }
+    h5 { font-size: 1.1em; }
+    h6 { font-size: 1em; }
+    
+    .content-block {
+      background: white;
+      padding: 24px;
+      margin: 16px 0;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .test-buttons {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      background: white;
+      padding: 16px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      z-index: 1000;
+    }
+    
+    .test-buttons button {
+      display: block;
+      width: 200px;
+      margin: 8px 0;
+      padding: 8px 12px;
+      border: 2px solid #3b82f6;
+      border-radius: 6px;
+      background: white;
+      color: #3b82f6;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    
+    .test-buttons button:hover {
+      background: #3b82f6;
+      color: white;
+    }
+    
+    .test-buttons .danger {
+      border-color: #ef4444;
+      color: #ef4444;
+    }
+    
+    .test-buttons .danger:hover {
+      background: #ef4444;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+
+<div class="test-info">
+  <h2>🧪 Close Functionality Test Page</h2>
+  <p><strong>測試步驟：</strong></p>
+  <p>1. 等待 EagleTOC 載入並顯示在右側</p>
+  <p>2. 點擊右上角的 "×" 關閉按鈕</p>
+  <p>3. 在彈出的對話框中選擇：</p>
+  <p>   • <span style="color: #059669;">僅此次關閉</span>：TOC 會隱藏但重新整理後會再次出現</p>
+  <p>   • <span style="color: #dc2626;">永久不顯示</span>：TOC 會完全消失，重新整理後也不會出現</p>
+  <p>4. 使用下方測試按鈕來重新載入 TOC 或清除設定</p>
+</div>
+
+<div class="test-buttons">
+  <button onclick="reloadTOC()">🔄 重新載入 TOC</button>
+  <button onclick="checkDismissalStatus()">📊 檢查關閉狀態</button>
+  <button onclick="clearDismissal()" class="danger">🗑️ 清除永久關閉設定</button>
+</div>
+
+<h1>測試文章標題</h1>
+
+<div class="content-block">
+  <p>這是一個用來測試 EagleTOC 關閉功能的測試頁面。請注意觀察右上角關閉按鈕的行為。</p>
+</div>
+
+<h2>第一章：基礎概念</h2>
+
+<div class="content-block">
+  <p>在這一章節中，我們將介紹一些基礎概念，幫助您理解整個系統的工作原理。</p>
+</div>
+
+<h3>1.1 系統架構</h3>
+
+<div class="content-block">
+  <p>系統採用模組化設計，每個模組都有明確的職責和接口。</p>
+</div>
+
+<h3>1.2 核心功能</h3>
+
+<div class="content-block">
+  <p>核心功能包括內容解析、目錄生成、導航控制等。</p>
+</div>
+
+<h4>1.2.1 內容解析</h4>
+
+<div class="content-block">
+  <p>系統會自動掃描頁面中的標題元素，並建立層級關係。</p>
+</div>
+
+<h4>1.2.2 目錄生成</h4>
+
+<div class="content-block">
+  <p>根據解析結果生成結構化的目錄樹，提供清晰的導航結構。</p>
+</div>
+
+<h2>第二章：進階功能</h2>
+
+<div class="content-block">
+  <p>進階功能提供了更多自定義選項和交互方式。</p>
+</div>
+
+<h3>2.1 主題系統</h3>
+
+<div class="content-block">
+  <p>支援多種視覺主題，可根據使用者偏好進行調整。</p>
+</div>
+
+<h3>2.2 搜尋功能</h3>
+
+<div class="content-block">
+  <p>提供快速搜尋功能，可以快速定位到特定章節。</p>
+</div>
+
+<h4>2.2.1 即時搜尋</h4>
+
+<div class="content-block">
+  <p>支援即時搜尋，輸入關鍵字即可看到結果。</p>
+</div>
+
+<h4>2.2.2 搜尋歷史</h4>
+
+<div class="content-block">
+  <p>記錄搜尋歷史，方便重複查找相同內容。</p>
+</div>
+
+<h2>第三章：使用技巧</h2>
+
+<div class="content-block">
+  <p>這裡分享一些使用技巧，幫助您更有效地使用系統。</p>
+</div>
+
+<h3>3.1 快捷鍵</h3>
+
+<div class="content-block">
+  <p>支援多種快捷鍵操作，提高使用效率。</p>
+</div>
+
+<h3>3.2 自定義設置</h3>
+
+<div class="content-block">
+  <p>可以根據個人習慣調整各種設置參數。</p>
+</div>
+
+<h4>3.2.1 顯示設置</h4>
+
+<div class="content-block">
+  <p>調整字體大小、顏色主題等視覺設置。</p>
+</div>
+
+<h4>3.2.2 行為設置</h4>
+
+<div class="content-block">
+  <p>設置自動顯示、滑動行為等交互參數。</p>
+</div>
+
+<h5>3.2.2.1 自動顯示設置</h5>
+
+<div class="content-block">
+  <p>配置何時自動顯示目錄面板。</p>
+</div>
+
+<h5>3.2.2.2 動畫設置</h5>
+
+<div class="content-block">
+  <p>調整滑動動畫的速度和效果。</p>
+</div>
+
+<h6>動畫速度調節</h6>
+
+<div class="content-block">
+  <p>可以設置動畫的播放速度，滿足不同用戶的偏好。</p>
+</div>
+
+<script>
+// Test utility functions
+function reloadTOC() {
+  console.log('🔄 Reloading TOC...');
+  
+  // Remove existing TOC
+  if (window.eagleTOC) {
+    window.eagleTOC.destroy();
+    delete window.eagleTOC;
+  }
+  
+  // Remove any remaining elements
+  const existingPanel = document.getElementById('eagle-toc-panel');
+  const existingTrigger = document.querySelector('.eagle-toc-slide-trigger');
+  if (existingPanel) existingPanel.remove();
+  if (existingTrigger) existingTrigger.remove();
+  
+  // Reinitialize
+  setTimeout(() => {
+    const hostname = window.location.hostname || 'localhost';
+    const isDismissed = localStorage.getItem(`eagle-toc-dismissed-${hostname}`) === 'true';
+    
+    if (isDismissed) {
+      alert('❌ TOC 已被永久關閉。請先清除永久關閉設定。');
+      return;
+    }
+    
+    window.eagleTOC = new EagleTOC();
+    alert('✅ TOC 重新載入完成！');
+  }, 100);
+}
+
+function checkDismissalStatus() {
+  const hostname = window.location.hostname || 'localhost';
+  const isDismissed = localStorage.getItem(`eagle-toc-dismissed-${hostname}`) === 'true';
+  
+  const status = isDismissed ? '永久關閉' : '正常運行';
+  const emoji = isDismissed ? '❌' : '✅';
+  
+  alert(`${emoji} 當前狀態: ${status}\n主機名稱: ${hostname}\nLocalStorage 鍵值: eagle-toc-dismissed-${hostname}`);
+}
+
+function clearDismissal() {
+  const hostname = window.location.hostname || 'localhost';
+  const key = `eagle-toc-dismissed-${hostname}`;
+  
+  if (confirm('確定要清除永久關閉設定嗎？\n清除後需要重新整理頁面才會生效。')) {
+    localStorage.removeItem(key);
+    alert('🗑️ 永久關閉設定已清除！\n請重新整理頁面以重新載入 TOC。');
+  }
+}
+
+// 頁面載入完成後顯示提示
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    console.log('🧪 Test page loaded. TOC should be visible on the right side.');
+    console.log('💡 Click the × button in the top-right corner of the TOC to test close functionality.');
+  }, 1000);
+});
+</script>
+
+</body>
+</html>
