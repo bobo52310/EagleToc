@@ -1,0 +1,11 @@
+{
+  "name": "smart-toc-tools",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "popup:screenshots": "node tools/capture-popup-screenshots.js"
+  },
+  "devDependencies": {
+    "puppeteer-core": "^22.12.1"
+  }
+}
