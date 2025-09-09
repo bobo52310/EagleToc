@@ -10,7 +10,12 @@ if (!isExtensionEnv) {
   }
 }
 
-document.addEventListener('DOMContentLoaded', loadSettings);
+document.addEventListener('DOMContentLoaded', () => {
+  try { localizePage(); } catch {}
+  // Set document title via i18n if available
+  try { document.title = getMessage('optionsPageTitle', document.title); } catch {}
+  loadSettings();
+});
 
 const defaultSettings = {
   enableLocalFiles: false,
@@ -21,7 +26,23 @@ const defaultSettings = {
   tocPosition: 'right',
   tocWidth: 300,
   fontSize: 16,
-  highlightDuration: 5
+  highlightDuration: 5,
+  // Extended defaults for lists and floating persistence
+  autoShowWhitelist: [
+    'wikipedia.org',
+    '*.wikipedia.org',
+    'github.com',
+    '*.github.com',
+    'developer.mozilla.org',
+    'docs.microsoft.com',
+    'developer.apple.com',
+    'nodejs.org',
+    'reactjs.org',
+    'vuejs.org'
+  ],
+  excludedDomains: [],
+  tocTop: null,
+  tocLeft: null
 };
 
 function loadSettings() {
@@ -41,10 +62,15 @@ function loadSettings() {
     
     // 根據 autoShow 狀態更新相關選項的可見性
     updateAutoShowOptionsVisibility(settings.autoShow);
+
+    // Render whitelist/excluded lists
+    displayWhitelist(settings.autoShowWhitelist || []);
+    displayExcluded(settings.excludedDomains || []);
   });
   
   // 載入被禁用的域名列表
-  loadDisabledDomains();
+  // Legacy section (kept for compatibility). New lists render from storage above.
+  // loadDisabledDomains();
 
   setupEventListeners();
 }
@@ -85,6 +111,30 @@ function setupEventListeners() {
 
   document.getElementById('saveSettings').addEventListener('click', saveSettings);
   document.getElementById('resetSettings').addEventListener('click', resetSettings);
+
+  // Position reset
+  const resetPosBtn = document.getElementById('resetPosition');
+  if (resetPosBtn) resetPosBtn.addEventListener('click', resetPosition);
+
+  // Whitelist actions
+  const wlAddBtn = document.getElementById('addWhitelist');
+  const wlAddCurBtn = document.getElementById('addCurrentToWhitelist');
+  const wlInput = document.getElementById('whitelistInput');
+  const wlReset = document.getElementById('resetWhitelist');
+  if (wlAddBtn) wlAddBtn.addEventListener('click', addWhitelistFromInput);
+  if (wlAddCurBtn) wlAddCurBtn.addEventListener('click', addCurrentToWhitelist);
+  if (wlInput) wlInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') addWhitelistFromInput(); });
+  if (wlReset) wlReset.addEventListener('click', resetWhitelistToDefaults);
+
+  // Excluded actions
+  const exAddBtn = document.getElementById('addExcluded');
+  const exAddCurBtn = document.getElementById('addCurrentToExcluded');
+  const exInput = document.getElementById('excludedInput');
+  const exClear = document.getElementById('clearExcluded');
+  if (exAddBtn) exAddBtn.addEventListener('click', addExcludedFromInput);
+  if (exAddCurBtn) exAddCurBtn.addEventListener('click', addCurrentToExcluded);
+  if (exInput) exInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') addExcludedFromInput(); });
+  if (exClear) exClear.addEventListener('click', clearExcluded);
 }
 
 function saveSettings() {
@@ -120,7 +170,9 @@ function resetSettings() {
 
 function showStatus(message, type) {
   const statusEl = document.getElementById('statusMessage');
-  statusEl.textContent = message;
+  // allow i18n key passthrough
+  const localized = getMessage(message, message);
+  statusEl.textContent = localized;
   statusEl.className = `status-message ${type}`;
   
   setTimeout(() => {
@@ -129,8 +181,8 @@ function showStatus(message, type) {
 }
 
 function showLocalFilePermissionInfo() {
-  const message = 'To enable local files, you may need to allow "file://" access in Chrome extensions settings.';
-  showStatus(message, 'success');
+  const msg = 'To enable local files, you may need to allow "file://" access in Chrome extensions settings.';
+  showStatus(msg, 'success');
 }
 
 function updateAutoShowOptionsVisibility(enabled) {
@@ -220,4 +272,189 @@ function clearDisabledDomains() {
       }
     });
   }
+}
+
+// ===== i18n helpers =====
+function hasI18n() {
+  return typeof chrome !== 'undefined' && chrome.i18n && typeof chrome.i18n.getMessage === 'function';
+}
+
+function getMessage(key, fallback = '') {
+  if (hasI18n()) {
+    const msg = chrome.i18n.getMessage(key);
+    return msg || fallback || key;
+  }
+  return fallback || key;
+}
+
+function localizePage() {
+  // text content
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (key) el.textContent = getMessage(key, el.textContent);
+  });
+  // placeholders
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+    const key = el.getAttribute('data-i18n-placeholder');
+    if (key) el.setAttribute('placeholder', getMessage(key, el.getAttribute('placeholder') || ''));
+  });
+  // titles
+  document.querySelectorAll('[data-i18n-title]').forEach(el => {
+    const key = el.getAttribute('data-i18n-title');
+    if (key) el.setAttribute('title', getMessage(key, el.getAttribute('title') || ''));
+  });
+}
+
+// =========== New: Whitelist/Excluded helpers ===========
+function normalizeDomain(input) {
+  if (!input) return '';
+  try {
+    let d = input.trim().toLowerCase();
+    d = d.replace(/^https?:\/\//, '');
+    d = d.replace(/\/.*/, '');
+    return d;
+  } catch { return ''; }
+}
+
+function displayWhitelist(list) {
+  const container = document.getElementById('whitelistList');
+  if (!container) return;
+  container.innerHTML = '';
+  list.forEach((domain) => {
+    const item = document.createElement('div');
+    item.className = 'domain-item';
+    const removeText = getMessage('remove', 'Remove');
+    item.innerHTML = `
+      <span class="domain-name">${domain}</span>
+      <button class="remove-domain" data-domain="${domain}">${removeText}</button>
+    `;
+    item.querySelector('.remove-domain').addEventListener('click', () => removeWhitelistDomain(domain));
+    container.appendChild(item);
+  });
+}
+
+function displayExcluded(list) {
+  const container = document.getElementById('excludedList');
+  if (!container) return;
+  container.innerHTML = '';
+  list.forEach((domain) => {
+    const item = document.createElement('div');
+    item.className = 'domain-item';
+    const removeText = getMessage('remove', 'Remove');
+    item.innerHTML = `
+      <span class="domain-name">${domain}</span>
+      <button class="remove-domain" data-domain="${domain}">${removeText}</button>
+    `;
+    item.querySelector('.remove-domain').addEventListener('click', () => removeExcludedDomain(domain));
+    container.appendChild(item);
+  });
+}
+
+function addWhitelistFromInput() {
+  const input = document.getElementById('whitelistInput');
+  const raw = input?.value || '';
+  const domain = normalizeDomain(raw);
+  if (!domain) return;
+  chrome.storage.sync.get(defaultSettings, (settings) => {
+    const list = settings.autoShowWhitelist || [];
+    if (list.includes(domain)) return;
+    list.push(domain);
+    chrome.storage.sync.set({ autoShowWhitelist: list }, () => {
+      displayWhitelist(list);
+      input.value = '';
+      showStatus(`Added ${domain} to whitelist`, 'success');
+    });
+  });
+}
+
+function addCurrentToWhitelist() {
+  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    const url = tabs?.[0]?.url || '';
+    const domain = normalizeDomain(url);
+    if (!domain) return;
+    chrome.storage.sync.get(defaultSettings, (settings) => {
+      const list = settings.autoShowWhitelist || [];
+      if (!list.includes(domain)) list.push(domain);
+      chrome.storage.sync.set({ autoShowWhitelist: list }, () => {
+        displayWhitelist(list);
+        showStatus(`Added ${domain} to whitelist`, 'success');
+      });
+    });
+  });
+}
+
+function removeWhitelistDomain(domain) {
+  chrome.storage.sync.get(defaultSettings, (settings) => {
+    const list = (settings.autoShowWhitelist || []).filter(d => d !== domain);
+    chrome.storage.sync.set({ autoShowWhitelist: list }, () => {
+      displayWhitelist(list);
+      showStatus(`Removed ${domain} from whitelist`, 'success');
+    });
+  });
+}
+
+function resetWhitelistToDefaults() {
+  if (!confirm('Reset whitelist to defaults?')) return;
+  const list = defaultSettings.autoShowWhitelist.slice();
+  chrome.storage.sync.set({ autoShowWhitelist: list }, () => {
+    displayWhitelist(list);
+    showStatus('Whitelist reset to defaults', 'success');
+  });
+}
+
+function addExcludedFromInput() {
+  const input = document.getElementById('excludedInput');
+  const raw = input?.value || '';
+  const domain = normalizeDomain(raw);
+  if (!domain) return;
+  chrome.storage.sync.get(defaultSettings, (settings) => {
+    const list = settings.excludedDomains || [];
+    if (list.includes(domain)) return;
+    list.push(domain);
+    chrome.storage.sync.set({ excludedDomains: list }, () => {
+      displayExcluded(list);
+      input.value = '';
+      showStatus(`Added ${domain} to hidden list`, 'success');
+    });
+  });
+}
+
+function addCurrentToExcluded() {
+  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    const url = tabs?.[0]?.url || '';
+    const domain = normalizeDomain(url);
+    if (!domain) return;
+    chrome.storage.sync.get(defaultSettings, (settings) => {
+      const list = settings.excludedDomains || [];
+      if (!list.includes(domain)) list.push(domain);
+      chrome.storage.sync.set({ excludedDomains: list }, () => {
+        displayExcluded(list);
+        showStatus(`Hidden on ${domain}`, 'success');
+      });
+    });
+  });
+}
+
+function removeExcludedDomain(domain) {
+  chrome.storage.sync.get(defaultSettings, (settings) => {
+    const list = (settings.excludedDomains || []).filter(d => d !== domain);
+    chrome.storage.sync.set({ excludedDomains: list }, () => {
+      displayExcluded(list);
+      showStatus(`Removed ${domain} from hidden list`, 'success');
+    });
+  });
+}
+
+function clearExcluded() {
+  if (!confirm('Clear all hidden domains?')) return;
+  chrome.storage.sync.set({ excludedDomains: [] }, () => {
+    displayExcluded([]);
+    showStatus('Hidden list cleared', 'success');
+  });
+}
+
+function resetPosition() {
+  chrome.storage.sync.set({ tocTop: null, tocLeft: null }, () => {
+    showStatus('Position reset. Reopen page to apply.', 'success');
+  });
 }

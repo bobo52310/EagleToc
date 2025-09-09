@@ -363,8 +363,27 @@ class EagleTOC {
     `;
     
     this.tocPanel.style.width = this.settings.tocWidth + 'px';
-    this.tocPanel.style.right = this.settings.tocPosition === 'right' ? '20px' : 'auto';
-    this.tocPanel.style.left = this.settings.tocPosition === 'left' ? '20px' : 'auto';
+    // Apply initial position by mode
+    if (this.settings.tocPosition === 'left') {
+      this.tocPanel.style.left = '20px';
+      this.tocPanel.style.right = 'auto';
+    } else if (this.settings.tocPosition === 'right') {
+      this.tocPanel.style.right = '20px';
+      this.tocPanel.style.left = 'auto';
+    } else {
+      // floating
+      const hasCoords = Number.isFinite(this.settings.tocLeft) && Number.isFinite(this.settings.tocTop);
+      if (hasCoords) {
+        this.tocPanel.style.left = this.settings.tocLeft + 'px';
+        this.tocPanel.style.top = this.settings.tocTop + 'px';
+        this.tocPanel.style.right = 'auto';
+      } else {
+        // default floating spot
+        this.tocPanel.style.top = '100px';
+        this.tocPanel.style.right = '20px';
+        this.tocPanel.style.left = 'auto';
+      }
+    }
     
     // Apply font size to content area only
     this.applyContentFontSize();
@@ -986,6 +1005,82 @@ class EagleTOC {
   }
 
   setupEventListeners() {
+    // Listen for settings updates from Options page via chrome.storage.sync
+    try {
+      if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.onChanged) {
+        chrome.storage.onChanged.addListener((changes, area) => {
+          if (area !== 'sync') return;
+
+          let needsRerender = false;
+
+          if (changes.tocWidth) {
+            const newWidth = parseInt(changes.tocWidth.newValue, 10);
+            if (!Number.isNaN(newWidth)) {
+              this.settings.tocWidth = newWidth;
+              if (this.tocPanel) {
+                this.tocPanel.style.width = newWidth + 'px';
+              }
+            }
+          }
+
+          if (changes.fontSize) {
+            const newFont = parseInt(changes.fontSize.newValue, 10);
+            if (!Number.isNaN(newFont)) {
+              this.settings.fontSize = newFont;
+              // Update displays and apply to list
+              this.updateSettingsDisplay();
+              const toolbarDisplay = this.tocPanel?.querySelector('.eagle-toc-font-toolbar-display');
+              if (toolbarDisplay) toolbarDisplay.textContent = newFont + 'px';
+            }
+          }
+
+          if (changes.maxHeadingLevels) {
+            const newDepth = parseInt(changes.maxHeadingLevels.newValue, 10);
+            if (!Number.isNaN(newDepth)) {
+              this.settings.maxHeadingLevels = newDepth;
+              this.updateDepthControls();
+              this.updateHeadingVisibility();
+              needsRerender = true;
+            }
+          }
+
+          if (changes.tocPosition) {
+            const pos = changes.tocPosition.newValue;
+            this.settings.tocPosition = pos;
+            if (!this.tocPanel) return;
+            if (pos === 'left') {
+              this.isManuallyPositioned = false;
+              this.tocPanel.style.top = '';
+              this.tocPanel.style.left = '20px';
+              this.tocPanel.style.right = 'auto';
+            } else if (pos === 'right') {
+              this.isManuallyPositioned = false;
+              this.tocPanel.style.top = '';
+              this.tocPanel.style.left = 'auto';
+              this.tocPanel.style.right = '20px';
+            } else if (pos === 'floating') {
+              const hasCoords = Number.isFinite(this.settings.tocLeft) && Number.isFinite(this.settings.tocTop);
+              if (hasCoords) {
+                this.tocPanel.style.left = this.settings.tocLeft + 'px';
+                this.tocPanel.style.top = this.settings.tocTop + 'px';
+                this.tocPanel.style.right = 'auto';
+              } else {
+                this.tocPanel.style.top = '100px';
+                this.tocPanel.style.left = 'auto';
+                this.tocPanel.style.right = '20px';
+              }
+            }
+          }
+
+          if (needsRerender) {
+            this.renderTOC();
+          }
+        });
+      }
+    } catch (e) {
+      console.warn('Failed to attach storage change listener:', e);
+    }
+
     chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       console.log('Content script received message:', request);
       if (request.action === 'toggle-toc') {
@@ -1514,6 +1609,13 @@ class EagleTOC {
     // Store permanent dismissal in localStorage
     const hostname = window.location.hostname || 'localhost';
     localStorage.setItem(`eagle-toc-dismissed-${hostname}`, 'true');
+    // Also add to excludedDomains so it won't auto-show next time
+    try {
+      this.addToExcludedList(hostname);
+      this.saveSettings();
+    } catch (e) {
+      console.warn('Failed to add to excludedDomains:', e);
+    }
     
     // Completely remove TOC elements
     this.destroy();
@@ -2707,6 +2809,15 @@ class EagleTOC {
     if (this.dragFrameRequest) {
       cancelAnimationFrame(this.dragFrameRequest);
       this.dragFrameRequest = null;
+    }
+
+    // Persist floating position after drag
+    if (this.tocPanel) {
+      const rect = this.tocPanel.getBoundingClientRect();
+      this.settings.tocLeft = Math.round(rect.left);
+      this.settings.tocTop = Math.round(rect.top);
+      this.settings.tocPosition = 'floating';
+      this.saveSettings();
     }
   }
 
@@ -4250,7 +4361,13 @@ class EagleTOC {
     // 移除調整大小時的樣式
     this.tocPanel.classList.remove('eagle-toc-resizing');
     
-    // 保存設定
+    // 保存設定（包含浮動位置與寬度）
+    if (this.tocPanel) {
+      const rect = this.tocPanel.getBoundingClientRect();
+      this.settings.tocLeft = Math.round(rect.left);
+      this.settings.tocTop = Math.round(rect.top);
+      // Keep current width already set in handleResize
+    }
     this.saveSettings();
   }
 

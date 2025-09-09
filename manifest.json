@@ -3,6 +3,7 @@
   "name": "EagleToc - Eagle Eye Table of Contents",
   "description": "Navigate with eagle precision! Smart table of contents for any website, making it easier to read and navigate long articles, documentations, and online books with eagle-eye overview.",
   "version": "1.0.0",
+  "default_locale": "zh_TW",
   "permissions": [
     "activeTab",
     "storage",

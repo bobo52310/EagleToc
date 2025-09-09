@@ -9,136 +9,168 @@
 <body>
   <div class="container">
     <header class="header">
-      <h1>EagleToc Settings</h1>
-      <p>Configure your eagle eye table of contents preferences</p>
+      <h1 data-i18n="headerTitle">EagleToc Settings</h1>
+      <p data-i18n="headerTagline">Configure your eagle eye table of contents preferences</p>
     </header>
 
     <div class="layout">
       <aside class="sidebar" aria-label="Settings navigation">
         <div class="brand">⚙️ Settings</div>
         <nav class="side-nav">
-          <a href="#appearance" class="side-link">Appearance</a>
-          <a href="#general" class="side-link">General</a>
-          <a href="#shortcuts" class="side-link">Shortcuts</a>
+          <a href="#appearance" class="side-link" data-i18n="navAppearance">Appearance</a>
+          <a href="#general" class="side-link" data-i18n="navGeneral">General</a>
+          <a href="#shortcuts" class="side-link" data-i18n="navShortcuts">Shortcuts</a>
         </nav>
         <div class="quick-toggles">
           <label class="setting-label">
             <input type="checkbox" id="autoShow_quick" class="setting-checkbox">
             <span class="checkmark"></span>
-            Auto-show
+            <span data-i18n="quickAutoShow">Auto-show</span>
           </label>
           <label class="setting-label">
             <input type="checkbox" id="enableLocalFiles_quick" class="setting-checkbox">
             <span class="checkmark"></span>
-            Local files
+            <span data-i18n="quickLocalFiles">Local files</span>
           </label>
         </div>
       </aside>
       <main class="main">
       <section id="appearance" class="settings-section">
-        <h2>Appearance</h2>
+        <h2 data-i18n="appearanceTitle">Appearance</h2>
         
         <div class="setting-item">
-          <label class="setting-label">TOC Position:</label>
+          <label class="setting-label" data-i18n="tocPositionLabel">TOC Position:</label>
           <select id="tocPosition" class="setting-select">
-            <option value="right">Right side</option>
-            <option value="left">Left side</option>
-            <option value="floating">Floating</option>
+            <option value="right" data-i18n="positionRight">Right side</option>
+            <option value="left" data-i18n="positionLeft">Left side</option>
+            <option value="floating" data-i18n="positionFloating">Floating</option>
           </select>
+          <button id="resetPosition" class="btn btn-secondary" style="margin-left:8px;" data-i18n="resetPosition">Reset position</button>
+          <p class="setting-description" data-i18n="positionDesc">Choose sidebar position. Floating allows drag to place anywhere.</p>
         </div>
 
         <div class="setting-item">
-          <label class="setting-label">TOC Width:</label>
+          <label class="setting-label" data-i18n="tocWidthLabel">TOC Width:</label>
           <input type="range" id="tocWidth" min="250" max="500" value="300" class="setting-range">
           <span id="tocWidthValue" class="range-value">300px</span>
         </div>
 
         <div class="setting-item">
-          <label class="setting-label">Font Size:</label>
+          <label class="setting-label" data-i18n="fontSizeLabel">Font Size:</label>
           <input type="range" id="fontSize" min="12" max="24" value="16" class="setting-range">
           <span id="fontSizeValue" class="range-value">16px</span>
-          <p class="setting-description">Font size for the table of contents panel</p>
+          <p class="setting-description" data-i18n="fontSizeDesc">Font size for the table of contents panel</p>
         </div>
 
         <div class="setting-item">
-          <label class="setting-label">Highlight Duration:</label>
+          <label class="setting-label" data-i18n="highlightDurationLabel">Highlight Duration:</label>
           <input type="range" id="highlightDuration" min="1" max="15" value="5" class="setting-range">
           <span id="highlightDurationValue" class="range-value">5s</span>
-          <p class="setting-description">How long to highlight clicked headings</p>
+          <p class="setting-description" data-i18n="highlightDurationDesc">How long to highlight clicked headings</p>
+        </div>
+
+        <hr>
+
+        <div class="setting-item">
+          <label class="setting-label" data-i18n="whitelistLabel">Auto-show Whitelist</label>
+          <div class="domain-management">
+            <div class="domain-input-row">
+              <input type="text" id="whitelistInput" class="text-input" data-i18n-placeholder="whitelistPlaceholder" placeholder="Add domain (e.g., example.com or *.example.com)">
+              <button type="button" id="addWhitelist" class="btn btn-secondary" data-i18n="whitelistAdd">Add</button>
+              <button type="button" id="addCurrentToWhitelist" class="btn btn-secondary" data-i18n="whitelistAddCurrent">Add current site</button>
+            </div>
+            <div id="whitelistList" class="disabled-domains-list"></div>
+            <button type="button" id="resetWhitelist" class="clear-button" data-i18n="whitelistReset">Reset to defaults</button>
+          </div>
+          <p class="setting-description" data-i18n="whitelistDesc">Only sites in this list auto-show the TOC. Wildcards supported with *.</p>
+        </div>
+
+        <div class="setting-item">
+          <label class="setting-label" data-i18n="excludedLabel">Hide On These Sites</label>
+          <div class="domain-management">
+            <div class="domain-input-row">
+              <input type="text" id="excludedInput" class="text-input" data-i18n-placeholder="excludedPlaceholder" placeholder="Add domain to hide (e.g., example.com)">
+              <button type="button" id="addExcluded" class="btn btn-secondary" data-i18n="excludedAdd">Add</button>
+              <button type="button" id="addCurrentToExcluded" class="btn btn-secondary" data-i18n="excludedAddCurrent">Hide current site</button>
+            </div>
+            <div id="excludedList" class="disabled-domains-list"></div>
+            <button type="button" id="clearExcluded" class="clear-button" data-i18n="excludedClear">Clear all</button>
+          </div>
+          <p class="setting-description" data-i18n="excludedDesc">These domains will not auto-show even if whitelisted.</p>
         </div>
       </section>
 
       <section id="general" class="settings-section">
-        <h2>General Settings</h2>
+        <h2 data-i18n="generalTitle">General Settings</h2>
         
         <div class="setting-item">
           <label class="setting-label">
             <input type="checkbox" id="enableLocalFiles" class="setting-checkbox">
             <span class="checkmark"></span>
-            Enable for local HTML files
+            <span data-i18n="enableLocalFilesLabel">Enable for local HTML files</span>
           </label>
-          <p class="setting-description">Allow EagleToc to work on file:// URLs</p>
+          <p class="setting-description" data-i18n="enableLocalFilesDesc">Allow EagleToc to work on file:// URLs</p>
         </div>
 
         <div class="setting-item">
           <label class="setting-label">
             <input type="checkbox" id="autoShow" class="setting-checkbox">
             <span class="checkmark"></span>
-            Auto-show TOC on compatible pages
+            <span data-i18n="autoShowLabel">Auto-show TOC on compatible pages</span>
           </label>
-          <p class="setting-description">Automatically display TOC when headings are detected</p>
+          <p class="setting-description" data-i18n="autoShowDesc">Automatically display TOC when headings are detected</p>
         </div>
 
         <div class="setting-item auto-show-options">
-          <label class="setting-label">Minimum headings for auto-show:</label>
+          <label class="setting-label" data-i18n="minHeadingsLabel">Minimum headings for auto-show:</label>
           <div class="number-input-group">
             <input type="number" id="autoShowMinHeadings" min="1" max="10" value="2" class="number-input">
-            <span class="input-suffix">headings</span>
+            <span class="input-suffix" data-i18n="minHeadingsSuffix">headings</span>
           </div>
           <p class="setting-description">Only auto-show when page has at least this many headings</p>
         </div>
 
         <div class="setting-item auto-show-options">
-          <label class="setting-label">Auto-show delay:</label>
+          <label class="setting-label" data-i18n="autoShowDelayLabel">Auto-show delay:</label>
           <div class="select-group">
             <select id="autoShowDelay" class="select-input">
-              <option value="0">Immediately</option>
-              <option value="300">0.3 seconds</option>
-              <option value="500" selected>0.5 seconds</option>
-              <option value="1000">1 second</option>
-              <option value="2000">2 seconds</option>
+              <option value="0" data-i18n="delayImmediate">Immediately</option>
+              <option value="300" data-i18n="delaySec03">0.3 seconds</option>
+              <option value="500" selected data-i18n="delaySec05">0.5 seconds</option>
+              <option value="1000" data-i18n="delaySec1">1 second</option>
+              <option value="2000" data-i18n="delaySec2">2 seconds</option>
             </select>
           </div>
           <p class="setting-description">Delay before showing TOC after page loads</p>
         </div>
 
         <div class="setting-item auto-show-options">
-          <label class="setting-label">Disabled domains management:</label>
+          <label class="setting-label" data-i18n="disabledDomainsLabel">Disabled domains management:</label>
           <div class="domain-management">
             <div id="disabledDomainsList" class="disabled-domains-list"></div>
-            <button type="button" id="clearDisabledDomains" class="clear-button">Clear all disabled domains</button>
+            <button type="button" id="clearDisabledDomains" class="clear-button" data-i18n="clearAllDisabled">Clear all disabled domains</button>
           </div>
-          <p class="setting-description">Domains where you manually closed auto-shown TOC</p>
+          <p class="setting-description" data-i18n="disabledDomainsDesc">Domains where you manually closed auto-shown TOC</p>
         </div>
 
         <div class="setting-item">
-          <label class="setting-label">Maximum heading levels:</label>
+          <label class="setting-label" data-i18n="maxHeadingLevelsLabel">Maximum heading levels:</label>
           <select id="maxHeadingLevels" class="setting-select">
-            <option value="3">3 levels (h1-h3)</option>
-            <option value="4">4 levels (h1-h4)</option>
-            <option value="5">5 levels (h1-h5)</option>
-            <option value="6">6 levels (h1-h6)</option>
+            <option value="3" data-i18n="maxH3">3 levels (h1-h3)</option>
+            <option value="4" data-i18n="maxH4">4 levels (h1-h4)</option>
+            <option value="5" data-i18n="maxH5">5 levels (h1-h5)</option>
+            <option value="6" data-i18n="maxH6">6 levels (h1-h6)</option>
           </select>
           <p class="setting-description">How many heading levels to include in the TOC</p>
         </div>
       </section>
 
       <section id="shortcuts" class="settings-section">
-        <h2>Keyboard Shortcuts</h2>
+        <h2 data-i18n="shortcutsTitle">Keyboard Shortcuts</h2>
         <div class="setting-item">
           <p class="shortcut-info">
-            <strong>Open Settings:</strong> Click the extension icon<br>
-            <strong>Toggle TOC:</strong> Alt+T
+            <strong data-i18n="shortcutOpenSettings">Open Settings: Click the extension icon</strong><br>
+            <strong data-i18n="shortcutToggleTOC">Toggle TOC: Alt+T</strong>
           </p>
         </div>
       </section>
@@ -147,8 +179,8 @@
 
     <footer class="footer">
       <div class="button-group">
-        <button id="saveSettings" class="btn btn-primary">Save Settings</button>
-        <button id="resetSettings" class="btn btn-secondary">Reset to Defaults</button>
+        <button id="saveSettings" class="btn btn-primary" data-i18n="saveSettings">Save Settings</button>
+        <button id="resetSettings" class="btn btn-secondary" data-i18n="resetDefaults">Reset to Defaults</button>
       </div>
       <div class="status-message" id="statusMessage"></div>
     </footer>
