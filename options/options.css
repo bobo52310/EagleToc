@@ -19,7 +19,7 @@ body {
 }
 
 .header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #191970 0%, #007FFF 100%);
   color: white;
   padding: 2rem;
   text-align: center;
@@ -81,8 +81,8 @@ body {
 }
 
 .setting-checkbox:checked + .checkmark {
-  background: #0969da;
-  border-color: #0969da;
+  background: #007FFF;
+  border-color: #007FFF;
 }
 
 .setting-checkbox:checked + .checkmark::after {
@@ -115,7 +115,7 @@ body {
 
 .range-value {
   font-weight: 500;
-  color: #0969da;
+  color: #007FFF;
 }
 
 .setting-description {
@@ -155,13 +155,13 @@ body {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #191970 0%, #007FFF 100%);
   color: white;
 }
 
 .btn-primary:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 4px 12px rgba(25, 25, 112, 0.3);
 }
 
 .btn-secondary {
@@ -225,7 +225,7 @@ body {
 
 .number-input:focus {
   outline: none;
-  border-color: #0969da;
+  border-color: #007FFF;
   box-shadow: 0 0 0 3px rgba(9, 105, 218, 0.1);
 }
 
@@ -241,7 +241,7 @@ body {
 
 .select-input:focus {
   outline: none;
-  border-color: #0969da;
+  border-color: #007FFF;
   box-shadow: 0 0 0 3px rgba(9, 105, 218, 0.1);
 }
 
@@ -291,7 +291,7 @@ body {
 }
 
 .domain-name {
-  color: #0969da;
+  color: #007FFF;
   font-weight: 500;
 }
 
