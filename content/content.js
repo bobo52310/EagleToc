@@ -2539,11 +2539,11 @@ class EagleTOC {
       // 開始滑入動畫
       this.tocPanel.classList.add('eagle-toc-slide-in', 'eagle-toc-visible', 'eagle-toc-expanded');
       
-      // 動畫結束後清理 class
+      // 動畫結束後清理 class（與 CSS 動畫時間對齊 0.4s）
       setTimeout(() => {
         this.tocPanel.classList.remove('eagle-toc-slide-in');
         this.isAnimating = false;
-      }, 600);
+      }, 400);
     }
     
     // 隱藏滑動條
@@ -2580,7 +2580,7 @@ class EagleTOC {
       // 開始滑出動畫
       this.tocPanel.classList.add('eagle-toc-slide-out');
       
-      // 動畫結束後清理 class
+      // 動畫結束後清理 class（與 CSS 動畫時間對齊 0.3s）
       setTimeout(() => {
         this.tocPanel.classList.remove('eagle-toc-slide-out');
         this.isAnimating = false;
@@ -2597,7 +2597,7 @@ class EagleTOC {
             this.slideTrigger.style.pointerEvents = 'auto';
           }
         }
-      }, 400);
+      }, 300);
     }
     
     // 重置自動顯示標記

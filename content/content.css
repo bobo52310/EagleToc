@@ -2,8 +2,8 @@
 .eagle-toc-panel {
   position: fixed;
   top: 50%;
-  right: -380px; /* 初始完全隱藏 */
-  transform: translateY(-50%) scale(0.9);
+  right: 0; /* 固定定位，使用 transform 進出場 */
+  transform: translateX(110%) translateY(-50%) scale(0.98);
   width: 400px;
   max-height: 60vh;
   background: rgba(255, 255, 255, 0.98);
@@ -16,12 +16,14 @@
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
   line-height: 1.4;
   opacity: 0;
-  transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* 彈性動畫 */
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.2s ease,
+              box-shadow 0.2s ease;
   resize: none;
   overflow: hidden;
   min-width: 350px;
   min-height: 200px;
-  will-change: transform, right, opacity;
+  will-change: transform, opacity;
   backdrop-filter: blur(20px) saturate(200%);
   -webkit-backdrop-filter: blur(20px) saturate(200%);
   pointer-events: none; /* 隱藏/未展開狀態不阻擋點擊 */
@@ -65,16 +67,18 @@
 /* 滑動展開狀態 */
 .eagle-toc-panel.eagle-toc-sliding {
   right: 0;
-  transform: translateY(-50%) scale(1);
+  transform: translateX(0) translateY(-50%) scale(1);
   opacity: 1;
-  transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.2s ease,
+              box-shadow 0.2s ease;
   pointer-events: auto;
 }
 
 /* 完全展開狀態 */
 .eagle-toc-panel.eagle-toc-expanded {
   right: 0;
-  transform: translateY(-50%) scale(1);
+  transform: translateX(0) translateY(-50%) scale(1);
   opacity: 1;
   box-shadow: -16px 0 64px rgba(59, 130, 246, 0.2),
               -6px 0 32px rgba(59, 130, 246, 0.15),
@@ -100,37 +104,33 @@
 /* Plan A: Smooth Slide Animation - 平滑滑動動畫 */
 @keyframes slideInSmooth {
   0% {
-    right: -400px;
-    transform: translateY(-50%);
+    transform: translateX(110%) translateY(-50%) scale(0.98);
     opacity: 0;
   }
   100% {
-    right: 0;
-    transform: translateY(-50%);
+    transform: translateX(0) translateY(-50%) scale(1);
     opacity: 1;
   }
 }
 
 @keyframes slideOutSmooth {
   0% {
-    right: 0;
-    transform: translateY(-50%);
+    transform: translateX(0) translateY(-50%) scale(1);
     opacity: 1;
   }
   100% {
-    right: -400px;
-    transform: translateY(-50%);
+    transform: translateX(110%) translateY(-50%) scale(0.98);
     opacity: 0;
   }
 }
 
 /* Plan A: Smooth Animation Classes - 平滑動畫樣式 */
 .eagle-toc-panel.eagle-toc-slide-in {
-  animation: slideInSmooth 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  animation: slideInSmooth 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 .eagle-toc-panel.eagle-toc-slide-out {
-  animation: slideOutSmooth 0.3s cubic-bezier(0.55, 0.06, 0.68, 0.19) forwards;
+  animation: slideOutSmooth 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 /* 調整大小的邊緣區域 */
@@ -249,12 +249,12 @@
 /* Plan B 特定的可見狀態 */
 .eagle-toc-panel.eagle-toc-visible.eagle-toc-expanded {
   right: 0;
-  transform: translateY(-50%) scale(1);
+  transform: translateX(0) translateY(-50%) scale(1);
 }
 
 .eagle-toc-panel.eagle-toc-visible.eagle-toc-sliding {
   right: 0;
-  transform: translateY(-50%) scale(1);
+  transform: translateX(0) translateY(-50%) scale(1);
 }
 
 .eagle-toc-header {
