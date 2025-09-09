@@ -1,3 +1,15 @@
+// Allow running outside extension context (comparison/demo)
+const isExtensionEnv = typeof chrome !== 'undefined' && chrome?.storage?.sync;
+if (!isExtensionEnv) {
+  window.chrome = window.chrome || {};
+  if (!chrome.storage) {
+    chrome.storage = { sync: { get: (defaults, cb) => cb(defaults), set: (_s, cb) => cb && cb() } };
+  }
+  if (!chrome.tabs) {
+    chrome.tabs = { query: (_q, cb) => cb([{ id: 0, url: location.href }]), sendMessage: (_id, _msg, cb) => cb && cb({}) };
+  }
+}
+
 document.addEventListener('DOMContentLoaded', loadSettings);
 
 const defaultSettings = {
@@ -38,6 +50,19 @@ function loadSettings() {
 }
 
 function setupEventListeners() {
+  // Keep quick toggles in sync with main controls (if present)
+  const qAuto = document.getElementById('autoShow_quick');
+  const qLocal = document.getElementById('enableLocalFiles_quick');
+  if (qAuto) {
+    const mainAuto = document.getElementById('autoShow');
+    qAuto.addEventListener('change', () => { mainAuto.checked = qAuto.checked; updateAutoShowOptionsVisibility(qAuto.checked); });
+    mainAuto.addEventListener('change', () => { qAuto.checked = mainAuto.checked; });
+  }
+  if (qLocal) {
+    const mainLocal = document.getElementById('enableLocalFiles');
+    qLocal.addEventListener('change', () => { mainLocal.checked = qLocal.checked; });
+    mainLocal.addEventListener('change', () => { qLocal.checked = mainLocal.checked; });
+  }
   document.getElementById('tocWidth').addEventListener('input', (e) => {
     document.getElementById('tocWidthValue').textContent = e.target.value + 'px';
   });
