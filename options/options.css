@@ -330,3 +330,37 @@ body {
   background: #8c959f;
   cursor: not-allowed;
 }
+/* Ensure wider width when used as browserAction popup */
+html {
+  width: 600px; /* Refined popup width for better balance */
+}
+
+/* When opened as a full tab or large view, don't constrain width */
+@media (min-width: 801px) {
+  html { width: auto; }
+}
+
+/* Polished look when in smaller popup context */
+@media (max-width: 640px) {
+  body {
+    padding: 8px;
+    background: #f6f8fa;
+  }
+  .container {
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    min-height: auto;
+    overflow: hidden;
+  }
+  .header {
+    padding: 1.25rem;
+    border-radius: 10px 10px 0 0;
+  }
+  .main {
+    padding: 1.25rem;
+  }
+  .settings-section {
+    margin-bottom: 1rem;
+    padding: 1rem;
+  }
+}
