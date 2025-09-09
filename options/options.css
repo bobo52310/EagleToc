@@ -38,12 +38,16 @@ body {
   display: grid;
   grid-template-columns: 200px 1fr;
   gap: 0;
+  align-items: start;
 }
 
 .sidebar {
   border-right: 1px solid #e1e5e9;
   background: #f9fafb;
   padding: 16px;
+  position: sticky;
+  top: 0;
+  align-self: start;
 }
 
 .brand {
