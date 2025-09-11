@@ -3019,12 +3019,12 @@ class EagleTOC {
     // 面板離開時隱藏（如果未固定）
     this.tocPanel.addEventListener('mouseleave', () => {
       if (!this.isPinned && this.isExpanded && !this.isAnimating) {
-        // 延遲隱藏，給用戶時間操作
+        // 延遲隱藏 1 秒，給用戶時間操作
         setTimeout(() => {
           if (!this.tocPanel.matches(':hover') && !this.isPinned) {
             this.hide();
           }
-        }, 800); // Plan B 的延遲時間較長
+        }, 1000);
       }
     });
     
