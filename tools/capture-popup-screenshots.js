@@ -1,88 +1,67 @@
-#!/usr/bin/env node
-/*
-  Capture screenshots of popup redesign variants.
-  Requires Chrome installed at default path on macOS or chromium/google-chrome on Linux.
-*/
+/* Capture screenshots of popup redesign variants at multiple widths. */
+const http = require('http');
+const { spawn } = require('child_process');
+const fs = require('fs');
+const path = require('path');
 
-const { spawn } = require('node:child_process');
-const fs = require('node:fs');
-const path = require('node:path');
-const os = require('node:os');
-const http = require('node:http');
-
-function wait(ms) { return new Promise(r => setTimeout(r, ms)); }
-
-async function waitForUrl(url, timeoutMs = 10000) {
+async function waitForServer(url, timeoutMs = 10000) {
   const start = Date.now();
-  while (Date.now() - start < timeoutMs) {
-    try {
-      await fetch(url, { method: 'HEAD' });
-      return true;
-    } catch { /* retry */ }
-    await wait(200);
-  }
-  throw new Error(`Timeout waiting for ${url}`);
-}
-
-function ensureDir(p) { if (!fs.existsSync(p)) fs.mkdirSync(p, { recursive: true }); }
-
-function platformChromePath() {
-  const plat = os.platform();
-  if (plat === 'darwin') return '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
-  if (plat === 'linux') return '/usr/bin/google-chrome';
-  if (plat === 'win32') return process.env['PROGRAMFILES'] + '\\Google\\Chrome\\Application\\chrome.exe';
-  return null;
+  return new Promise((resolve, reject) => {
+    (function poll() {
+      http.get(url, () => resolve()).on('error', () => {
+        if (Date.now() - start > timeoutMs) return reject(new Error('Server start timeout'));
+        setTimeout(poll, 200);
+      });
+    })();
+  });
 }
 
 async function main() {
-  const puppeteer = require('puppeteer-core');
-
-  // Start servers if needed
-  const servers = [];
-  const versions = [
-    { name: 'v1', dir: '../smart-toc-popup-v1', url: 'http://localhost:8101/options/options.html', port: 8101 },
-    { name: 'v2', dir: '../smart-toc-popup-v2', url: 'http://localhost:8102/options/options.html', port: 8102 },
-    { name: 'v3', dir: '../smart-toc-popup-v3', url: 'http://localhost:8103/options/options.html', port: 8103 }
+  const port = process.env.PORT || 8080;
+  const base = `http://localhost:${port}`;
+  const targets = [
+    { id: 'v1', url: `${base}/worktrees/v1/popup/popup.html` },
+    { id: 'v2', url: `${base}/worktrees/v2/popup/popup.html` },
+    { id: 'v3', url: `${base}/worktrees/v3/popup/popup.html` },
   ];
+  const widths = [480, 640, 760];
 
-  for (const v of versions) {
-    const ready = await fetch(v.url).then(r => r.ok).catch(() => false);
-    if (!ready) {
-      const proc = spawn('python3', ['-m', 'http.server', String(v.port)], { cwd: path.resolve(__dirname, '..', v.dir) });
-      servers.push(proc);
-      await waitForUrl(v.url, 10000);
+  const screenshotsDir = path.join(process.cwd(), 'screenshots');
+  if (!fs.existsSync(screenshotsDir)) fs.mkdirSync(screenshotsDir);
+
+  // Start simple server
+  const server = spawn('python3', ['-m', 'http.server', String(port)], { stdio: 'ignore' });
+  try {
+    await waitForServer(`${base}/popup-redesign-comparison.html`);
+  } catch (e) {
+    server.kill();
+    throw e;
+  }
+
+  // Use puppeteer (not core) to ensure Chromium is available
+  const puppeteer = require('puppeteer');
+  const browser = await puppeteer.launch({ headless: 'new', defaultViewport: null });
+  const page = await browser.newPage();
+
+  for (const t of targets) {
+    for (const w of widths) {
+      await page.setViewport({ width: w, height: 900, deviceScaleFactor: 2 });
+      await page.goto(t.url, { waitUntil: 'networkidle2' });
+      // small delay to allow paints
+      await page.evaluate(() => new Promise(r => setTimeout(r, 150)));
+      const out = path.join(screenshotsDir, `popup-${t.id}-${w}.png`);
+      await page.screenshot({ path: out, fullPage: false });
+      // eslint-disable-next-line no-console
+      console.log('Saved', out);
     }
   }
 
-  const execPath = platformChromePath();
-  if (!execPath || !fs.existsSync(execPath)) {
-    console.error('Could not find Chrome executable. Please install Chrome or edit tools/capture-popup-screenshots.js');
-    process.exit(1);
-  }
-
-  const browser = await puppeteer.launch({
-    headless: 'new',
-    executablePath: execPath,
-    args: ['--no-sandbox', '--disable-gpu']
-  });
-
-  const outDir = path.resolve(process.cwd(), 'screenshots');
-  ensureDir(outDir);
-
-  for (const v of versions) {
-    const page = await browser.newPage();
-    await page.setViewport({ width: 900, height: 780, deviceScaleFactor: 2 });
-    await page.goto(v.url, { waitUntil: 'domcontentloaded' });
-    await wait(400); // small settle
-    const out = path.join(outDir, `popup-${v.name}.png`);
-    await page.screenshot({ path: out, fullPage: false });
-    console.log('Saved', out);
-    await page.close();
-  }
-
   await browser.close();
-  servers.forEach(p => p.kill());
+  server.kill();
 }
 
-main().catch(err => { console.error(err); process.exit(1); });
-
+main().catch((err) => {
+  // eslint-disable-next-line no-console
+  console.error(err);
+  process.exit(1);
+});

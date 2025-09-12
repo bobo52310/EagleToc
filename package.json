@@ -6,6 +6,6 @@
     "popup:screenshots": "node tools/capture-popup-screenshots.js"
   },
   "devDependencies": {
-    "puppeteer-core": "^22.12.1"
+    "puppeteer": "^22.12.1"
   }
 }
