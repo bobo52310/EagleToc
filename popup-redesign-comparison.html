@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Popup Redesign Comparison</title>
+  <style>
+    :root { --bg:#0b0b0c; --fg:#e5e7eb; --muted:#9aa3b2; --card:#0f1218; --border:#262b36; }
+    @media (prefers-color-scheme: light) { :root { --bg:#f6f8fb; --fg:#0f172a; --muted:#64748b; --card:#fff; --border:#e5e7eb; } }
+    html,body{height:100%}
+    body { margin:0; font: 14px/1.45 -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Ubuntu,Cantarell,sans-serif; background:var(--bg); color:var(--fg); }
+    header { display:flex; align-items:center; justify-content:space-between; padding:12px 14px; border-bottom:1px solid var(--border); position: sticky; top:0; backdrop-filter: blur(6px); background: color-mix(in oklab, var(--bg) 88%, transparent); }
+    .title { font-weight: 800; letter-spacing: .2px; }
+    .controls { display:flex; gap:12px; align-items:center; color: var(--muted); }
+    .grid { display:grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; padding: 14px; }
+    .col { display:grid; gap: 10px; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+    .card header { display:flex; justify-content:space-between; align-items:center; padding: 10px 12px; border-bottom: 1px solid var(--border); position:static; background: none; }
+    .frame-wrap { padding: 0; overflow: auto; }
+    iframe { width: 100%; height: 560px; border: 0; display:block; background: #fff; }
+    .note { color: var(--muted); padding: 0 14px 14px; }
+    .width-value { min-width: 42px; display:inline-block; text-align:right; }
+    .range { accent-color: #6366f1; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="title">Popup Redesign Comparison</div>
+    <div class="controls">
+      <label>Viewport width: <span id="wval" class="width-value">640</span>px</label>
+      <input id="w" class="range" type="range" min="360" max="800" value="640" step="10" />
+    </div>
+  </header>
+  <div class="note">Tip: This page embeds each branch worktree’s popup.html so you can quickly compare v1, v2, v3 and test responsiveness by adjusting the width above.</div>
+  <div class="grid">
+    <section class="col card">
+      <header><div>v1 • feature/popup-redesign-v1</div><a href="worktrees/v1/popup/popup.html" target="_blank">Open</a></header>
+      <div class="frame-wrap"><iframe id="f1" src="worktrees/v1/popup/popup.html"></iframe></div>
+    </section>
+    <section class="col card">
+      <header><div>v2 • feature/popup-redesign-v2</div><a href="worktrees/v2/popup/popup.html" target="_blank">Open</a></header>
+      <div class="frame-wrap"><iframe id="f2" src="worktrees/v2/popup/popup.html"></iframe></div>
+    </section>
+    <section class="col card">
+      <header><div>v3 • feature/popup-redesign-v3</div><a href="worktrees/v3/popup/popup.html" target="_blank">Open</a></header>
+      <div class="frame-wrap"><iframe id="f3" src="worktrees/v3/popup/popup.html"></iframe></div>
+    </section>
+  </div>
+  <script>
+    const w = document.getElementById('w');
+    const wval = document.getElementById('wval');
+    const frames = [document.getElementById('f1'), document.getElementById('f2'), document.getElementById('f3')];
+    function applyWidth(px){
+      wval.textContent = px;
+      frames.forEach(f => { f.style.width = px + 'px'; });
+    }
+    w.addEventListener('input', e => applyWidth(e.target.value));
+    applyWidth(w.value);
+  </script>
+</body>
+</html>
