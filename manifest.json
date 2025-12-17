@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "EagleToc - Eagle Eye Table of Contents",
-  "description": "Navigate with eagle precision! Smart table of contents for any website, making it easier to read and navigate long articles, documentations, and online books with eagle-eye overview.",
+  "description": "Smart table of contents for any website. Navigate articles, docs, and books with eagle-eye precision.",
   "version": "1.0.0",
   "default_locale": "zh_TW",
   "permissions": [
@@ -42,11 +42,5 @@
   "options_ui": {
     "page": "options/options.html",
     "open_in_tab": false
-  },
-  "web_accessible_resources": [
-    {
-      "resources": ["content/*"],
-      "matches": ["<all_urls>"]
-    }
-  ]
+  }
 }

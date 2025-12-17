@@ -2479,19 +2479,66 @@ class EagleTOC {
     if (!listContainer) return;
 
     const whitelist = this.settings.autoShowWhitelist || [];
-    
-    listContainer.innerHTML = whitelist.map((domain, index) => `
-      <div class="eagle-toc-whitelist-item" data-index="${index}">
-        <span class="eagle-toc-whitelist-domain" data-original="${domain}">${domain}</span>
-        <input class="eagle-toc-whitelist-input-edit" type="text" value="${domain}" style="display: none;">
-        <div class="eagle-toc-whitelist-actions">
-          <button class="eagle-toc-whitelist-edit" data-index="${index}" title="編輯">✏️</button>
-          <button class="eagle-toc-whitelist-save" data-index="${index}" title="保存" style="display: none;">✓</button>
-          <button class="eagle-toc-whitelist-cancel" data-index="${index}" title="取消" style="display: none;">✕</button>
-          <button class="eagle-toc-whitelist-remove" data-domain="${domain}" title="移除">🗑️</button>
-        </div>
-      </div>
-    `).join('');
+
+    // 使用 DOM API 安全地渲染白名單項目，防止 XSS
+    listContainer.innerHTML = '';
+
+    whitelist.forEach((domain, index) => {
+      const item = document.createElement('div');
+      item.className = 'eagle-toc-whitelist-item';
+      item.dataset.index = index;
+
+      const domainSpan = document.createElement('span');
+      domainSpan.className = 'eagle-toc-whitelist-domain';
+      domainSpan.dataset.original = domain;
+      domainSpan.textContent = domain;
+
+      const input = document.createElement('input');
+      input.className = 'eagle-toc-whitelist-input-edit';
+      input.type = 'text';
+      input.value = domain;
+      input.style.display = 'none';
+
+      const actions = document.createElement('div');
+      actions.className = 'eagle-toc-whitelist-actions';
+
+      const editBtn = document.createElement('button');
+      editBtn.className = 'eagle-toc-whitelist-edit';
+      editBtn.dataset.index = index;
+      editBtn.title = '編輯';
+      editBtn.textContent = '✏️';
+
+      const saveBtn = document.createElement('button');
+      saveBtn.className = 'eagle-toc-whitelist-save';
+      saveBtn.dataset.index = index;
+      saveBtn.title = '保存';
+      saveBtn.style.display = 'none';
+      saveBtn.textContent = '✓';
+
+      const cancelBtn = document.createElement('button');
+      cancelBtn.className = 'eagle-toc-whitelist-cancel';
+      cancelBtn.dataset.index = index;
+      cancelBtn.title = '取消';
+      cancelBtn.style.display = 'none';
+      cancelBtn.textContent = '✕';
+
+      const removeBtn = document.createElement('button');
+      removeBtn.className = 'eagle-toc-whitelist-remove';
+      removeBtn.dataset.domain = domain;
+      removeBtn.title = '移除';
+      removeBtn.textContent = '🗑️';
+
+      actions.appendChild(editBtn);
+      actions.appendChild(saveBtn);
+      actions.appendChild(cancelBtn);
+      actions.appendChild(removeBtn);
+
+      item.appendChild(domainSpan);
+      item.appendChild(input);
+      item.appendChild(actions);
+
+      listContainer.appendChild(item);
+    });
 
     this.bindWhitelistItemEvents(listContainer);
   }
@@ -3233,28 +3280,35 @@ class EagleTOC {
     });
   }
 
+  // HTML 逃逸函數，防止 XSS 攻擊
+  escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+
   highlightMatchingText(originalText, query) {
     if (!query) {
-      return originalText;
+      return this.escapeHtml(originalText);
     }
-    
+
     const lowerText = originalText.toLowerCase();
     const lowerQuery = query.toLowerCase();
-    
+
     // Find direct matches to highlight
     const startIndex = lowerText.indexOf(lowerQuery);
-    
+
     if (startIndex !== -1) {
-      const beforeMatch = originalText.substring(0, startIndex);
-      const match = originalText.substring(startIndex, startIndex + query.length);
-      const afterMatch = originalText.substring(startIndex + query.length);
-      
-      return beforeMatch + 
-             '<span class="eagle-toc-search-match">' + match + '</span>' + 
+      const beforeMatch = this.escapeHtml(originalText.substring(0, startIndex));
+      const match = this.escapeHtml(originalText.substring(startIndex, startIndex + query.length));
+      const afterMatch = this.escapeHtml(originalText.substring(startIndex + query.length));
+
+      return beforeMatch +
+             '<span class="eagle-toc-search-match">' + match + '</span>' +
              afterMatch;
     }
-    
-    return originalText;
+
+    return this.escapeHtml(originalText);
   }
 
   handleSearchKeydown(e) {
