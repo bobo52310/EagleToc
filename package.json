@@ -3,7 +3,6 @@
   "private": true,
   "version": "0.1.0",
   "scripts": {
-    "popup:screenshots": "node tools/capture-popup-screenshots.js",
     "store:screenshots": "node tools/capture-store-screenshots.js"
   },
   "devDependencies": {

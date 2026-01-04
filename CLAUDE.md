@@ -95,8 +95,8 @@ Search dialog positions adjacent to TOC panel (not center-modal) for non-intrusi
 
 ## Testing
 
-- Manual testing via `test-auto-show.js`, `test-deduplication.js`, `debug-auto-show.js`
-- Use `feature-test.html` for comprehensive feature testing
+- Manual testing: load the unpacked extension and test on real websites.
+- For quick repro, create a minimal local HTML page (not committed) and open it with a local server.
 - Dark theme: Toggle system dark mode or use `document.documentElement.style.colorScheme = 'dark'`
 
 ## i18n
