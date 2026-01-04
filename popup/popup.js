@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   helpBtn.addEventListener('click', () => {
     chrome.tabs.create({
-      url: 'https://github.com/your-username/eagle-toc#usage'
+      url: 'https://github.com/bobo52310/EagleToc#usage'
     });
     window.close();
   });

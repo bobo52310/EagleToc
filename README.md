@@ -106,7 +106,7 @@
 
 1. **下載擴充功能**
    ```bash
-   git clone https://github.com/your-username/eagle-toc.git
+   git clone https://github.com/bobo52310/EagleToc.git
    ```
 
 2. **開啟 Chrome 擴充功能頁面**
@@ -222,9 +222,9 @@ eagle-toc/
 
 ## 📞 聯絡與支援
 
-- 🐛 **回報問題**：[GitHub Issues](https://github.com/your-username/eagle-toc/issues)
-- 💡 **功能建議**：[GitHub Discussions](https://github.com/your-username/eagle-toc/discussions)
-- 📧 **聯絡開發者**：your-email@example.com
+- 🐛 **回報問題**：[GitHub Issues](https://github.com/bobo52310/EagleToc/issues)
+- 💡 **功能建議**：[GitHub Discussions](https://github.com/bobo52310/EagleToc/discussions)
+- 📧 **聯絡開發者**：bobo52310@gmail.com
 
 ## 📚 深入了解
 
