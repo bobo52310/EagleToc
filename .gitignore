@@ -9,6 +9,27 @@ coverage/
 *.local
 .env*
 
-# 工具產生的歷史/快取檔案
+# AI 工具產生的歷史/快取/設定檔
 .specstory/
-.claude/plans/
+.claude/
+AGENTS.md
+GEMINI.md
+
+# 內部開發文件（不適合開源）
+IMPLEMENTATION_PLAN.md
+IMPLEMENTATION_REPORT.md
+ANIMATION_IMPLEMENTATION_GUIDE.md
+API_REFERENCE.md
+COMPREHENSIVE_DOCUMENTATION.md
+FEATURE_DOCUMENTATION.md
+SCROLL_SYNC_VERSIONS.md
+PRD.md
+landing-page.md
+worktree-testing-guide.md
+docs/chrome-store-screenshots.md
+
+# 開發用暫存檔
+temp
+temp-*
+kill-ports.sh
+2025-*.txt
