@@ -28,8 +28,8 @@ export const Scene2Solution: React.FC<SceneProps> = ({ format = "full" }) => {
         style={{
           width: "100%",
           height: "100%",
-          objectFit: "cover",
         }}
+        objectFit="cover"
         muted
       />
 

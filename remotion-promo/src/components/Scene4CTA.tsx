@@ -37,8 +37,8 @@ export const Scene4CTA: React.FC<SceneProps> = ({ format = "full" }) => {
         style={{
           width: "100%",
           height: "100%",
-          objectFit: "cover",
         }}
+        objectFit="cover"
         muted
       />
 

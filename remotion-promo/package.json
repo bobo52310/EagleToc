@@ -8,20 +8,20 @@
     "render:gif": "remotion render EagleTocPromo out/eagletoc-promo.gif",
     "render:square": "remotion render EagleTocPromo out/eagletoc-promo-square.mp4 --props='{\"format\":\"square\"}'",
     "render:vertical": "remotion render EagleTocPromo out/eagletoc-promo-vertical.mp4 --props='{\"format\":\"vertical\"}'",
-    "render:preview": "remotion render EagleTocPromo out/eagletoc-promo-preview.mp4 --quality=50",
+    "render:preview": "remotion render EagleTocPromo out/eagletoc-promo-preview.mp4 --jpeg-quality=50",
     "upgrade": "remotion upgrade",
     "versions": "remotion versions"
   },
   "dependencies": {
-    "@remotion/cli": "4.0.417",
-    "@remotion/media": "4.0.417",
-    "@remotion/transitions": "4.0.417",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "remotion": "4.0.417"
+    "@remotion/cli": "4.0.539",
+    "@remotion/media": "4.0.539",
+    "@remotion/transitions": "4.0.539",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "remotion": "4.0.539"
   },
   "devDependencies": {
-    "@types/react": "^19.0.0",
-    "typescript": "^5.7.0"
+    "@types/react": "^19.3.0",
+    "typescript": "^7.0.2"
   }
 }
