@@ -70,6 +70,8 @@ All formats use responsive font sizes and element scaling for optimal visibility
   - `scene4.mp4` - Overview perspective
   - `icon128.png` - EagleToc icon
 
+> The scene videos are not committed (they are large binaries). Provide your own clips with these names before rendering.
+
 ### Development
 
 ```bash
@@ -101,7 +103,7 @@ npm run render:preview
 npm run render:gif
 ```
 
-Output files are saved to `out/` directory.
+Output files are saved to `out/` directory (gitignored).
 
 ## 🛠️ Project Structure
 

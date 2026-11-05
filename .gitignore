@@ -48,3 +48,7 @@ docs/design/promo-review.html
 CHANGELOG-sessions.md
 TODO.md
 remotion-promo/*.ini
+
+# Remotion 大型影片素材與輸出（已從歷史移除）
+remotion-promo/public/*.mp4
+remotion-promo/out/
