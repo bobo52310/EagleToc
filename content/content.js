@@ -1,3 +1,13 @@
+// i18n helper: resolve a message from _locales (chrome.i18n.getMessage is synchronous in content scripts).
+// Falls back to the key itself when chrome.i18n is unavailable or the key is missing.
+const t = (key, subs) => {
+  try {
+    return chrome.i18n.getMessage(key, subs) || key;
+  } catch (e) {
+    return key;
+  }
+};
+
 class EagleTOC {
   constructor() {
     this.tocPanel = null;
@@ -244,14 +254,14 @@ class EagleTOC {
     // Plan B: 創建滑動觸發條
     this.slideTrigger = document.createElement('div');
     this.slideTrigger.className = 'eagle-toc-slide-trigger';
-    this.slideTrigger.title = 'TOC 滑動展開 - 點擊、滑動或滑鼠操作';
+    this.slideTrigger.title = t('contentSlideTriggerTitle');
     this.isExpanded = false;
     this.isPinned = false;
     this.isAnimating = false;
     this.tocPanel.innerHTML = `
       <div class="eagle-toc-header">
         <div class="eagle-toc-controls">
-          <button class="eagle-toc-toggle" title="固定" aria-pressed="false">
+          <button class="eagle-toc-toggle" title="${t('contentPin')}" aria-pressed="false">
             <!-- Unpinned icon -->
             <svg class="icon-unpinned" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="12" height="12" aria-hidden="true">
               <path fill="currentColor" d="M4.146 14.354a.5.5 0 0 0 .708 0l3.536-3.536 2.121 2.122a.5.5 0 0 0 .708-.708l-2.122-2.121 2.829-2.829c.63-.63.184-1.707-.707-1.707H9.5L6.354 1.146a.5.5 0 1 0-.708.708L8.293 4.5H6.5c-.89 0-1.337 1.077-.707 1.707l2.829 2.829-3.536 3.536a.5.5 0 0 0 0 .708z"/>
@@ -262,36 +272,36 @@ class EagleTOC {
             </svg>
           </button>
           <div class="eagle-toc-depth-controls">
-            <button class="eagle-toc-depth-decrease" title="減少顯示深度">−</button>
+            <button class="eagle-toc-depth-decrease" title="${t('contentDepthDecrease')}">−</button>
             <span class="eagle-toc-depth-display">H${this.settings.maxHeadingLevels}</span>
-            <button class="eagle-toc-depth-increase" title="增加顯示深度">+</button>
+            <button class="eagle-toc-depth-increase" title="${t('contentDepthIncrease')}">+</button>
           </div>
           <div class="eagle-toc-font-toolbar-controls">
-            <button class="eagle-toc-font-toolbar-decrease" title="減小字體">−</button>
+            <button class="eagle-toc-font-toolbar-decrease" title="${t('contentFontDecrease')}">−</button>
             <span class="eagle-toc-font-toolbar-display">${this.settings.fontSize}px</span>
-            <button class="eagle-toc-font-toolbar-increase" title="增大字體">+</button>
+            <button class="eagle-toc-font-toolbar-increase" title="${t('contentFontIncrease')}">+</button>
           </div>
-          <button class="eagle-toc-toolbar-search" title="搜尋">
+          <button class="eagle-toc-toolbar-search" title="${t('contentSearch')}">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="12" height="12">
               <path d="M6.5 0C2.91 0 0 2.91 0 6.5S2.91 13 6.5 13c1.61 0 3.09-.59 4.23-1.57l4.92 4.92a.75.75 0 1 0 1.06-1.06l-4.92-4.92A6.5 6.5 0 0 0 6.5 0zM1.5 6.5a5 5 0 1 1 10 0 5 5 0 0 1-10 0z" fill="currentColor"/>
             </svg>
           </button>
-          <button class="eagle-toc-toolbar-export" title="智能導出 - 多格式導出選項">
+          <button class="eagle-toc-toolbar-export" title="${t('contentExportButtonTitle')}">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="12" height="12">
               <path d="M8.5 1.5a.5.5 0 0 0-1 0v5.793L5.354 5.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 7.293V1.5z" fill="currentColor"/>
               <path d="M3 9.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5z" fill="currentColor"/>
               <path d="M2.5 11.5A1.5 1.5 0 0 0 4 13h8a1.5 1.5 0 0 0 1.5-1.5v-1a.5.5 0 0 0-1 0v1a.5.5 0 0 1-.5.5H4a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 0-1 0v1z" fill="currentColor"/>
             </svg>
           </button>
-          <button class="eagle-toc-toolbar-zen" title="Zen Mode - 全螢幕閱讀模式">
+          <button class="eagle-toc-toolbar-zen" title="${t('contentZenButtonTitle')}">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="12" height="12">
               <path d="M1.5 1a.5.5 0 0 0-.5.5v4a.5.5 0 0 1-1 0v-4A1.5 1.5 0 0 1 1.5 0h4a.5.5 0 0 1 0 1h-4zM10 .5a.5.5 0 0 1 .5-.5h4A1.5 1.5 0 0 1 16 1.5v4a.5.5 0 0 1-1 0v-4a.5.5 0 0 0-.5-.5h-4a.5.5 0 0 1-.5-.5zM.5 10a.5.5 0 0 1 .5.5v4a.5.5 0 0 0 .5.5h4a.5.5 0 0 1 0 1h-4A1.5 1.5 0 0 1 0 14.5v-4a.5.5 0 0 1 .5-.5zm15 0a.5.5 0 0 1 .5.5v4a1.5 1.5 0 0 1-1.5 1.5h-4a.5.5 0 0 1 0-1h4a.5.5 0 0 0 .5-.5v-4a.5.5 0 0 1 .5-.5z" fill="currentColor"/>
             </svg>
           </button>
           <div class="eagle-toc-action-buttons">
-            <button class="eagle-toc-close" title="關閉">×</button>
+            <button class="eagle-toc-close" title="${t('contentClose')}">×</button>
             <div class="eagle-toc-more-container">
-              <button class="eagle-toc-more" title="更多選項">
+              <button class="eagle-toc-more" title="${t('contentMoreOptions')}">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="12" height="12">
                   <path d="M8 9a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zM1.5 9a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zm13 0a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z" fill="currentColor"/>
                 </svg>
@@ -299,19 +309,19 @@ class EagleTOC {
               <div class="eagle-toc-more-menu">
                 <div class="eagle-toc-more-option eagle-toc-pin">
                   <span class="eagle-toc-more-icon">📍</span>
-                  <span class="eagle-toc-more-text">自動開啟</span>
+                  <span class="eagle-toc-more-text">${t('contentMenuAutoShow')}</span>
                 </div>
                 <div class="eagle-toc-more-option eagle-toc-theme-toggle">
                   <span class="eagle-toc-more-icon">🎨</span>
-                  <span class="eagle-toc-more-text">主題</span>
+                  <span class="eagle-toc-more-text">${t('contentMenuTheme')}</span>
                 </div>
                 <div class="eagle-toc-more-option eagle-toc-copy">
                   <span class="eagle-toc-more-icon">📋</span>
-                  <span class="eagle-toc-more-text">複製</span>
+                  <span class="eagle-toc-more-text">${t('contentCopy')}</span>
                 </div>
                 <div class="eagle-toc-more-option eagle-toc-settings">
                   <span class="eagle-toc-more-icon">⚙️</span>
-                  <span class="eagle-toc-more-text">設定</span>
+                  <span class="eagle-toc-more-text">${t('contentMenuSettings')}</span>
                 </div>
               </div>
             </div>
@@ -320,36 +330,36 @@ class EagleTOC {
         <div class="eagle-toc-theme-menu" style="display: none;">
           <div class="eagle-toc-theme-option" data-theme="auto">
             <div class="eagle-toc-theme-dot auto"></div>
-            <span>自動適應</span>
+            <span>${t('contentThemeAuto')}</span>
           </div>
           <div class="eagle-toc-theme-option" data-theme="light">
             <div class="eagle-toc-theme-dot light"></div>
-            <span>亮色</span>
+            <span>${t('contentThemeLight')}</span>
           </div>
           <div class="eagle-toc-theme-option" data-theme="dark">
             <div class="eagle-toc-theme-dot dark"></div>
-            <span>深色</span>
+            <span>${t('contentThemeDark')}</span>
           </div>
           <div class="eagle-toc-theme-option" data-theme="ocean">
             <div class="eagle-toc-theme-dot ocean"></div>
-            <span>海洋</span>
+            <span>${t('contentThemeOcean')}</span>
           </div>
           <div class="eagle-toc-theme-option" data-theme="forest">
             <div class="eagle-toc-theme-dot forest"></div>
-            <span>森林</span>
+            <span>${t('contentThemeForest')}</span>
           </div>
           <div class="eagle-toc-theme-option" data-theme="sunset">
             <div class="eagle-toc-theme-dot sunset"></div>
-            <span>日落</span>
+            <span>${t('contentThemeSunset')}</span>
           </div>
           <div class="eagle-toc-theme-option" data-theme="coral">
             <div class="eagle-toc-theme-dot coral"></div>
-            <span>珊瑚</span>
+            <span>${t('contentThemeCoral')}</span>
           </div>
         </div>
       </div>
       <div class="eagle-toc-content">
-        <div class="eagle-toc-loading">Analyzing page structure...</div>
+        <div class="eagle-toc-loading">${t('contentAnalyzing')}</div>
       </div>
       <!-- 調整大小的處理元素 -->
       <div class="resize-handle resize-handle-right"></div>
@@ -416,29 +426,29 @@ class EagleTOC {
       <div class="eagle-toc-settings-overlay"></div>
       <div class="eagle-toc-settings-dialog">
         <div class="eagle-toc-settings-header">
-          <h3 class="eagle-toc-settings-title">EagleToc 設定</h3>
-          <button class="eagle-toc-settings-close" title="關閉設定">×</button>
+          <h3 class="eagle-toc-settings-title">${t('contentSettingsTitle')}</h3>
+          <button class="eagle-toc-settings-close" title="${t('contentSettingsClose')}">×</button>
         </div>
         <div class="eagle-toc-settings-content">
           <div class="eagle-toc-settings-item">
-            <span class="eagle-toc-settings-label">字體大小</span>
+            <span class="eagle-toc-settings-label">${t('contentFontSizeLabel')}</span>
             <div class="eagle-toc-font-controls">
-              <button class="eagle-toc-font-btn eagle-toc-font-decrease" title="減小字體">-</button>
+              <button class="eagle-toc-font-btn eagle-toc-font-decrease" title="${t('contentFontDecrease')}">-</button>
               <span class="eagle-toc-font-size-display">16px</span>
-              <button class="eagle-toc-font-btn eagle-toc-font-increase" title="增大字體">+</button>
+              <button class="eagle-toc-font-btn eagle-toc-font-increase" title="${t('contentFontIncrease')}">+</button>
             </div>
           </div>
           <div class="eagle-toc-settings-item">
-            <span class="eagle-toc-settings-label">高亮時間</span>
+            <span class="eagle-toc-settings-label">${t('contentHighlightDurationLabel')}</span>
             <div class="eagle-toc-font-controls">
-              <button class="eagle-toc-font-btn eagle-toc-highlight-decrease" title="減少時間">-</button>
+              <button class="eagle-toc-font-btn eagle-toc-highlight-decrease" title="${t('contentHighlightDecrease')}">-</button>
               <span class="eagle-toc-highlight-duration-display">5s</span>
-              <button class="eagle-toc-font-btn eagle-toc-highlight-increase" title="增加時間">+</button>
+              <button class="eagle-toc-font-btn eagle-toc-highlight-increase" title="${t('contentHighlightIncrease')}">+</button>
             </div>
           </div>
           <div class="eagle-toc-settings-item eagle-toc-whitelist-section">
             <div class="eagle-toc-whitelist-header">
-              <span class="eagle-toc-settings-label">自動顯示白名單</span>
+              <span class="eagle-toc-settings-label">${t('contentWhitelistLabel')}</span>
               <label class="eagle-toc-whitelist-toggle">
                 <input type="checkbox" class="eagle-toc-whitelist-enabled" checked />
                 <span class="eagle-toc-toggle-slider"></span>
@@ -446,12 +456,12 @@ class EagleTOC {
             </div>
             <div class="eagle-toc-whitelist-controls">
               <div class="eagle-toc-whitelist-input-row">
-                <input type="text" class="eagle-toc-whitelist-input" placeholder="新增網域 (例: example.com)" />
-                <button class="eagle-toc-whitelist-add" title="新增網域">+</button>
+                <input type="text" class="eagle-toc-whitelist-input" placeholder="${t('contentWhitelistPlaceholder')}" />
+                <button class="eagle-toc-whitelist-add" title="${t('contentWhitelistAddTitle')}">+</button>
               </div>
               <div class="eagle-toc-whitelist-actions">
-                <button class="eagle-toc-whitelist-add-current" title="新增當前網域">新增當前網域</button>
-                <button class="eagle-toc-whitelist-reset" title="重置為預設值">重置</button>
+                <button class="eagle-toc-whitelist-add-current" title="${t('contentWhitelistAddCurrent')}">${t('contentWhitelistAddCurrent')}</button>
+                <button class="eagle-toc-whitelist-reset" title="${t('contentWhitelistResetTitle')}">${t('contentReset')}</button>
               </div>
             </div>
             <div class="eagle-toc-whitelist-list">
@@ -558,10 +568,10 @@ class EagleTOC {
     if (addCurrentBtn) {
       addCurrentBtn.addEventListener('click', async () => {
         if (await this.addCurrentDomainToWhitelist()) {
-          this.showNotification(`已新增 ${window.location.hostname} 到白名單`);
+          this.showNotification(t('contentNotifyWhitelistAdded', window.location.hostname));
           this.renderWhitelistItems();
         } else {
-          this.showNotification(`${window.location.hostname} 已在白名單中`);
+          this.showNotification(t('contentNotifyWhitelistExists', window.location.hostname));
         }
       });
     }
@@ -569,7 +579,7 @@ class EagleTOC {
     if (resetBtn) {
       resetBtn.addEventListener('click', async () => {
         await this.resetWhitelistToDefault();
-        this.showNotification('白名單已重置為預設值');
+        this.showNotification(t('contentNotifyWhitelistReset'));
         this.renderWhitelistItems();
       });
     }
@@ -844,8 +854,8 @@ class EagleTOC {
       const copyBtn = document.createElement('button');
       copyBtn.className = 'eagle-toc-copy-btn';
       copyBtn.innerHTML = '🔗';
-      copyBtn.title = '複製連結';
-      copyBtn.setAttribute('aria-label', '複製此標題的連結');
+      copyBtn.title = t('contentCopyLink');
+      copyBtn.setAttribute('aria-label', t('contentCopyHeadingLink'));
       
       copyBtn.addEventListener('click', (e) => {
         e.preventDefault();
@@ -882,7 +892,7 @@ class EagleTOC {
     // Use modern clipboard API if available, fallback to older method
     if (navigator.clipboard && window.isSecureContext) {
       navigator.clipboard.writeText(url).then(() => {
-        this.showCopyFeedback(button, '已複製!');
+        this.showCopyFeedback(button, t('contentCopied'));
       }).catch(() => {
         this.fallbackCopyToClipboard(url, button);
       });
@@ -904,9 +914,9 @@ class EagleTOC {
     
     try {
       document.execCommand('copy');
-      this.showCopyFeedback(button, '已複製!');
+      this.showCopyFeedback(button, t('contentCopied'));
     } catch (err) {
-      this.showCopyFeedback(button, '複製失敗');
+      this.showCopyFeedback(button, t('contentCopyFailed'));
     } finally {
       document.body.removeChild(textArea);
     }
@@ -1001,7 +1011,7 @@ class EagleTOC {
 
   showNoHeadingsMessage() {
     const content = this.tocPanel.querySelector('.eagle-toc-content');
-    content.innerHTML = '<div class="eagle-toc-no-headings">No headings found on this page.</div>';
+    content.innerHTML = `<div class="eagle-toc-no-headings">${t('contentNoHeadings')}</div>`;
   }
 
   setupEventListeners() {
@@ -1348,7 +1358,7 @@ class EagleTOC {
   }
 
   showCopySuccess() {
-    this.showNotification('已複製到剪貼簿');
+    this.showNotification(t('contentNotifyCopiedClipboard'));
   }
 
   showNotification(message, duration = 2000, type = 'default') {
@@ -1466,18 +1476,18 @@ class EagleTOC {
     this.closeConfirmModal.innerHTML = `
       <div class="eagle-toc-close-confirm-dialog">
         <div class="eagle-toc-close-confirm-header">
-          <h3 class="eagle-toc-close-confirm-title">隱藏目錄</h3>
+          <h3 class="eagle-toc-close-confirm-title">${t('contentCloseConfirmTitle')}</h3>
         </div>
         <div class="eagle-toc-close-confirm-content">
-          <p class="eagle-toc-close-confirm-message">選擇關閉方式：</p>
+          <p class="eagle-toc-close-confirm-message">${t('contentCloseConfirmMessage')}</p>
           <div class="eagle-toc-close-confirm-buttons">
             <button class="eagle-toc-close-confirm-btn eagle-toc-close-temp" type="button">
-              <span class="eagle-toc-close-btn-text">僅此次關閉</span>
-              <span class="eagle-toc-close-btn-desc">本次瀏覽暫時隱藏</span>
+              <span class="eagle-toc-close-btn-text">${t('contentCloseTemp')}</span>
+              <span class="eagle-toc-close-btn-desc">${t('contentCloseTempDesc')}</span>
             </button>
             <button class="eagle-toc-close-confirm-btn eagle-toc-close-permanent" type="button">
-              <span class="eagle-toc-close-btn-text">永久不顯示</span>
-              <span class="eagle-toc-close-btn-desc">此網站不再顯示</span>
+              <span class="eagle-toc-close-btn-text">${t('contentClosePermanent')}</span>
+              <span class="eagle-toc-close-btn-desc">${t('contentClosePermanentDesc')}</span>
             </button>
           </div>
         </div>
@@ -2013,7 +2023,7 @@ class EagleTOC {
     const notifiedDomains = this.getNotifiedDomains();
     
     if (!notifiedDomains.includes(currentDomain)) {
-      this.showNotification('TOC 已自動顯示。如不需要，可點擊 × 關閉', 4000, 'auto-show');
+      this.showNotification(t('contentNotifyAutoShown'), 4000, 'auto-show');
       notifiedDomains.push(currentDomain);
       localStorage.setItem('eagle-toc-notified-domains', JSON.stringify(notifiedDomains));
     }
@@ -2412,10 +2422,10 @@ class EagleTOC {
     if (addCurrentBtn) {
       addCurrentBtn.addEventListener('click', async () => {
         if (await this.addCurrentDomainToWhitelist()) {
-          this.showNotification(`已新增 ${window.location.hostname} 到白名單`);
+          this.showNotification(t('contentNotifyWhitelistAdded', window.location.hostname));
           this.renderWhitelistItems();
         } else {
-          this.showNotification(`${window.location.hostname} 已在白名單中`);
+          this.showNotification(t('contentNotifyWhitelistExists', window.location.hostname));
         }
       });
     }
@@ -2423,7 +2433,7 @@ class EagleTOC {
     if (resetBtn) {
       resetBtn.addEventListener('click', async () => {
         await this.resetWhitelistToDefault();
-        this.showNotification('白名單已重置為預設值');
+        this.showNotification(t('contentNotifyWhitelistReset'));
         this.renderWhitelistItems();
       });
     }
@@ -2439,16 +2449,16 @@ class EagleTOC {
     const domain = input.value.trim();
     
     if (!domain) {
-      this.showNotification('請輸入網域名稱');
+      this.showNotification(t('contentNotifyEnterDomain'));
       return;
     }
 
     if (await this.addToWhitelist(domain)) {
       input.value = '';
-      this.showNotification(`已新增 ${domain} 到白名單`);
+      this.showNotification(t('contentNotifyWhitelistAdded', domain));
       this.renderWhitelistItems();
     } else {
-      this.showNotification(`${domain} 已在白名單中`);
+      this.showNotification(t('contentNotifyWhitelistExists', domain));
     }
   }
 
@@ -2505,27 +2515,27 @@ class EagleTOC {
       const editBtn = document.createElement('button');
       editBtn.className = 'eagle-toc-whitelist-edit';
       editBtn.dataset.index = index;
-      editBtn.title = '編輯';
+      editBtn.title = t('contentEdit');
       editBtn.textContent = '✏️';
 
       const saveBtn = document.createElement('button');
       saveBtn.className = 'eagle-toc-whitelist-save';
       saveBtn.dataset.index = index;
-      saveBtn.title = '保存';
+      saveBtn.title = t('contentSave');
       saveBtn.style.display = 'none';
       saveBtn.textContent = '✓';
 
       const cancelBtn = document.createElement('button');
       cancelBtn.className = 'eagle-toc-whitelist-cancel';
       cancelBtn.dataset.index = index;
-      cancelBtn.title = '取消';
+      cancelBtn.title = t('contentCancel');
       cancelBtn.style.display = 'none';
       cancelBtn.textContent = '✕';
 
       const removeBtn = document.createElement('button');
       removeBtn.className = 'eagle-toc-whitelist-remove';
       removeBtn.dataset.domain = domain;
-      removeBtn.title = '移除';
+      removeBtn.title = t('contentRemove');
       removeBtn.textContent = '🗑️';
 
       actions.appendChild(editBtn);
@@ -2573,7 +2583,7 @@ class EagleTOC {
       btn.addEventListener('click', async (e) => {
         const domain = e.target.dataset.domain;
         if (await this.removeFromWhitelist(domain)) {
-          this.showNotification(`已從白名單移除 ${domain}`);
+          this.showNotification(t('contentNotifyWhitelistRemoved', domain));
           this.renderWhitelistItems();
         }
       });
@@ -2596,7 +2606,8 @@ class EagleTOC {
   }
 
   startEditWhitelistItem(index) {
-    const listContainer = this.tocPanel.querySelector('.eagle-toc-whitelist-list');
+    const listContainer = this.settingsModal?.querySelector('.eagle-toc-whitelist-list');
+    if (!listContainer) return;
     const item = listContainer.querySelector(`[data-index="${index}"]`);
     if (!item) return;
 
@@ -2619,7 +2630,8 @@ class EagleTOC {
   }
 
   async saveWhitelistItemEdit(index) {
-    const listContainer = this.tocPanel.querySelector('.eagle-toc-whitelist-list');
+    const listContainer = this.settingsModal?.querySelector('.eagle-toc-whitelist-list');
+    if (!listContainer) return;
     const item = listContainer.querySelector(`[data-index="${index}"]`);
     if (!item) return;
 
@@ -2629,7 +2641,7 @@ class EagleTOC {
     const newDomain = inputEdit.value.trim();
 
     if (!newDomain) {
-      this.showNotification('網域名稱不能為空');
+      this.showNotification(t('contentNotifyDomainEmpty'));
       return;
     }
 
@@ -2641,7 +2653,7 @@ class EagleTOC {
 
     // 檢查新域名是否已存在
     if (this.settings.autoShowWhitelist.includes(newDomain)) {
-      this.showNotification(`${newDomain} 已存在於白名單中`);
+      this.showNotification(t('contentNotifyWhitelistDuplicate', newDomain));
       return;
     }
 
@@ -2650,14 +2662,15 @@ class EagleTOC {
     await this.saveSettings();
 
     // 顯示成功提示
-    this.showNotification(`已將 ${originalDomain} 更新為 ${newDomain}`);
+    this.showNotification(t('contentNotifyWhitelistUpdated', [originalDomain, newDomain]));
 
     // 重新渲染
     this.renderWhitelistItems();
   }
 
   cancelWhitelistItemEdit(index) {
-    const listContainer = this.tocPanel.querySelector('.eagle-toc-whitelist-list');
+    const listContainer = this.settingsModal?.querySelector('.eagle-toc-whitelist-list');
+    if (!listContainer) return;
     const item = listContainer.querySelector(`[data-index="${index}"]`);
     if (!item) return;
 
@@ -2784,14 +2797,14 @@ class EagleTOC {
     if (this.isPinned) {
       this.show();
       this.tocPanel.classList.add('eagle-toc-pinned');
-      this.showNotification('已固定此面板', 1600, 'pin-action');
+      this.showNotification(t('contentNotifyPanelPinned'), 1600, 'pin-action');
     } else {
       this.tocPanel.classList.remove('eagle-toc-pinned');
-      this.showNotification('已取消固定', 1600, 'pin-action');
+      this.showNotification(t('contentNotifyPanelUnpinned'), 1600, 'pin-action');
     }
     const toggleBtn = this.tocPanel.querySelector('.eagle-toc-toggle');
     if (toggleBtn) {
-      toggleBtn.title = this.isPinned ? '取消固定' : '固定';
+      toggleBtn.title = this.isPinned ? t('contentUnpin') : t('contentPin');
       toggleBtn.setAttribute('aria-pressed', String(this.isPinned));
     }
   }
@@ -2803,10 +2816,10 @@ class EagleTOC {
     if (this.isPinned) {
       this.show();
       this.tocPanel.classList.add('eagle-toc-pinned');
-      this.showNotification('TOC 已固定顯示 - 滑動模式', 2000, 'pin-action');
+      this.showNotification(t('contentNotifyTocPinned'), 2000, 'pin-action');
     } else {
       this.tocPanel.classList.remove('eagle-toc-pinned');
-      this.showNotification('TOC 已取消固定', 2000, 'pin-action');
+      this.showNotification(t('contentNotifyTocUnpinned'), 2000, 'pin-action');
     }
     
     // 更新菜單的pin按鈕狀態
@@ -3097,15 +3110,15 @@ class EagleTOC {
       <div class="eagle-toc-search-overlay"></div>
       <div class="eagle-toc-search-dialog">
         <div class="eagle-toc-search-input-container">
-          <input type="text" class="eagle-toc-search-input" placeholder="搜尋標題..." />
+          <input type="text" class="eagle-toc-search-input" placeholder="${t('contentSearchPlaceholder')}" />
           <div class="eagle-toc-search-icon">🔍</div>
         </div>
         <div class="eagle-toc-search-results"></div>
         <div class="eagle-toc-search-footer">
           <div class="eagle-toc-search-tips">
-            <span>↑↓ 導航</span>
-            <span>Enter 選擇</span>
-            <span>ESC 關閉</span>
+            <span>${t('contentSearchHintNavigate')}</span>
+            <span>${t('contentSearchHintSelect')}</span>
+            <span>${t('contentSearchHintClose')}</span>
           </div>
         </div>
       </div>
@@ -3250,7 +3263,7 @@ class EagleTOC {
     if (this.filteredHeadings.length === 0) {
       resultsContainer.innerHTML = `
         <div class="eagle-toc-search-no-results">
-          找不到匹配的標題
+          ${t('contentSearchNoResults')}
         </div>
       `;
       return;
@@ -3723,14 +3736,6 @@ class EagleTOC {
         border-top: 1px solid ${colors.borderColor} !important;
       }
       
-      .eagle-toc-settings-label {
-        color: ${colors.textColor} !important;
-      }
-      
-      .eagle-toc-font-size-display {
-        color: ${colors.textColor} !important;
-      }
-      
       .eagle-toc-search-modal {
         background: ${colors.panelBg} !important;
         border: 1px solid ${colors.borderColor} !important;
@@ -3906,14 +3911,6 @@ class EagleTOC {
         border-top: 1px solid ${colors.borderColor} !important;
       }
       
-      .eagle-toc-settings-label {
-        color: ${colors.textColor} !important;
-      }
-      
-      .eagle-toc-font-size-display {
-        color: ${colors.textColor} !important;
-      }
-      
       .eagle-toc-search-modal {
         background: ${colors.panelBg} !important;
         border: 1px solid ${colors.borderColor} !important;
@@ -4057,19 +4054,19 @@ class EagleTOC {
 
   showThemeToast(themeName) {
     const themeNames = {
-      auto: '自動適應',
-      light: '亮色主題',
-      dark: '深色主題',
-      ocean: '海洋主題',
-      forest: '森林主題',
-      sunset: '日落主題',
-      coral: '珊瑚主題'
+      auto: t('contentThemeAuto'),
+      light: t('contentThemeNameLight'),
+      dark: t('contentThemeNameDark'),
+      ocean: t('contentThemeNameOcean'),
+      forest: t('contentThemeNameForest'),
+      sunset: t('contentThemeNameSunset'),
+      coral: t('contentThemeNameCoral')
     };
     
     // 創建 toast 元素
     const toast = document.createElement('div');
     toast.className = 'eagle-toc-theme-toast';
-    toast.textContent = `已切換至 ${themeNames[themeName] || themeName}`;
+    toast.textContent = t('contentThemeSwitched', themeNames[themeName] || themeName);
     
     // 添加到面板中
     this.tocPanel.appendChild(toast);
@@ -4182,17 +4179,17 @@ class EagleTOC {
       success = await this.removeFromWhitelist(currentDomain);
       console.log('Remove result:', success);
       if (success) {
-        this.showNotification(`已取消自動開啟\n${currentDomain} 將不會自動顯示 EagleToc`, 4000, 'pin-action');
+        this.showNotification(t('contentNotifyAutoShowDisabled', currentDomain), 4000, 'pin-action');
       } else {
-        this.showNotification(`取消失敗，請稍後再試`);
+        this.showNotification(t('contentNotifyAutoShowDisableFailed'));
       }
     } else {
       success = await this.addToWhitelist(currentDomain);
       console.log('Add result:', success);
       if (success) {
-        this.showNotification(`已設定自動開啟\n下次訪問 ${currentDomain} 將自動顯示 EagleToc`, 4000, 'pin-action');
+        this.showNotification(t('contentNotifyAutoShowEnabled', currentDomain), 4000, 'pin-action');
       } else {
-        this.showNotification(`設定失敗，請稍後再試`);
+        this.showNotification(t('contentNotifyAutoShowEnableFailed'));
       }
     }
     
@@ -4216,12 +4213,12 @@ class EagleTOC {
     
     if (isExactlyInWhitelist) {
       iconElement.textContent = '📌';
-      textElement.textContent = '取消自動開啟';
+      textElement.textContent = t('contentMenuAutoShowOff');
       pinOption.removeAttribute('title');
       pinOption.style.color = '#d73a49';
     } else {
       iconElement.textContent = '📍';
-      textElement.textContent = '自動開啟';
+      textElement.textContent = t('contentMenuAutoShow');
       pinOption.removeAttribute('title');
       pinOption.style.color = '';
     }
@@ -4504,7 +4501,7 @@ class EagleTOC {
       </div>
       <div class="eagle-toc-zen-controls">
         <div class="zen-control-group">
-          <button class="zen-control-btn zen-play-pause" title="暫停/繼續 (空格鍵)">
+          <button class="zen-control-btn zen-play-pause" title="${t('contentZenPlayPause')}">
             <svg class="zen-play-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
               <path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0zM1.5 8a6.5 6.5 0 1 0 13 0 6.5 6.5 0 0 0-13 0zm4.879-2.773l4.264 2.559a.25.25 0 0 1 0 .428l-4.264 2.559A.25.25 0 0 1 6 10.559V5.442a.25.25 0 0 1 .379-.215z" fill="currentColor"/>
             </svg>
@@ -4513,11 +4510,11 @@ class EagleTOC {
             </svg>
           </button>
           <div class="zen-speed-controls">
-            <button class="zen-control-btn zen-speed-btn" data-speed="slow" title="慢速">🐌</button>
-            <button class="zen-control-btn zen-speed-btn active" data-speed="medium" title="中速">🚶</button>
-            <button class="zen-control-btn zen-speed-btn" data-speed="fast" title="快速">🏃</button>
+            <button class="zen-control-btn zen-speed-btn" data-speed="slow" title="${t('contentZenSpeedSlow')}">🐌</button>
+            <button class="zen-control-btn zen-speed-btn active" data-speed="medium" title="${t('contentZenSpeedMedium')}">🚶</button>
+            <button class="zen-control-btn zen-speed-btn" data-speed="fast" title="${t('contentZenSpeedFast')}">🏃</button>
           </div>
-          <button class="zen-control-btn zen-settings-btn" title="個性化設置 (S鍵)">
+          <button class="zen-control-btn zen-settings-btn" title="${t('contentZenSettingsButton')}">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
               <path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z" fill="currentColor"/>
               <path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52l-.094-.319zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.292-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.292c.415.764-.42 1.6-1.185 1.184l-.292-.159a1.873 1.873 0 0 0-2.692 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.693-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.292A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115l.094-.319z" fill="currentColor"/>
@@ -4532,60 +4529,60 @@ class EagleTOC {
         </div>
       </div>
       <div class="eagle-toc-zen-instructions">
-        <div>ESC: 退出 | 空格: 暫停/繼續 | ↑↓: 手動滾動 | S: 設置</div>
+        <div>${t('contentZenInstructions')}</div>
       </div>
       <div class="zen-settings-panel" style="display: none;">
         <div class="zen-settings-content">
-          <h3>🎨 個性化設置</h3>
+          <h3>🎨 ${t('contentZenSettingsTitle')}</h3>
           
           <div class="zen-setting-group">
-            <label>主題選擇</label>
+            <label>${t('contentZenThemeLabel')}</label>
             <div class="zen-theme-grid">
               <button class="zen-theme-btn active" data-theme="classic">
                 <div class="theme-preview classic-preview"></div>
-                <span>經典</span>
+                <span>${t('contentZenThemeClassic')}</span>
               </button>
               <button class="zen-theme-btn" data-theme="starry">
                 <div class="theme-preview starry-preview"></div>
-                <span>星空</span>
+                <span>${t('contentZenThemeStarry')}</span>
               </button>
               <button class="zen-theme-btn" data-theme="ocean">
                 <div class="theme-preview ocean-preview"></div>
-                <span>海洋</span>
+                <span>${t('contentZenThemeOcean')}</span>
               </button>
               <button class="zen-theme-btn" data-theme="forest">
                 <div class="theme-preview forest-preview"></div>
-                <span>森林</span>
+                <span>${t('contentZenThemeForest')}</span>
               </button>
               <button class="zen-theme-btn" data-theme="sunset">
                 <div class="theme-preview sunset-preview"></div>
-                <span>夕陽</span>
+                <span>${t('contentZenThemeSunset')}</span>
               </button>
               <button class="zen-theme-btn" data-theme="galaxy">
                 <div class="theme-preview galaxy-preview"></div>
-                <span>銀河</span>
+                <span>${t('contentZenThemeGalaxy')}</span>
               </button>
             </div>
           </div>
           
           <div class="zen-setting-group">
-            <label>字體大小: <span class="zen-font-size-value">${this.zenFontSize}px</span></label>
+            <label>${t('contentZenFontSize')} <span class="zen-font-size-value">${this.zenFontSize}px</span></label>
             <input type="range" class="zen-font-size-slider" min="20" max="60" value="${this.zenFontSize}">
           </div>
           
           <div class="zen-setting-group">
-            <label>行間距: <span class="zen-line-spacing-value">${this.zenLineSpacing}px</span></label>
+            <label>${t('contentZenLineSpacing')} <span class="zen-line-spacing-value">${this.zenLineSpacing}px</span></label>
             <input type="range" class="zen-line-spacing-slider" min="40" max="120" value="${this.zenLineSpacing}">
           </div>
           
           <div class="zen-setting-group">
-            <label>背景模糊: <span class="zen-blur-value">${this.zenBlurLevel}px</span></label>
+            <label>${t('contentZenBlur')} <span class="zen-blur-value">${this.zenBlurLevel}px</span></label>
             <input type="range" class="zen-blur-slider" min="0" max="40" value="${this.zenBlurLevel}">
           </div>
           
           <div class="zen-setting-actions">
-            <button class="zen-settings-close">關閉</button>
-            <button class="zen-settings-reset">重置</button>
+            <button class="zen-settings-close">${t('contentClose')}</button>
+            <button class="zen-settings-reset">${t('contentReset')}</button>
           </div>
         </div>
       </div>
@@ -4917,7 +4914,15 @@ class EagleTOC {
   // 版本3: 個性化設置方法
   toggleZenSettings() {
     const isVisible = this.zenSettingsPanel.style.display !== 'none';
-    this.zenSettingsPanel.style.display = isVisible ? 'none' : 'block';
+    if (isVisible) {
+      this.zenSettingsPanel.classList.remove('show');
+      this.zenSettingsPanel.style.display = 'none';
+    } else {
+      this.zenSettingsPanel.style.display = 'block';
+      // Force a reflow so the opacity/transform transition runs from the hidden state.
+      void this.zenSettingsPanel.offsetWidth;
+      this.zenSettingsPanel.classList.add('show');
+    }
   }
 
   setupZenSettingsEvents() {
@@ -5142,16 +5147,16 @@ class EagleTOC {
     this.exportModal.innerHTML = `
       <div class="eagle-toc-enhanced-export-content">
         <div class="eagle-toc-enhanced-export-header">
-          <h3>✨ 智能導出</h3>
+          <h3>✨ ${t('contentExportHeading')}</h3>
           <button class="eagle-toc-enhanced-export-close">×</button>
         </div>
         
         <div class="eagle-toc-enhanced-export-toolbar">
           <div class="toolbar-section format-section">
-            <label class="section-label">格式</label>
+            <label class="section-label">${t('contentExportFormat')}</label>
             <select class="inline-dropdown" name="format">
               <option value="markdown">Markdown</option>
-              <option value="txt">文字</option>
+              <option value="txt">${t('contentExportFormatText')}</option>
               <option value="json">JSON</option>
             </select>
           </div>
@@ -5161,11 +5166,11 @@ class EagleTOC {
           <div class="toolbar-section actions-section">
             <button class="toolbar-action primary" data-action="copy">
               <span class="action-icon">📋</span>
-              <span class="action-label">複製</span>
+              <span class="action-label">${t('contentCopy')}</span>
             </button>
             <button class="toolbar-action secondary" data-action="download">
               <span class="action-icon">💾</span>
-              <span class="action-label">下載</span>
+              <span class="action-label">${t('contentDownload')}</span>
             </button>
           </div>
         </div>
@@ -5347,7 +5352,7 @@ class EagleTOC {
 
   extractEnhancedMetadata() {
     // 版本2: 增強的元數據提取
-    const pageTitle = document.title || '未命名頁面';
+    const pageTitle = document.title || t('contentExportUntitledPage');
     const pageUrl = window.location.href;
     const currentDate = new Date().toLocaleString('zh-TW');
     
@@ -5439,18 +5444,18 @@ class EagleTOC {
       content += `# 📝 ${metadata.title}\n\n`;
       
       if (options.includeMetadata) {
-        content += `## 📊 頁面資訊\n\n`;
-        content += `- **來源**: [${metadata.title}](${metadata.url})\n`;
-        content += `- **網域**: ${metadata.domain}\n`;
-        if (metadata.author) content += `- **作者**: ${metadata.author}\n`;
-        if (metadata.publishDate) content += `- **發布時間**: ${metadata.publishDate}\n`;
-        if (options.includeTimestamp) content += `- **導出時間**: ${metadata.exportDate}\n`;
-        if (metadata.description) content += `- **描述**: ${metadata.description}\n`;
-        content += `- **標題數量**: ${metadata.headingsCount}\n`;
-        content += `- **字數統計**: ${metadata.characterCount.toLocaleString()} 字符\n\n`;
+        content += `## 📊 ${t('contentExportPageInfo')}\n\n`;
+        content += `- **${t('contentExportSource')}**: [${metadata.title}](${metadata.url})\n`;
+        content += `- **${t('contentExportDomain')}**: ${metadata.domain}\n`;
+        if (metadata.author) content += `- **${t('contentExportAuthor')}**: ${metadata.author}\n`;
+        if (metadata.publishDate) content += `- **${t('contentExportPublishTime')}**: ${metadata.publishDate}\n`;
+        if (options.includeTimestamp) content += `- **${t('contentExportExportTime')}**: ${metadata.exportDate}\n`;
+        if (metadata.description) content += `- **${t('contentExportDescription')}**: ${metadata.description}\n`;
+        content += `- **${t('contentExportHeadingCount')}**: ${metadata.headingsCount}\n`;
+        content += `- **${t('contentExportCharCountLabel')}**: ${t('contentExportCharCountValue', metadata.characterCount.toLocaleString())}\n\n`;
         
         if (metadata.keywords.length > 0) {
-          content += `### 🏷️ 關鍵字\n\n`;
+          content += `### 🏷️ ${t('contentExportKeywords')}\n\n`;
           content += metadata.keywords.map(k => `\`${k}\``).join(', ') + '\n\n';
         }
         
@@ -5458,7 +5463,7 @@ class EagleTOC {
       }
       
       if (options.includeTOC && this.headings.length > 0) {
-        content += `## 📋 目錄結構\n\n`;
+        content += `## 📋 ${t('contentExportTocStructure')}\n\n`;
         this.headings.forEach(heading => {
           const level = heading.level;
           const indent = '  '.repeat(level - 1);
@@ -5472,14 +5477,14 @@ class EagleTOC {
       }
       
       if (options.includeContent && this.headings.length > 0) {
-        content += `## 📖 筆記內容\n\n`;
+        content += `## 📖 ${t('contentExportNotesContent')}\n\n`;
         this.headings.forEach(heading => {
           const level = heading.level;
           const markdownLevel = '#'.repeat(level + 2);
           const text = heading.text.trim();
           content += `${markdownLevel} ${text}\n\n`;
-          content += `> **筆記**: [在此添加你的筆記內容]\n\n`;
-          content += `**要點**:\n- \n- \n- \n\n`;
+          content += `> **${t('contentExportNote')}**: [${t('contentExportNotePlaceholder')}]\n\n`;
+          content += `**${t('contentExportKeyPoints')}**:\n- \n- \n- \n\n`;
         });
       }
     }
@@ -5509,35 +5514,35 @@ class EagleTOC {
     let content = '';
     
     if (options.format === 'markdown') {
-      content += `# 📚 ${metadata.title} - 參考文獻\n\n`;
+      content += `# 📚 ${metadata.title} - ${t('contentExportReferenceSuffix')}\n\n`;
       
-      content += `## 🔗 引用信息\n\n`;
-      content += `**APA 格式**:\n`;
-      const author = metadata.author || '作者不詳';
+      content += `## 🔗 ${t('contentExportCitationInfo')}\n\n`;
+      content += `**${t('contentExportApaFormat')}**:\n`;
+      const author = metadata.author || t('contentExportAuthorUnknown');
       const year = metadata.publishDate ? new Date(metadata.publishDate).getFullYear() : new Date().getFullYear();
-      content += `> ${author} (${year}). *${metadata.title}*. 取自 ${metadata.url}\n\n`;
+      content += `> ${author} (${year}). *${metadata.title}*. ${t('contentExportRetrievedFrom')} ${metadata.url}\n\n`;
       
-      content += `**MLA 格式**:\n`;
+      content += `**${t('contentExportMlaFormat')}**:\n`;
       content += `> ${author}. "${metadata.title}." *${metadata.domain}*, ${metadata.publishDate || metadata.exportDate}. Web. ${new Date().toLocaleDateString('en-US')}.\n\n`;
       
-      content += `**IEEE 格式**:\n`;
+      content += `**${t('contentExportIeeeFormat')}**:\n`;
       content += `> [1] ${author}, "${metadata.title}," ${metadata.domain}. [Online]. Available: ${metadata.url}. [Accessed: ${new Date().toLocaleDateString('en-US')}].\n\n`;
       
       if (options.includeMetadata) {
-        content += `## 📊 詳細資訊\n\n`;
-        content += `| 項目 | 內容 |\n`;
+        content += `## 📊 ${t('contentExportDetails')}\n\n`;
+        content += `| ${t('contentExportTableItem')} | ${t('contentExportTableContent')} |\n`;
         content += `|------|------|\n`;
-        content += `| 標題 | ${metadata.title} |\n`;
+        content += `| ${t('contentExportTableTitle')} | ${metadata.title} |\n`;
         content += `| URL | ${metadata.url} |\n`;
-        content += `| 作者 | ${metadata.author || 'N/A'} |\n`;
-        content += `| 發布日期 | ${metadata.publishDate || 'N/A'} |\n`;
-        content += `| 存取日期 | ${metadata.exportDate} |\n`;
-        content += `| 語言 | ${metadata.language} |\n\n`;
+        content += `| ${t('contentExportAuthor')} | ${metadata.author || 'N/A'} |\n`;
+        content += `| ${t('contentExportPublishDate')} | ${metadata.publishDate || 'N/A'} |\n`;
+        content += `| ${t('contentExportAccessDate')} | ${metadata.exportDate} |\n`;
+        content += `| ${t('contentExportLanguage')} | ${metadata.language} |\n\n`;
       }
       
       if (options.includeTOC && this.headings.length > 0) {
-        content += `## 📝 內容摘要\n\n`;
-        content += `本文檔包含 ${this.headings.length} 個主要段落：\n\n`;
+        content += `## 📝 ${t('contentExportSummary')}\n\n`;
+        content += `${t('contentExportSectionCount', String(this.headings.length))}\n\n`;
         this.headings.forEach((heading, index) => {
           content += `${index + 1}. ${heading.text.trim()}\n`;
         });
@@ -5610,9 +5615,9 @@ class EagleTOC {
       // 視覺反饋
       const originalContent = copyBtn.innerHTML;
       if (isV3) {
-        copyBtn.innerHTML = '<span class="action-icon">✅</span><span class="action-text">已複製</span>';
+        copyBtn.innerHTML = `<span class="action-icon">✅</span><span class="action-text">${t('contentExportCopied')}</span>`;
       } else {
-        copyBtn.textContent = '✅ 已複製!';
+        copyBtn.textContent = '✅ ' + t('contentCopied');
       }
       copyBtn.style.background = '#27ae60';
       
@@ -5626,9 +5631,9 @@ class EagleTOC {
       
       // V3 fallback
       if (isV3) {
-        copyBtn.innerHTML = '<span class="action-icon">❌</span><span class="action-text">失敗</span>';
+        copyBtn.innerHTML = `<span class="action-icon">❌</span><span class="action-text">${t('contentFailed')}</span>`;
         setTimeout(() => {
-          copyBtn.innerHTML = '<span class="action-icon">📋</span><span class="action-text">複製</span>';
+          copyBtn.innerHTML = `<span class="action-icon">📋</span><span class="action-text">${t('contentCopy')}</span>`;
         }, 2000);
       } else {
         // V1/V2 fallback
@@ -5638,14 +5643,14 @@ class EagleTOC {
         
         try {
           document.execCommand('copy');
-          copyBtn.textContent = '✅ 已複製!';
+          copyBtn.textContent = '✅ ' + t('contentCopied');
           setTimeout(() => {
-            copyBtn.textContent = '📋 複製到剪貼板';
+            copyBtn.textContent = '📋 ' + t('contentCopyToClipboard');
           }, 2000);
         } catch (err2) {
-          copyBtn.textContent = '❌ 複製失敗';
+          copyBtn.textContent = '❌ ' + t('contentCopyFailed');
           setTimeout(() => {
-            copyBtn.textContent = '📋 複製到剪貼板';
+            copyBtn.textContent = '📋 ' + t('contentCopyToClipboard');
           }, 2000);
         }
       }
@@ -5683,7 +5688,7 @@ class EagleTOC {
     // 生成文件名
     const timestamp = new Date().toISOString().split('T')[0];
     const pageTitle = document.title.replace(/[<>:"/\\|?*]/g, '-').substring(0, 50);
-    const templateName = { 'notes': '筆記', 'outline': '大綱', 'reference': '參考' }[selectedTemplate];
+    const templateName = { 'notes': t('contentExportTemplateNotes'), 'outline': t('contentExportTemplateOutline'), 'reference': t('contentExportTemplateReference') }[selectedTemplate];
     const fileName = `${pageTitle}-${templateName}-${timestamp}.${selectedFormat}`;
     
     // 設置 MIME 類型
@@ -5712,9 +5717,9 @@ class EagleTOC {
       // 視覺反饋
       const originalContent = downloadBtn.innerHTML;
       if (isV3) {
-        downloadBtn.innerHTML = '<span class="action-icon">✅</span><span class="action-text">完成</span>';
+        downloadBtn.innerHTML = `<span class="action-icon">✅</span><span class="action-text">${t('contentDone')}</span>`;
       } else {
-        downloadBtn.textContent = '✅ 下載完成!';
+        downloadBtn.textContent = '✅ ' + t('contentDownloadComplete');
       }
       downloadBtn.style.background = '#27ae60';
       
@@ -5727,14 +5732,14 @@ class EagleTOC {
       console.error('下載失敗:', err);
       
       if (isV3) {
-        downloadBtn.innerHTML = '<span class="action-icon">❌</span><span class="action-text">失敗</span>';
+        downloadBtn.innerHTML = `<span class="action-icon">❌</span><span class="action-text">${t('contentFailed')}</span>`;
         setTimeout(() => {
-          downloadBtn.innerHTML = '<span class="action-icon">💾</span><span class="action-text">下載</span>';
+          downloadBtn.innerHTML = `<span class="action-icon">💾</span><span class="action-text">${t('contentDownload')}</span>`;
         }, 2000);
       } else {
-        downloadBtn.textContent = '❌ 下載失敗';
+        downloadBtn.textContent = '❌ ' + t('contentDownloadFailed');
         setTimeout(() => {
-          downloadBtn.textContent = '💾 下載文件';
+          downloadBtn.textContent = '💾 ' + t('contentDownloadFile');
         }, 2000);
       }
     }
