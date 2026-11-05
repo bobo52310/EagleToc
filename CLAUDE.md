@@ -43,18 +43,14 @@ Uses Chrome Storage Sync API with 8KB per-item limit:
 - Settings and whitelist stored separately to avoid limits
 - Background script handles `get-settings`, `save-settings`, `save-whitelist` messages
 
-### Landing Page (website/)
+### Landing Page
 
-Astro-based static site with TailwindCSS v4:
-```
-website/
-├── src/
-│   ├── pages/index.astro
-│   ├── layouts/Layout.astro
-│   ├── components/
-│   └── styles/global.css
-└── package.json
-```
+The landing page (eagletoc.bobochen.dev) lives in the separate `EagleToc-website` repo, not here.
+
+### Intro Animations (docs/)
+
+- `docs/promo/intro-{en,zh-tw}.{gif,mp4}`: compressed renders embedded in README.md / README.zh-TW.md
+- `docs/design/promo-intro/` (EN) and `docs/design/promo-intro-zh-tw/`: HyperFrames sources. Real footage is re-captured with `scripts/capture.cjs` (needs `PUPPETEER_DIR`); `renders/`, `assets/capture/`, `assets/crops/` are gitignored.
 
 ## Development Commands
 
@@ -62,15 +58,6 @@ website/
 ```bash
 # No build step - load unpacked extension directly in Chrome
 # chrome://extensions > Load unpacked > select project root
-```
-
-### Landing Page (website/)
-```bash
-cd website
-npm install
-npm run dev      # Dev server at localhost:4321
-npm run build    # Build to ./dist/
-npm run preview  # Preview production build
 ```
 
 ## Key Implementation Details
