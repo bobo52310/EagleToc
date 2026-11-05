@@ -35,7 +35,7 @@ Every frame shows the real extension. The animation sources (HyperFrames composi
 - **Quick search** — a search box next to the panel with fuzzy heading matching and keyboard navigation.
 - **Glance mode** — hold `Alt/Option` and hover to preview the TOC.
 - **Zen Mode** — distraction-free full-screen reading with six reading themes and three auto-scroll speeds.
-- **Auto / light / dark themes** — auto follows the system `prefers-color-scheme`.
+- **Seven panel themes** — auto, light, dark, ocean, forest, sunset and coral; auto follows the system `prefers-color-scheme`.
 - **Wildcard whitelist** — patterns like `*.github.*` or `docs.*.org` show the TOC automatically.
 - **Copy the outline** — as plain text or Markdown, for your notes.
 
@@ -94,7 +94,7 @@ Settings sync through Chrome Storage Sync. Settings and the whitelist are stored
 
 | Kind | Options |
 | --- | --- |
-| Panel theme | Auto (follows the system), light, dark |
+| Panel theme | Auto (follows the system), light, dark, ocean, forest, sunset, coral |
 | Zen Mode theme | Classic, starry, ocean, forest, sunset, galaxy |
 
 Zen Mode also lets you adjust font size, line spacing, background blur and auto-scroll speed (slow / medium / fast), and tracks your reading progress.
