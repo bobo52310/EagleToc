@@ -8,7 +8,7 @@
 
 [![Chrome Web Store](https://img.shields.io/badge/Chrome_Web_Store-安裝-4285F4?logo=googlechrome&logoColor=white)](https://chromewebstore.google.com/detail/eagletoc-eagle-eye-table/ibempgkkjjokbaojofkfcbpbeieglbic)
 [![Manifest V3](https://img.shields.io/badge/Manifest-V3-blue)](manifest.json)
-[![Version](https://img.shields.io/badge/version-1.0.1-informational)](manifest.json)
+[![Version](https://img.shields.io/badge/version-1.0.2-informational)](manifest.json)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 專案網站：[eagletoc.bobochen.dev](https://eagletoc.bobochen.dev/)
