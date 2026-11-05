@@ -1,0 +1,11 @@
+{
+  "name": "eagletoc-intro-promo",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "data": "node scripts/embed-manifest.cjs",
+    "dev": "npx --yes hyperframes@0.8.226 preview",
+    "check": "npx --yes hyperframes@0.8.226 lint && npx --yes hyperframes@0.8.226 validate && npx --yes hyperframes@0.8.226 inspect",
+    "render": "npx --yes hyperframes@0.8.226 render"
+  }
+}

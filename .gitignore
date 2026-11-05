@@ -33,3 +33,18 @@ temp
 temp-*
 kill-ports.sh
 2025-*.txt
+
+# 簡介動畫：只提交原始碼與成品（docs/promo/），渲染輸出與可由 scripts/capture.cjs 重拍的素材不進 repo
+docs/design/*/renders/
+docs/design/*/snapshots/
+docs/design/*/.hyperframes/
+docs/design/*/node_modules/
+docs/design/*/assets/capture/
+docs/design/*/assets/crops/
+docs/design/*/BUILD_BRIEF.md
+docs/design/promo-review.html
+
+# 個人工作筆記
+CHANGELOG-sessions.md
+TODO.md
+remotion-promo/*.ini
