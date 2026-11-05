@@ -2565,7 +2565,7 @@ body.eagle-toc-glance-mode h6:hover {
 /* ==================== 版本3: 個性化設置和主題系統 ==================== */
 
 /* 設置面板樣式 */
-.eagle-toc-zen-settings-panel {
+.zen-settings-panel {
   position: absolute;
   top: 30px;
   right: 30px;
@@ -2582,9 +2582,126 @@ body.eagle-toc-glance-mode h6:hover {
   z-index: 10;
 }
 
-.eagle-toc-zen-settings-panel.show {
+.zen-settings-panel.show {
   opacity: 1;
   transform: translateX(0);
+}
+
+/* Zen settings panel contents (classes rendered by createZenMode). Scoped to
+   the panel so host-page styles for h3/label/button/input don't leak in. */
+.zen-settings-panel {
+  color: #f2f6ff;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang TC", "Noto Sans TC", sans-serif;
+  font-size: 14px;
+  line-height: 1.4;
+  width: 320px;
+  max-width: calc(100vw - 40px);
+  box-sizing: border-box;
+}
+
+.zen-settings-panel h3 {
+  margin: 0 0 18px;
+  font-size: 18px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.zen-settings-panel .zen-setting-group {
+  margin-bottom: 16px;
+}
+
+.zen-settings-panel .zen-setting-group > label {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(242, 246, 255, 0.85);
+}
+
+.zen-settings-panel .zen-font-size-value,
+.zen-settings-panel .zen-line-spacing-value,
+.zen-settings-panel .zen-blur-value {
+  font-variant-numeric: tabular-nums;
+  color: #7cc4ff;
+}
+
+.zen-settings-panel .zen-theme-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.zen-settings-panel .zen-theme-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  padding: 8px 4px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.06);
+  color: #f2f6ff;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.zen-settings-panel .zen-theme-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.zen-settings-panel .zen-theme-btn.active {
+  border-color: #38b6ff;
+  background: rgba(56, 182, 255, 0.15);
+}
+
+.zen-settings-panel .theme-preview {
+  width: 100%;
+  height: 22px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.zen-settings-panel .classic-preview { background: #000000; }
+.zen-settings-panel .starry-preview { background: linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 50%, #16213e 100%); }
+.zen-settings-panel .ocean-preview { background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #1e3c72 100%); }
+.zen-settings-panel .forest-preview { background: linear-gradient(135deg, #134e5e 0%, #71b280 50%, #134e5e 100%); }
+.zen-settings-panel .sunset-preview { background: linear-gradient(135deg, #ff7b7b 0%, #ff9a56 50%, #ffad56 100%); }
+.zen-settings-panel .galaxy-preview { background: linear-gradient(135deg, #2d1b69 0%, #11998e 50%, #38ef7d 100%); }
+
+.zen-settings-panel input[type="range"] {
+  width: 100%;
+  margin: 0;
+  accent-color: #38b6ff;
+}
+
+.zen-settings-panel .zen-setting-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.zen-settings-panel .zen-setting-actions button {
+  flex: 1;
+  width: auto;
+  height: auto;
+  margin: 0;
+  padding: 8px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #f2f6ff;
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.zen-settings-panel .zen-setting-actions button:hover {
+  background: rgba(255, 255, 255, 0.16);
 }
 
 .zen-settings-header {
@@ -2919,7 +3036,7 @@ body.eagle-toc-glance-mode h6:hover {
 
 /* 響應式設計 - 版本3 */
 @media (max-width: 768px) {
-  .eagle-toc-zen-settings-panel {
+  .zen-settings-panel {
     top: 20px;
     right: 20px;
     left: 20px;
