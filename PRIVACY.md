@@ -19,7 +19,6 @@ When you are signed into Chrome, your settings may sync across your devices thro
 ### Permissions Explanation
 - **activeTab**: Required to access the current page URL for whitelist matching
 - **storage**: Required to save your preferences
-- **scripting**: Required to inject the table of contents panel into web pages
 - **Host permissions (all URLs)**: Required to generate table of contents on any website you visit. The extension needs to read page headings to create the TOC.
 
 ### Third-Party Services
@@ -47,7 +46,6 @@ EagleToc 在您的裝置上本機儲存以下資料：
 ### 權限說明
 - **activeTab**：用於存取當前頁面 URL 以進行白名單比對
 - **storage**：用於儲存您的偏好設定
-- **scripting**：用於將目錄面板注入網頁
 - **主機權限（所有 URL）**：用於在您造訪的任何網站上產生目錄。擴充功能需要讀取頁面標題來建立目錄。
 
 ### 第三方服務

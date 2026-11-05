@@ -2,12 +2,11 @@
   "manifest_version": 3,
   "name": "EagleToc - Eagle Eye Table of Contents",
   "description": "Smart table of contents for any website. Navigate articles, docs, and books with eagle-eye precision.",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "default_locale": "zh_TW",
   "permissions": [
     "activeTab",
-    "storage",
-    "scripting"
+    "storage"
   ],
   "host_permissions": [
     "<all_urls>"
